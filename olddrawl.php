@@ -29,7 +29,7 @@ page_header("Old Drawls Tisch");
 
 $config = unserialize($session['user']['donationconfig']); 
 
-if ($_GET[op]=="speak"){ 
+if ($_GET['op']=="speak"){ 
 	$zufall = e_rand(1,8); 
     	output("`@`b`cOld Drawls Stammtisch`c`b`0`n`n"); 
     	output("`@Du hast es gewagt und Old Drawl angesprochen. Langsam dreht der alte Mann seinen Kopf zu Dir herum 
@@ -53,7 +53,7 @@ if ($_GET[op]=="speak"){
                 		output("trifft Dich mitten im Gesicht, so daß eine häßliche Narbe entstanden ist. Die Wucht 
                     			schleudert Dich bis an den Tresen zurück."); 
                 		output("`n`n`@Du hast `42 Charmpunkte`@ verloren."); 
-                		$session[user][charm]-=2; 
+                		$session['user']['charm']-=2; 
                 		//debuglog("`^Old Drawl `@haut 3 Charmpunkte weg");
 			if ($session['user']['charm']<=0) $session['user']['charm']=0;
                			break; 
@@ -81,9 +81,9 @@ if ($_GET[op]=="speak"){
                     		debuglog("Hat {$session['user']['gold']} Gold und 3 Edelsteine bei Old Drawl verloren"); 
                 		$session['user']['gold']=0; 
                 		$session['user']['gems']-=2; 
-                		if ($session['user']['gems']<0) $session[user][gems]=0; 
+                		if ($session['user']['gems']<0) $session['user']['gems']=0; 
                                		addnav("Tägliche News","news.php"); 
-                		addnews("`0".$session[user][name]." `0wurde von Old Drawl erschlagen als ".($session[user][sex]?"sie":"er")." ihn angesprochen hat."); 
+                		addnews("`0".$session['user']['name']." `0wurde von Old Drawl erschlagen als ".($session['user']['sex']?"sie":"er")." ihn angesprochen hat."); 
 		                break; 
             			case 5: 
                 		output("haut voll daneben und fällt dabei unsanft auf den Boden. Er hatte wohl schon das eine oder andere Ale zuviel. \"Puh\", denkst Du, \"Glück gehabt...\""); 
@@ -91,8 +91,8 @@ if ($_GET[op]=="speak"){
                			break; 
         		}     
     	}     
-}else if ($_GET[op]=="do"){ 
-    	if ($_GET[action]=="goldmine"){ 
+}else if ($_GET['op']=="do"){ 
+    	if ($_GET['action']=="goldmine"){ 
         		output("`@`b`cOld Drawls Stammtisch`c`b`0`n`n"); 
         		output("`@Für die Aktion `^3 mal Goldmine im Wald `@verlangt Old Drawl `42 `@Edelsteine. 
             			Aber achte darauf, daß sie nach wie vor einstürzen kann und es keine Garantie für eine erfolgreiche 
@@ -101,13 +101,13 @@ if ($_GET[op]=="speak"){
         		addnav("Zwei Edelsteine geben","olddrawl.php?op=do&action=goldmine2"); 
 		addnav("Zurück zur Auswahl","olddrawl.php?op=speak"); 
         		//debuglog("`^Old Drawl `@wegen Goldmine angesprochen"); 
-    	}else if ($_GET[action]=="goldmine2"){ 
+    	}else if ($_GET['action']=="goldmine2"){ 
         		output("`@`b`cOld Drawls Stammtisch`c`b`0`n`n"); 
-        		if ($session[user][gems] >= 2){ 
-            			if ($session[user][gems] >= 2 && $config['goldmine']==0 && $config['goldmineday']==0){ 
+        		if ($session['user']['gems'] >= 2){ 
+            			if ($session['user']['gems'] >= 2 && $config['goldmine']==0 && $config['goldmineday']==0){ 
                 			$config['goldmine'] += 3; 
                 			$config['goldmineday']=1; 
-                			$session[user][gems] -= 2; 
+                			$session['user']['gems'] -= 2; 
                 			output("`n`n`@Old Drawl gibt dir eine halb zerfallene Karte zur Goldmine. Du wirst sie wohl tatsächlich nur 3 mal verwenden können."); 
                 			//debuglog("`^Old Drawl `@macht Zugang zur Goldmine auf"); 
             			}elseif ($config['goldmineday']==1){ 

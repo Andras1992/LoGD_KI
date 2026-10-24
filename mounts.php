@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "common.php";
 isnewday(3);
 
@@ -67,7 +67,7 @@ if ($_GET['op']==""){
 	$buff = array();
 	reset($_POST['mount']['mountbuff']);
 	$_POST['mount']['mountbuff']['activate']=join(",",$_POST['mount']['mountbuff']['activate']);
-	while (list($key,$val)=each($_POST['mount']['mountbuff'])){
+	foreach ($_POST['mount']['mountbuff'] as $key => $val) {
 		if ($val>""){
 			$buff[$key]=stripslashes($val);
 		}
@@ -79,7 +79,7 @@ if ($_GET['op']==""){
 	$vals='';
 	$sql='';
 	$i=0;
-	while (list($key,$val)=each($_POST['mount'])){
+	foreach ($_POST['mount'] as $key => $val) {
 		if (is_array($val)) $val = addslashes(serialize($val));
 		if ($_GET['id']>""){
 			$sql.=($i>0?",":"")."$key='$val'";

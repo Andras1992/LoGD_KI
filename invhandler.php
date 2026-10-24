@@ -17,35 +17,35 @@ page_header("Inventar");
 if ($_GET['op']=="fit"){
 	output("`QDu tauschst `q`n");
 	if ($item['class']=="Rüstung"){
-		output($session[user][armor]."`Q (`q".$session[user][armordef]."`Q Verteidigung, Wert: `q".$session[user][armorvalue]."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Verteidigung, Wert: `q$item[gold] `QGold) aus.`n Deine Verteidigung ändert sich damit von `q".$session[user][defence]."`Q auf `q");
-		$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES ('".addslashes($session[user][armor])."','Rüstung',".$session[user][acctid].",".$session[user][armorvalue].",".$session[user][armordef].",'Gebrauchte Rüstung mit ".$session[user][armordef]." Verteidigung.')";
+		output($session['user']['armor']."`Q (`q".$session['user']['armordef']."`Q Verteidigung, Wert: `q".$session['user']['armorvalue']."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Verteidigung, Wert: `q$item[gold] `QGold) aus.`n Deine Verteidigung ändert sich damit von `q".$session['user']['defence']."`Q auf `q");
+		$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES ('".addslashes($session['user']['armor'])."','Rüstung',".$session['user']['acctid'].",".$session['user']['armorvalue'].",".$session['user']['armordef'].",'Gebrauchte Rüstung mit ".$session['user']['armordef']." Verteidigung.')";
 		$session['user']['defence']=$session['user']['defence']-$session['user']['armordef']+$item['value1'];
 		$session['user']['armordef']=$item['value1'];
 		$session['user']['armor']=$item['name'];
 		$session['user']['armorvalue']=$item['gold']-1;
 		if ($session['user']['armorvalue']<1) $session['user']['armorvalue']=1;
-		output($session[user][defence]."`Q.`n`n");
+		output($session['user']['defence']."`Q.`n`n");
 	}
 	if ($item['class']=="Waffe"){
-		output($session[user][weapon]."`Q (`q".$session[user][weapondmg]."`Q Angriff, Wert: `q".$session[user][weaponvalue]."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Angriff, Wert: `q$item[gold] `QGold) aus.`n Dein Angriffswert ändert sich damit von `q".$session[user][attack]."`Q auf `q");
-		$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES ('".addslashes($session[user][weapon])."','Waffe',".$session[user][acctid].",".$session[user][weaponvalue].",".$session[user][weapondmg].",'Gebrauchte Waffe mit ".$session[user][weapondmg]." Angriffswert.')";
+		output($session['user']['weapon']."`Q (`q".$session['user']['weapondmg']."`Q Angriff, Wert: `q".$session['user']['weaponvalue']."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Angriff, Wert: `q$item[gold] `QGold) aus.`n Dein Angriffswert ändert sich damit von `q".$session['user']['attack']."`Q auf `q");
+		$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES ('".addslashes($session['user']['weapon'])."','Waffe',".$session['user']['acctid'].",".$session['user']['weaponvalue'].",".$session['user']['weapondmg'].",'Gebrauchte Waffe mit ".$session['user']['weapondmg']." Angriffswert.')";
 		$session['user']['attack']=$session['user']['attack']-$session['user']['weapondmg']+$item['value1'];
 		$session['user']['weapondmg']=$item['value1'];
 		$session['user']['weapon']=$item['name'];
 		$session['user']['weaponvalue']=$item['gold']-1;
-		output($session[user][attack]."`Q.");
+		output($session['user']['attack']."`Q.");
 		if ($session['user']['weaponvalue']<1) $session['user']['weaponvalue']=1;
 	}
 	db_query($sql) or die(sql_error($sql));
 	db_query("DELETE FROM items WHERE id=$_GET[id]");
 }else if ($_GET['op']=="house"){
-	if (db_num_rows(db_query("SELECT id FROM items WHERE name='".stripslashes($item[name])."' AND class='Möbel' AND owner=$item[owner]"))>0){
-		db_query("DELETE FROM items WHERE name='".stripslashes($item[name])."' AND class='Möbel' AND owner=$item[owner]");
+	if (db_num_rows(db_query("SELECT id FROM items WHERE name='".stripslashes($item['name'])."' AND class='Möbel' AND owner=$item[owner]"))>0){
+		db_query("DELETE FROM items WHERE name='".stripslashes($item['name'])."' AND class='Möbel' AND owner=$item[owner]");
 		output("Du hast `q$item[name]`Q schon im Haus. Kurzerhand fliegt `q$item[name]`Q raus und wird duch das neuere Stück ersetzt.");
 	}else{
 		output("`QDu suchst für `q$item[name]`Q einen Ehrenplatz in deinem Haus, an dem `q$item[name]`Q von jetzt an den Staub fangen wird.");
 	}
-	db_query("UPDATE items SET class='Möbel',gold=1,gems=0,value1=".$session[user][house]." WHERE id=$_GET[id]");
+	db_query("UPDATE items SET class='Möbel',gold=1,gems=0,value1=".$session['user']['house']." WHERE id=$_GET[id]");
 }else if ($_GET['op']=="throw"){
 	output("`QDu wirfst `q$item[name]`Q einem hungrigen Strassenköter vor die Füsse, der `q$item[name]`Q sofort in sein Versteck schleppt.`nWas will ein Hund damit anfangen?");
 	db_query("DELETE FROM items WHERE id=$_GET[id]");

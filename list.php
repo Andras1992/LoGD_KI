@@ -3,9 +3,9 @@
 // 15082004
 
 require_once "common.php";
-if ($session[user][loggedin]) {
+if ($session['user']['loggedin']) {
 	checkday();
-	if ($session[user][alive]) {
+	if ($session['user']['alive']) {
 		addnav("Zurück zum Dorf","village.php");
 	} else {
 		addnav("Zurück zu den Schatten", "shades.php");
@@ -55,7 +55,7 @@ if ($_GET['page']=="" && $_GET['op']==""){
 	output("`c`bKrieger in dieser Welt (Seite ".($pageoffset/$playersperpage+1).": $from-$to von $totalplayers)`b`c");
 	$sql = "SELECT acctid,name,login,alive,location,sex,level,laston,loggedin,lastip,uniqueid,race FROM accounts WHERE locked=0 $search ORDER BY level DESC, dragonkills DESC, login ASC $limit";
 }
-if ($session[user][loggedin]){
+if ($session['user']['loggedin']){
 	output("<form action='list.php?op=search' method='POST'>Nach Name suchen: <input name='name'><input type='submit' class='button' value='Suchen'></form>",true);
 	addnav("","list.php?op=search");
 }
@@ -73,28 +73,28 @@ for($i=0;$i<$max;$i++){
 	output("<tr class='".($i%2?"trdark":"trlight")."'><td>",true);
 	output("`^$row[level]`0");
 	output("</td><td>",true);
-	if ($session[user][loggedin]) output("<a href=\"mail.php?op=write&to=".rawurlencode($row['login'])."\" target=\"_blank\" onClick=\"".popup("mail.php?op=write&to=".rawurlencode($row['login'])."").";return false;\"><img src='images/newscroll.GIF' width='16' height='16' alt='Mail schreiben' border='0'></a>",true);
-	if ($session[user][loggedin]) output("<a href='bio.php?char=".rawurlencode($row['login'])."'>",true);
-	if ($session[user][loggedin]) addnav("","bio.php?char=".rawurlencode($row['login'])."");
-	output("`".($row[acctid]==getsetting("hasegg",0)?"^":"&")."$row[name]`0");
-	if ($session[user][loggedin]) output("</a>",true);
+	if ($session['user']['loggedin']) output("<a href=\"mail.php?op=write&to=".rawurlencode($row['login'])."\" target=\"_blank\" onClick=\"".popup("mail.php?op=write&to=".rawurlencode($row['login'])."").";return false;\"><img src='images/newscroll.GIF' width='16' height='16' alt='Mail schreiben' border='0'></a>",true);
+	if ($session['user']['loggedin']) output("<a href='bio.php?char=".rawurlencode($row['login'])."'>",true);
+	if ($session['user']['loggedin']) addnav("","bio.php?char=".rawurlencode($row['login'])."");
+	output("`".($row['acctid']==getsetting("hasegg",0)?"^":"&")."$row[name]`0");
+	if ($session['user']['loggedin']) output("</a>",true);
 	output("</td><td>",true);
 	output($colraces[$row['race']]);
 	output("</td><td align=\"center\">",true);
-	output($row[sex]?"<img src=\"images/female.gif\">":"<img src=\"images/male.gif\">",true);
+	output($row['sex']?"<img src=\"images/female.gif\">":"<img src=\"images/male.gif\">",true);
 	output("</td><td>",true);
-	$loggedin=(date("U") - strtotime($row[laston]) < getsetting("LOGINTIMEOUT",900) && $row[loggedin]);
-	if ($row[location]==0) output($loggedin?"`#Online`0":"`3Die Felder`0");
-	if ($row[location]==1) output("`3Zimmer in Kneipe`0");
-	if ($row[location]==2) output("`3Im Haus`0");
+	$loggedin=(date("U") - strtotime($row['laston']) < getsetting("LOGINTIMEOUT",900) && $row['loggedin']);
+	if ($row['location']==0) output($loggedin?"`#Online`0":"`3Die Felder`0");
+	if ($row['location']==1) output("`3Zimmer in Kneipe`0");
+	if ($row['location']==2) output("`3Im Haus`0");
 	output("</td><td>",true);
-	output($row[alive]?"`1Lebt`0":"`4Tot`0");
+	output($row['alive']?"`1Lebt`0":"`4Tot`0");
 	output("</td><td>",true);
 	//$laston=round((strtotime("0 days")-strtotime($row[laston])) / 86400,0)." Tage";
-	$laston=round((strtotime(date("r"))-strtotime($row[laston])) / 86400,0)." Tage";
+	$laston=round((strtotime(date("r"))-strtotime($row['laston'])) / 86400,0)." Tage";
 	if (substr($laston,0,2)=="1 ") $laston="1 Tag";
-	if (date("Y-m-d",strtotime($row[laston])) == date("Y-m-d")) $laston="Heute";
-	if (date("Y-m-d",strtotime($row[laston])) == date("Y-m-d",strtotime(date("r")."-1 day"))) $laston="Gestern";
+	if (date("Y-m-d",strtotime($row['laston'])) == date("Y-m-d")) $laston="Heute";
+	if (date("Y-m-d",strtotime($row['laston'])) == date("Y-m-d",strtotime(date("r")."-1 day"))) $laston="Gestern";
 	if ($loggedin) $laston="Jetzt";
 	output($laston);
 	output("</td></tr>",true);

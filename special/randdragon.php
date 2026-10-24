@@ -18,21 +18,21 @@ some changes for my game - may not work with other versions!
 */
 
 if (!isset($session)) exit();
-$session[user][specialinc]="randdragon.php";
+$session['user']['specialinc']="randdragon.php";
 if ($HTTP_GET_VARS['count']==3) {
 	output("`tDer `@Grüne Drachen`t hat genug von deinem Geschwafel. Er bläst dich mit einem Feuerstoß weg!`n`n");
 	output("Du fragst dich noch, was schlimmer ist, der Schmerz, oder der Gestank deines verbrennenden Fleischs. Aber das spielt keine Rolle. ");
 	output("Das Reich der Schatten empfängt dich.`n`n`4Du wurdest vom `@Grünen Drachen`4 gegrillt!`n");
 	output("Du verlierst 5% deiner Erfahrung und alles Gold.");
-	addnews("`%".$session[user][name]."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
+	addnews("`%".$session['user']['name']."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
 	$session['user']['gold']=0;
-	$session[user][experience]=round($session[user][experience]*.95,0);
+	$session['user']['experience']=round($session['user']['experience']*.95,0);
 	$session['user']['alive']=false;
 	$session['user']['hitpoints']=0;
 	$session['user']['specialinc']="";
 	addnav("Tägliche News","news.php");
 } else {
-	switch($HTTP_GET_VARS[op]){
+	switch($HTTP_GET_VARS['op']){
 		case "":
 			output("`tBei deinem Streifzug durch die Wälder hörst du plötzlich ein lautes Brüllen. Das Geräusch lässt das Blut in deinen Adern gefrieren.`n");
 			output("Ein tiefes Stampfen ist hinter dir zu hören. Starr vor Schreck fühlst du einen Stoß heißen Atem in deinem Nacken. ");
@@ -42,7 +42,7 @@ if ($HTTP_GET_VARS['count']==3) {
 			addnav("Um Gnade winseln","forest.php?op=cower");
 			addnav("Rede dich raus","forest.php?op=talk");
 			addnav("Lauf weg!","forest.php?op=flee");
-			$session[user][specialinc]="randdragon.php";
+			$session['user']['specialinc']="randdragon.php";
 			break;	
 		case "slay":
 			output("`tDu hältst deine Waffe fest im Griff und bereitest dich auf den Angriff auf diese gewaltige Kreatur vor.");
@@ -58,20 +58,20 @@ if ($HTTP_GET_VARS['count']==3) {
 					output("dann wird dir schwarz vor Augen.`n`nEinige Zeit später erwachst du auf einer Lichtung. Deine ");
 					output(" Wunden wurden geheilt, aber nichts kann die Verletzungen, die Drachenatem verursacht, wirklich vollständig beseitigen.");
 					output("`nDu verlierst zwei Charmepunkte durch die Verbrennungen!");
-					addnews("`%".$session[user][name]."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
+					addnews("`%".$session['user']['name']."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
 					$session['user']['charm']-=2;
 					$session['user']['turns']-=2;
 					if ($session['user']['turns'] < 0) $session['user']['turns']=0;
 					$session['user']['reputation']++;
 					$session['user']['hitpoints']=$session['user']['maxhitpoints'];
-					$session[user][specialinc]="";
+					$session['user']['specialinc']="";
 				} else {
 					output("`nDas ist das Letzte, was du siehst, bevor du in die ewige Dunkelheit gleitest.`n`n");
 					output("`4Du wurdest vom `@Grünen Drachen`4 gefressen!");
 					output("Du verlierst 10% deiner Erfahrung und alles Gold.");
-					addnews("`%".$session[user][name]."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
+					addnews("`%".$session['user']['name']."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
 					$session['user']['gold']=0;
-					$session[user][experience]=round($session[user][experience]*.9,0);
+					$session['user']['experience']=round($session['user']['experience']*.9,0);
 					$session['user']['alive']=false;
 					$session['user']['hitpoints']=0;
 					$session['user']['specialinc']="";
@@ -205,7 +205,7 @@ if ($HTTP_GET_VARS['count']==3) {
 			}		
 			$session['user']['turns']--;
 			if ($session['user']['turns'] < 0) $session['user']['turns']=0;
-			addnews("`%".$session[user][name]."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
+			addnews("`%".$session['user']['name']."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
 			$session['user']['reputation']++;
 			$session['user']['specialinc']="";
 			break;
@@ -217,7 +217,7 @@ if ($HTTP_GET_VARS['count']==3) {
 			output("Der Drachen schaut einen Moment weg, dann wendet er sich dir erneut zu. \"`5Drachen haben nur getötet, was wir als Nahrung brauchten.");
 			output(" Jetzt töten wir, um zu überleben.`t\"`n`n\"`5Weiche von mir, bevor ich mich entschließe, dich ohne Grund zu töten.`t\"");
 			output("`nDu hältst es für eine gute Idee, dich zu beeilen, bevor es sich der Drache anders überlegt und einen Snack aus dir macht.");
-			addnews("`%".$session[user][name]."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
+			addnews("`%".$session['user']['name']."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
 			$session['user']['specialinc']="";
 			break;
 		case "flee":
@@ -226,7 +226,7 @@ if ($HTTP_GET_VARS['count']==3) {
 				output("`tDu drehst dich um und flüchtest so schnell du kannst vor der Macht des Drachens. Du glaubst, du schaffst es, denn ");
 				output("du hörst keinen Verfolger hinter dir.`nDu hältst an, um dich umzudrehen. Keine Spur vom Drachen!`n");
 				output("Du hast wirklich Glück gehabt.");
-				addnews("`%".$session[user][name]."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
+				addnews("`%".$session['user']['name']."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
 				$session['user']['specialinc']="";
 				$session['user']['reputation']--;
 			} elseif ($results==4) {
@@ -236,9 +236,9 @@ if ($HTTP_GET_VARS['count']==3) {
 				output("sein weit aufgerissene Maul rast auf dich zu.`nBevor du Zeit hast, zu reagieren, ");
 				output("hat dich der Drachen verspeist..");
 				output("`4Du bist gestorben!`nDu verlierst 10% deiner Erfahrung und all dein Gold.");
-				addnews("`%".$session[user][name]."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
+				addnews("`%".$session['user']['name']."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
 				$session['user']['gold']=0;
-				$session[user][experience]=round($session[user][experience]*.9,0);
+				$session['user']['experience']=round($session['user']['experience']*.9,0);
 				$session['user']['alive']=false;
 				$session['user']['hitpoints']=0;
 				$session['user']['specialinc']="";
@@ -252,9 +252,9 @@ if ($HTTP_GET_VARS['count']==3) {
 				if ($session['user']['hitpoints'] < 1) {
 					$session['user']['hitpoints']=0;
 					output("`4Du bist gestorben!`nDu verlierst 10% deiner Erfahrungspunkte und alles Gold!");
-					addnews("`%".$session[user][name]."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
+					addnews("`%".$session['user']['name']."`t wurde bei einer zufälligen Begegnung im Wald vom `@Grünen Drachen`t getötet!");
 					$session['user']['gold']=0;
-					$session[user][experience]=round($session[user][experience]*.9,0);
+					$session['user']['experience']=round($session['user']['experience']*.9,0);
 					$session['user']['alive']=false;
 					$session['user']['specialinc']="";
 					addnav("Tägliche News","news.php");
@@ -263,7 +263,7 @@ if ($HTTP_GET_VARS['count']==3) {
 					output("blickst du dich nach dem Drachen um. Doch der ist verschwunden. Hat er dich absichtlich nicht getötet? ");
 					output("Oder war er bloß der Meinung, dass du jetzt verkocht bist?`nDie Antwort wirst du nie erfahren, so machst du dich wieder auf den Weg. ");
 					output("Ein Besuch beim Heiler dürfte jetzt erstmal an der Reihe sein.");
-					addnews("`%".$session[user][name]."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
+					addnews("`%".$session['user']['name']."`t hat irgendwie eine zufällige Begegnung mit dem `@Grünen Drachen`t überlebt.");
 					$session['user']['specialinc']="";
 				}
 			}

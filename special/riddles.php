@@ -62,7 +62,7 @@ function filterwords($string)
     return $string;
 }
 
-if ($HTTP_GET_VARS[op]==""){
+if ($HTTP_GET_VARS['op']==""){
     output("`6`nEin kurzer kleiner Gnom mit Blättern in den Haaren hockt neben einem kleinen Baum. Er grinst und kichert hinter einer seiner fettigen Hände.");
     output("Für einen Moment sieht es so aus, als ob er in den Wald wegkrabbeln will, aber dann grinst er dich an.`n`n");
     output("`6\"`@Ich werde dir einen Gefallen tun,`6\" sagt er, \"`@wenn du mein Rätsel lösen kannst!`6\"`n`n");
@@ -77,16 +77,16 @@ if ($HTTP_GET_VARS[op]==""){
     addnav("Nein","forest.php?op=no");
     addnav("","forest.php?op=yes");
     addnav("","forest.php?op=no");
-    if ($session[user][specialinc]!="riddles.php"){
-        $session[user][specialmisc]=NULL;
+    if ($session['user']['specialinc']!="riddles.php"){
+        $session['user']['specialmisc']=NULL;
     }
-    $session[user][specialinc]="riddles.php";
+    $session['user']['specialinc']="riddles.php";
 
-}else if($HTTP_GET_VARS[op]=="yes"){
+}else if($HTTP_GET_VARS['op']=="yes"){
     //if ($HTTP_POST_VARS[guess]==NULL){
 		if ($_GET['subop']!="answer"){
-        $session[user][specialinc]="riddles.php";
-        $rid = $session[user][specialmisc];
+        $session['user']['specialinc']="riddles.php";
+        $rid = $session['user']['specialmisc'];
         if (!strpos($rid, "Riddle")) {
             $sq1 = "SELECT * FROM riddles ORDER BY rand(".e_rand().")";
         }else{
@@ -95,21 +95,21 @@ if ($HTTP_GET_VARS[op]==""){
         }        
         $result = db_query($sq1) or die(db_error(LINK));
         $riddle = db_fetch_assoc($result);
-        $session[user][specialmisc]="Riddle" . $riddle[id];
+        $session['user']['specialmisc']="Riddle" . $riddle['id'];
         output("`6Vor Freude kichernd stellt er sein Rätsel:`n`n");
         output("`6\"`@$riddle[riddle]`6\"`n`n");
         output("`6Was meinst du?");
         output("<form action='forest.php?op=yes&subop=answer' method='POST'><input name='guess'><input type='submit' class='button' value='Rate'></form>",true);
         addnav("","forest.php?op=yes&subop=answer");
     }else{
-        $rid = substr($session[user][specialmisc], 6);
+        $rid = substr($session['user']['specialmisc'], 6);
         $sq1 = "SELECT * FROM riddles WHERE id=$rid";
         $result = db_query($sq1) or die(db_error(LINK));
         $riddle = db_fetch_assoc($result);
 
 
         //*** Get and filter correct answer
-        $answer = explode(";", $riddle[answer]); //there can be more than one answer in the database, seperated by semicolons (;)
+        $answer = explode(";", $riddle['answer']); //there can be more than one answer in the database, seperated by semicolons (;)
         foreach($answer as $key => $answer1) {
 					//changed "" to " " below, I believe this is the correct implementation.
             $answer[$key] = preg_replace("/[^[:alpha:]]/"," ",$answer1); 
@@ -117,7 +117,7 @@ if ($HTTP_GET_VARS[op]==""){
             }
         
         //*** Get and filter players guess
-        $guess = $HTTP_POST_VARS[guess];
+        $guess = $HTTP_POST_VARS['guess'];
         // $guessdebug = $guess; // This is only for debugging, see below when the answer is wrong.
         $guess = preg_replace("/[^[:alpha:]]/"," ",$guess); 
         $guess = filterwords($guess);
@@ -140,31 +140,31 @@ if ($HTTP_GET_VARS[op]==""){
                 case 3:
                 case 4:
                     output("`^Er gibt dir einen Edelstein!");
-                    $session[user][gems]++;
+                    $session['user']['gems']++;
 					//debuglog("gained 1 gem from the riddle master");
                     break;
                 case 5:
                 case 6:
                 case 7:
                     output("`^Er gibt dir zwei Edelsteine!");
-                    $session[user][gems]+=2;
+                    $session['user']['gems']+=2;
 					//debuglog("gained 2 gems from the riddle master");
                     break;
                 case 8:
                 case 9:
                     output("Er macht ein Hokus Pokus und dreht sich um. Nach diesem Schauspiel fühlst du dich bereit für den Kampf!");
                     output("`n`n`^Du erhältst einen zusätzlichen Waldkampf!");
-                    $session[user][turns]++;
+                    $session['user']['turns']++;
                     break;
                 case 10:
                     output("Er schaut dir tief in die Augen, dann zieht er dir kräftig eins über die Rübe.  ");
-                    if ($session[user][specialty]) {
+                    if ($session['user']['specialty']) {
                         output("Als du wieder zu dir kommst, fühlst du dich ein klein wenig geschickter.`n`#");
                         increment_specialty();
                     }else{
                         output("Das war eine Lektion in Spaß.");
                         output("`n`n`^Du erhältst ein paar Erfahrungspunkte!");
-                        $session[user][experience] += $session[user][level] * 10;
+                        $session['user']['experience'] += $session['user']['level'] * 10;
                     }
                     break;
             }
@@ -190,32 +190,32 @@ if ($HTTP_GET_VARS[op]==""){
                 case 3:
                     output("Nicht viel später stellst du fest, dass dir auch etwas Gold fehlt...");
                     output("`n`n`^Du hast Gold verloren!");
-					$gold = e_rand(1, $session[user][level]*10);
+					$gold = e_rand(1, $session['user']['level']*10);
 					if ($gold > $session['user']['gold'])
 						$gold = $session['user']['gold'];
-                    $session[user][gold] -= $gold;
+                    $session['user']['gold'] -= $gold;
 					//debuglog("lost $gold gold to the riddlemaster");
                 case 4:
                 case 5:
                     output("Du glaubst nicht, dass du sofort wieder einem Gegner gegenüber treten kannst.");
                     output("`n`n`^Du verlierst einen Waldkampf!");
-                    if ($session[user][turns]>0) $session[user][turns]--;
+                    if ($session['user']['turns']>0) $session['user']['turns']--;
                     break;
                 case 6:
-                    output("Was wird wohl ".($session[user][sex]?"Seth":"Violet")." davon halten?");
+                    output("Was wird wohl ".($session['user']['sex']?"Seth":"Violet")." davon halten?");
                     output("`n`n`^Du verlierst einen Charmepunkt!");
-                    if ($session[user][charm]>0) $session[user][charm]--;
+                    if ($session['user']['charm']>0) $session['user']['charm']--;
                     break;
                 }    
         }
 
-        $session[user][specialinc]="";
-        $session[user][specialmisc]="";
+        $session['user']['specialinc']="";
+        $session['user']['specialmisc']="";
     }
-}else if($HTTP_GET_VARS[op]=="no"){
+}else if($HTTP_GET_VARS['op']=="no"){
     output("`n`6Du fürchtest dich lächerlich zu machen und lehnst seine Herausforderung ab. Er war sowieso etwas gruselig.");
     output("`n`6Der merkwürdige Gnom kichert hysterisch und verschwindet im Wald.");
-    $session[user][specialinc]="";
-    $session[user][specialmisc]="";
+    $session['user']['specialinc']="";
+    $session['user']['specialmisc']="";
 }
 ?>

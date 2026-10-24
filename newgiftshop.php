@@ -21,67 +21,67 @@ require_once "common.php";
 checkday();
 page_header("Geschenkeladen");
 output("`c`b`&Geschenkeladen`0`b`c`n`n");
-if ($HTTP_GET_VARS[op]=="" && $session[user][turns]>0){
+if ($HTTP_GET_VARS['op']=="" && $session['user']['turns']>0){
 	output("`rDu betrittst den Geschenkeladen und siehst eine Menge einzigartiger Gegenstände.`n");
-	output("Ein".($session[user][sex]?" junger Mann":"e junge Frau")." steht hinter der Ladentheke und lächelt dich sanft an.`n");
+	output("Ein".($session['user']['sex']?" junger Mann":"e junge Frau")." steht hinter der Ladentheke und lächelt dich sanft an.`n");
 	output("Ein Schild an der Wand verspricht \"`iGeschenkverpackung und Lieferung frei.`i\"`n");
 	// changed the next line to make sense for your gift shop (specialty)
 	// output("`3This shop specializes in specialty, you see for sale...`n`n"); // only need one shop
 	addnav("Tulpe","newgiftshop.php?op=send&op2=gift1");
-	if ($session[user][gold] > 10) addnav("Rose - 10 Gold","newgiftshop.php?op=send&op2=gift2");
-	if ($session[user][gold] > 20) addnav("Strauß Rosen - 20 Gold","newgiftshop.php?op=send&op2=gift3");
-	if ($session[user][gold] > 40) addnav("Pralinen - 40 Gold","newgiftshop.php?op=send&op2=gift4");
-	if ($session[user][gold] > 60) addnav("Freundschaftsbändchen - 60 Gold","newgiftshop.php?op=send&op2=gift5");
-	if ($session[user][gold] > 100) addnav("Freundschaftsanhänger - 100 Gold","newgiftshop.php?op=send&op2=gift6");
-	if ($session[user][gold] > 200) addnav("Halskette - 200 Gold","newgiftshop.php?op=send&op2=gift7");
-	if ($session[user][gold] > 500) addnav("Plüschdrachen - 500 Gold","newgiftshop.php?op=send&op2=gift8");
-	if ($session[user][gold] > 1000) addnav("Beutel Heilkräuter - 1000 Gold","newgiftshop.php?op=send&op2=gift9");
-	if ($session[user][gold] > 1500) addnav("Drachenei - 1500 Gold","newgiftshop.php?op=send&op2=gift10");
-	if ($session[user][gold] > 2000) addnav("Goldenes Amulett - 2000 Gold","newgiftshop.php?op=send&op2=gift11");
-	if ($session[user][gold] > 3000) addnav("Seltsamer Schädel - 3000 Gold","newgiftshop.php?op=send&op2=gift12");
+	if ($session['user']['gold'] > 10) addnav("Rose - 10 Gold","newgiftshop.php?op=send&op2=gift2");
+	if ($session['user']['gold'] > 20) addnav("Strauß Rosen - 20 Gold","newgiftshop.php?op=send&op2=gift3");
+	if ($session['user']['gold'] > 40) addnav("Pralinen - 40 Gold","newgiftshop.php?op=send&op2=gift4");
+	if ($session['user']['gold'] > 60) addnav("Freundschaftsbändchen - 60 Gold","newgiftshop.php?op=send&op2=gift5");
+	if ($session['user']['gold'] > 100) addnav("Freundschaftsanhänger - 100 Gold","newgiftshop.php?op=send&op2=gift6");
+	if ($session['user']['gold'] > 200) addnav("Halskette - 200 Gold","newgiftshop.php?op=send&op2=gift7");
+	if ($session['user']['gold'] > 500) addnav("Plüschdrachen - 500 Gold","newgiftshop.php?op=send&op2=gift8");
+	if ($session['user']['gold'] > 1000) addnav("Beutel Heilkräuter - 1000 Gold","newgiftshop.php?op=send&op2=gift9");
+	if ($session['user']['gold'] > 1500) addnav("Drachenei - 1500 Gold","newgiftshop.php?op=send&op2=gift10");
+	if ($session['user']['gold'] > 2000) addnav("Goldenes Amulett - 2000 Gold","newgiftshop.php?op=send&op2=gift11");
+	if ($session['user']['gold'] > 3000) addnav("Seltsamer Schädel - 3000 Gold","newgiftshop.php?op=send&op2=gift12");
 	output("`n<ul><a href=\"newgiftshop.php?op=send&op2=gift1\">Tulpe</a><br>",true);
 	addnav("","newgiftshop.php?op=send&op2=gift1");
-	if ($session[user][gold] > 10){
+	if ($session['user']['gold'] > 10){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift2\">Rose - 10 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift2");
 	}
-	if ($session[user][gold] > 20){
+	if ($session['user']['gold'] > 20){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift3\">Strauß Rosen - 20 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift3");
 	}
-	if ($session[user][gold] > 40){
+	if ($session['user']['gold'] > 40){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift4\">Pralinen - 40 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift4");
 	}
-	if ($session[user][gold] > 60){
+	if ($session['user']['gold'] > 60){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift5\">Freundschaftsbändchen - 60 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift5");
 	}
-	if ($session[user][gold] > 100){
+	if ($session['user']['gold'] > 100){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift6\">Freundschaftsanhänger - 100 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift6");
 	}
-	if ($session[user][gold] > 200){
+	if ($session['user']['gold'] > 200){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift7\">Halskette - 200 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift7");
 	}
-	if ($session[user][gold] > 500){
+	if ($session['user']['gold'] > 500){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift8\">Plüschdrachen - 500 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift8");
 	}
-	if ($session[user][gold] > 1000){
+	if ($session['user']['gold'] > 1000){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift9\">Beutel Heilkräuter - 1000 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift9");
 	}
-	if ($session[user][gold] > 1500){
+	if ($session['user']['gold'] > 1500){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift10\">Drachenei - 1500 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift10");
 	}
-	if ($session[user][gold] > 2000){
+	if ($session['user']['gold'] > 2000){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift11\">Goldenes Amulett - 2000 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift11");
 	}
-	if ($session[user][gold] > 3000){
+	if ($session['user']['gold'] > 3000){
 		output("<a href=\"newgiftshop.php?op=send&op2=gift12\">Seltsamer Schädel - 3000 Gold</a><br>",true);
 		addnav("","newgiftshop.php?op=send&op2=gift12");
 	}
@@ -93,12 +93,12 @@ if ($HTTP_GET_VARS[op]=="" && $session[user][turns]>0){
 	}
 	// change this nav to return to the location you call it from
 	addnav("Zurück zum Garten","gardens.php");
-}else if ($session[user][turns]<=0){
+}else if ($session['user']['turns']<=0){
 	output("`rDer Geschenkeladen hat jetzt leider schon geschlossen.");
 	addnav("Zurück zum Garten","gardens.php");
 }
-if ($HTTP_GET_VARS[op]=="send"){
-	$gift=$HTTP_GET_VARS[op2];
+if ($HTTP_GET_VARS['op']=="send"){
+	$gift=$HTTP_GET_VARS['op2'];
 	if (isset($_POST['search']) || $_GET['search']>""){
 		if ($_GET['search']>"") $_POST['search']=$_GET['search'];
 		$search="%";
@@ -112,14 +112,14 @@ if ($HTTP_GET_VARS[op]=="send"){
 		$search="";
 	}
 	$ppp=25; // Player Per Page to display
-	if (!$_GET[limit]){
+	if (!$_GET['limit']){
 		$page=0;
 	}else{
-		$page=(int)$_GET[limit];
+		$page=(int)$_GET['limit'];
 		addnav("Vorherige Seite","newgiftshop.php?op=send&op2=$gift&limit=".($page-1)."&search=$_POST[search]");
 	}
 	$limit="".($page*$ppp).",".($ppp+1);
-	$sql = "SELECT login,name,level,sex,acctid FROM accounts WHERE $search locked=0 AND acctid<>".$session[user][acctid]." AND lastip<>'".$session[user][lastip]."' AND charm>1 ORDER BY login,level LIMIT $limit";
+	$sql = "SELECT login,name,level,sex,acctid FROM accounts WHERE $search locked=0 AND acctid<>".$session['user']['acctid']." AND lastip<>'".$session['user']['lastip']."' AND charm>1 ORDER BY login,level LIMIT $limit";
 	$result = db_query($sql);
 	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","newgiftshop.php?op=send&op2=$gift&limit=".($page+1)."&search=$_POST[search]");
 	output("`rWem willst du das Geschenk schicken?`n`n");
@@ -138,74 +138,74 @@ if ($HTTP_GET_VARS[op]=="send"){
 	output("</table>",true);
 	addnav("Zurück zum Laden","newgiftshop.php");
 }
-if ($HTTP_GET_VARS[op]=="send2"){
-	$name=$HTTP_GET_VARS[name];
+if ($HTTP_GET_VARS['op']=="send2"){
+	$name=$HTTP_GET_VARS['name'];
 	$effekt="";
-	if ($HTTP_GET_VARS[op2]=="gift1"){
+	if ($HTTP_GET_VARS['op2']=="gift1"){
 		$gift="Tulpe";
 	}
-	if ($HTTP_GET_VARS[op2]=="gift2"){
+	if ($HTTP_GET_VARS['op2']=="gift2"){
 		$gift="Rose";
-		$session[user][gold]-=10;
+		$session['user']['gold']-=10;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift3"){
+	if ($HTTP_GET_VARS['op2']=="gift3"){
 		$gift="Strauß Rosen";
-		$session[user][gold]-=20;
+		$session['user']['gold']-=20;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift4"){
+	if ($HTTP_GET_VARS['op2']=="gift4"){
 		$gift="Pralinen";
 		$effekt="Natürlich futterst du sie sofort alle auf.";
-		$session[user][gold]-=40;
+		$session['user']['gold']-=40;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift5"){
+	if ($HTTP_GET_VARS['op2']=="gift5"){
 		$gift="Freundschaftsbändchen";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Freundschaftsbändchen',$name,'Geschenk',12,'Ein Freundschaftsbändchen von ".$session[user][name]."')");
-		$session[user][gold]-=60;
+		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Freundschaftsbändchen',$name,'Geschenk',12,'Ein Freundschaftsbändchen von ".$session['user']['name']."')");
+		$session['user']['gold']-=60;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift6"){
+	if ($HTTP_GET_VARS['op2']=="gift6"){
 		$gift="Freundschaftsanhänger";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Freundschaftsanhänger',$name,'Geschenk',20,'Ein Freundschaftsänhänger von ".$session[user][name]."')");
-		$session[user][gold]-=100;
+		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Freundschaftsanhänger',$name,'Geschenk',20,'Ein Freundschaftsänhänger von ".$session['user']['name']."')");
+		$session['user']['gold']-=100;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift7"){
+	if ($HTTP_GET_VARS['op2']=="gift7"){
 		$gift="Halskette";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Halskette',$name,'Geschenk',40,'Diese Halskette hat dir ".$session[user][name]." geschenkt.')");
-		$session[user][gold]-=200;
+		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Halskette',$name,'Geschenk',40,'Diese Halskette hat dir ".$session['user']['name']." geschenkt.')");
+		$session['user']['gold']-=200;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift8"){
+	if ($HTTP_GET_VARS['op2']=="gift8"){
 		$gift="Plüschdrachen";
 		$effekt="`RDer ist ja soooooo süüüüüüüüüüüssss!!!`0";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Plüschdrachen',$name,'Geschenk',100,'`REin `@Grüner Drachen`R aus Plüsch zum Kuscheln. Der ist von ".$session[user][name].".')");
-		$session[user][gold]-=500;
+		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Plüschdrachen',$name,'Geschenk',100,'`REin `@Grüner Drachen`R aus Plüsch zum Kuscheln. Der ist von ".$session['user']['name'].".')");
+		$session['user']['gold']-=500;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift9"){
+	if ($HTTP_GET_VARS['op2']=="gift9"){
 		$gift="Beutel Heilkräuter";
 		$buff = array("name"=>"`1Heilkräuter","rounds"=>20,"wearoff"=>"`1Die Heilkräuter verlieren ihre Wirkung!`0","regen"=>1.2,"roundmsg"=>"`1Die Heilkräuter heilen deine Wunden.`0","activate"=>"defense");
 		$buff=serialize($buff);
 		$effekt="Diese Heilkräuter heilen Wunden, bleiben aber nicht lange frisch.";
 		db_query("INSERT INTO items (name,owner,class,gold,description,hvalue,buff) VALUES ('Beutel Heilkräuter',$name,'Geschenk',500,'$effekt',1,'$buff')");
-		$session[user][gold]-=1000;
+		$session['user']['gold']-=1000;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift10"){
+	if ($HTTP_GET_VARS['op2']=="gift10"){
 		$gift="Drachenei";
-		$session[user][gold]-=1500;
+		$session['user']['gold']-=1500;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift11"){
+	if ($HTTP_GET_VARS['op2']=="gift11"){
 		$gift="Goldenes Amulett";
 		$buff = array("name"=>"`rAmulettaura`0","rounds"=>10,"wearoff"=>"`rDie Aura des Amuletts verschwindet.`0","defmod"=>1.1,"activate"=>"roundstart");
 		$buff=serialize($buff);
 		$effekt="Als du das Amulett anlegst, hüllt es dich in eine merkwürdige, schützende Aura. Der Beipackzettel verrät dir, dass das Amulett nach 3 Tagen seine Wirkung verliert und zu Staub zerfallen wird.";
 		db_query("INSERT INTO items (name,owner,class,gold,description,hvalue,buff) VALUES ('Goldenes Amulett',$name,'Geschenk',1000,'$effekt',3,'$buff')");
-		$session[user][gold]-=2000;
+		$session['user']['gold']-=2000;
 	}
-	if ($HTTP_GET_VARS[op2]=="gift12"){
+	if ($HTTP_GET_VARS['op2']=="gift12"){
 		$gift="Seltsamer Schädel";
 		$gefallen=e_rand(5,10);
 		$effekt="Du untersuchst dieses merkwürdige Geschenk genauer. Dabei rutscht es dir aus der Hand und zerplatzt am Boden in 1000 Stücke. Doch eine seltsame Kraft wird frei, die dir $gefallen Gefallen bei Ramius bringt!";
 		db_query("UPDATE accounts SET deathpower=deathpower+$gefallen WHERE acctid=$name");
-		$session[user][gold]-=3000;
+		$session['user']['gold']-=3000;
 	}
-	$mailmessage=$session[user][name];
+	$mailmessage=$session['user']['name'];
 	$mailmessage.="`7 hat dir ein Geschenk geschickt.  Du öffnest es. Es ist ein/e `6";
 	$mailmessage.=$gift;
 	//you can change the following the match what you name your gift shop
@@ -214,7 +214,7 @@ if ($HTTP_GET_VARS[op]=="send2"){
 	output("`rDein $gift wurde als Geschenk verschickt!");
 	if (e_rand(1,3)==2){
 		output(" Bei der Wahl des Geschenks und dem liebevollen Verpacken vergisst du die Zeit und vertrödelst einen Waldkampf.");
-		$session[user][turns]--;
+		$session['user']['turns']--;
 	}
 	addnav("Weiter","newgiftshop.php");
 }
@@ -225,13 +225,13 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 		$find = array('%Y','%y','%m','%n','%d','%j');
 		$replace = array('','',sprintf('%02d',$geb[1]),(int)$geb[1],sprintf('%02d',$geb[2]),(int)$geb[2]);
 		$geb = str_replace($find,$replace,getsetting('gamedateformat','%Y-%m-%d'));
-		$result=db_query("SELECT login,name FROM accounts WHERE locked=0 AND birthday LIKE '%$geb%' AND acctid<>".$session[user][acctid]." ORDER BY login ASC");
+		$result=db_query("SELECT login,name FROM accounts WHERE locked=0 AND birthday LIKE '%$geb%' AND acctid<>".$session['user']['acctid']." ORDER BY login ASC");
 		if ($wer=="" && db_num_rows($result)<=0){
-			output("`r".($session[user][sex]?"Der Mann":"Die Frau")." hinter dem Ladentisch schaut dich verwirrt an, denn heute, $geb, ist für niemanden ein besonderer Tag. Das Bewerfen mit Torten könnte an Tagen, an denen das Ziel nicht Geburtstag hat, von diesem als Angriff gewertet werden. ");
+			output("`r".($session['user']['sex']?"Der Mann":"Die Frau")." hinter dem Ladentisch schaut dich verwirrt an, denn heute, $geb, ist für niemanden ein besonderer Tag. Das Bewerfen mit Torten könnte an Tagen, an denen das Ziel nicht Geburtstag hat, von diesem als Angriff gewertet werden. ");
 			output("Darum sollte man auf diesen Brauch an normalen Tagen besser verzichten.`nEnttäuscht wendest du dich ab.");
 			addnav("Zurück in den Garten","gardens.php");
 		}else{
-			output("`r".($session[user][sex]?"Der Mann":"Die Frau")." hinter dem Ladentisch setzt ein breites Grinsen auf und fragt dich, welches der Geburtstagskinder du gerne mit einer Torte beglücken möchtest, wie es hier Brauch ist.`n`n");
+			output("`r".($session['user']['sex']?"Der Mann":"Die Frau")." hinter dem Ladentisch setzt ein breites Grinsen auf und fragt dich, welches der Geburtstagskinder du gerne mit einer Torte beglücken möchtest, wie es hier Brauch ist.`n`n");
 			output("<form action='newgiftshop.php?op=cake' method='POST'>`rZielperson: <select name='throw'>",true);
 			if ($wer!="") output("<option value='".rawurlencode($wer)."'>$wer</option>",true);
 			for ($i=0;$i<db_num_rows($result);$i++){
@@ -246,10 +246,10 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 		if (db_num_rows($result)<=0){
 			output("`r $_POST[throw]s Geburtstag ist entweder schon vorbei, oder es gibt ihn gar nicht.`nEnttäuscht wendest du dich ab.");
 			addnav("Zurück in den Garten","gardens.php");
-		}else if ($session[user][witch]>0){
+		}else if ($session['user']['witch']>0){
 			output("`rDu kannst heute leider keine Torte mehr werfen.");
 			addnav("Zurück in den Garten","gardens.php");
-		}else if ($session[user][gold]<$session[user][level]*15){
+		}else if ($session['user']['gold']<$session['user']['level']*15){
 			output("`rDu hast nicht genug Gold für diesen Spaß dabei.");
 			addnav("Zurück in den Garten","gardens.php");
 		}else{
@@ -257,7 +257,7 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 			$result2=db_query("SELECT * FROM items WHERE class='Geschenk' AND owner=$row[acctid] AND name='Tortenreste'");
 			$torte=e_rand(1,7);
 			if (db_num_rows($result2)>0) $item = db_fetch_assoc($result2);
-			if (db_num_rows($result2)>0) $torte=$item[value2];
+			if (db_num_rows($result2)>0) $torte=$item['value2'];
 			switch($torte){
 				case 1:
 				$wie="große und saftige";
@@ -280,23 +280,23 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 				case 7:
 				$wie="besonders klebrige";
 			}
-			$item[hvalue]++;
+			$item['hvalue']++;
 			$buff = array("name"=>"`rTortenreste`0","rounds"=>15,"wearoff"=>"`REinige der Tortenreste fallen von dir ab.`0","roundmsg"=>"`RTortenreste bremsen die Angriffe deines Gegners.`0","defmod"=>1.1,"activate"=>"roundstart");
 			$buff=serialize($buff);
-			output("`rDu suchst dir eine $wie Torte für `&$row[name]`r aus. Damit bewaffnet machst du dich auf die Suche nach `&$row[name]`r und als du ".($row[sex]?"sie":"ihn")." gefunden hast...`n`n");
+			output("`rDu suchst dir eine $wie Torte für `&$row[name]`r aus. Damit bewaffnet machst du dich auf die Suche nach `&$row[name]`r und als du ".($row['sex']?"sie":"ihn")." gefunden hast...`n`n");
 			output("`&`b`c<font size='5'>*PLATSCH*</font>`b`c`r`n",true);
-			output("`r...wirfst du sie ".($row[sex]?"ihr":"ihm")." mitten ins Gesicht und brüllst ".($row[sex]?"ihr":"ihm")." ein fröhliches `b`RHAPPY BIRTHDAY`b`r entgegen.`n`n");
-			output("`&$row[name]`r wird an den Tortenresten sicher noch lange ".($row[sex]?"ihre":"seine")." Freude haben. ".($row[sex]?"Sie":"Er")." trägt damit die klebrigen Reste von $item[hvalue] Torten an sich herum." );
+			output("`r...wirfst du sie ".($row['sex']?"ihr":"ihm")." mitten ins Gesicht und brüllst ".($row['sex']?"ihr":"ihm")." ein fröhliches `b`RHAPPY BIRTHDAY`b`r entgegen.`n`n");
+			output("`&$row[name]`r wird an den Tortenresten sicher noch lange ".($row['sex']?"ihre":"seine")." Freude haben. ".($row['sex']?"Sie":"Er")." trägt damit die klebrigen Reste von $item[hvalue] Torten an sich herum." );
 			if (db_num_rows($result2)>0){
 				$sql="UPDATE items SET hvalue=$item[hvalue] WHERE class='Geschenk' AND owner=$row[acctid] AND name='Tortenreste'";
 			}else{
 				$sql="INSERT INTO items (name,owner,class,gold,description,value2,hvalue,buff) VALUES ('Tortenreste',$row[acctid],'Geschenk',0,'Tortenreste von $item[hvalue] Geburtstagstorten kleben an dir.',$torte,$item[hvalue],'$buff')";
-				systemmail($row[acctid],"`rAchtung! Torte!","`&`bPLATSCH!`b`r Zu spät.`nDu wurdest von deiner ersten Geburtstagstorte getroffen... weitere werden heute bestimmt noch folgen. Es ist eine $wie Sorte. (Die genaue Anzahl siehst du in deinem Inventar.)");
+				systemmail($row['acctid'],"`rAchtung! Torte!","`&`bPLATSCH!`b`r Zu spät.`nDu wurdest von deiner ersten Geburtstagstorte getroffen... weitere werden heute bestimmt noch folgen. Es ist eine $wie Sorte. (Die genaue Anzahl siehst du in deinem Inventar.)");
 			}
 			db_query($sql);
-			$session[user][reputation]+=2;
-			$session[user][witch]++;
-			$session[user][gold]-=(15*$session[user][level]);
+			$session['user']['reputation']+=2;
+			$session['user']['witch']++;
+			$session['user']['gold']-=(15*$session['user']['level']);
 			addnav("Zurück ins Dorf","village.php");
 		}
 	}

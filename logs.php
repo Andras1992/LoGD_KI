@@ -16,17 +16,17 @@ require_once("common.php");
 
 page_header("Logs und Mail");
 
-if ($_GET[op]=="mail"){
-	if ($_GET[in]){
+if ($_GET['op']=="mail"){
+	if ($_GET['in']){
 		$ppp=25; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Seite","logs.php?op=mail&in=$_GET[in]&limit=".($page-1)."");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
-		output("`qYe Olde Mail (".($_GET[limit]*$ppp)."-".($_GET[limit]*$ppp+$ppp).") -- Alle Mails: Inbox $_GET[in] `0`n`n");
+		output("`qYe Olde Mail (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") -- Alle Mails: Inbox $_GET[in] `0`n`n");
 		$sql = "SELECT mail.*,accounts.login AS absender FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgfrom WHERE msgto=$_GET[in] ORDER BY sent DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=mail&in=$_GET[in]&limit=".($page+1)."");
@@ -38,16 +38,16 @@ if ($_GET[op]=="mail"){
 		}
 		output("</table>",true);
 		addnav("Zurück","logs.php?op=mail");
-	}else if ($_GET[out]){
+	}else if ($_GET['out']){
 		$ppp=25; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Seite","logs.php?op=mail&out=$_GET[in]&limit=".($page-1)."");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
-		output("`qYe Olde Mail (".($_GET[limit]*$ppp)."-".($_GET[limit]*$ppp+$ppp).") -- Alle Mails: Outbox $_GET[out] `0`n`n");
+		output("`qYe Olde Mail (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") -- Alle Mails: Outbox $_GET[out] `0`n`n");
 		$sql = "SELECT mail.*,accounts.login AS empfaenger FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgto WHERE msgfrom=$_GET[out] ORDER BY sent DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=mail&out=$_GET[out]&limit=".($page+1)."");
@@ -60,20 +60,20 @@ if ($_GET[op]=="mail"){
 		output("</table>",true);
 		addnav("Zurück","logs.php?op=mail");
 	}else{
-		if (!$_GET[subop]) $_GET[subop]="system";
+		if (!$_GET['subop']) $_GET['subop']="system";
 		$ppp=25; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Seite","logs.php?op=mail&limit=".($page-1)."&subop=$_GET[subop]&order=$sort");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sort="sent";
-		if ($_GET[order]) $sort=$_GET[order];
-		output("`qYe Olde Mail (".($_GET[limit]*$ppp)."-".($_GET[limit]*$ppp+$ppp).") -- ".($_GET[subop]=="all"?"Private Mails":"Systemnachrichten")."`0`n`n");
+		if ($_GET['order']) $sort=$_GET['order'];
+		output("`qYe Olde Mail (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") -- ".($_GET['subop']=="all"?"Private Mails":"Systemnachrichten")."`0`n`n");
 		//addnav($_GET[subop]=="system"?"Normale Nachrichten":"Systemnachrichten","logs.php?op=mail&subop=".($_GET[subop]=="system"?"all":"system")."&order=$_GET[order]&limit=$_GET[limit]"); // ist möglicherweise nicht erlaubt
-		$sql = "SELECT mail.*,accounts.login AS empfaenger FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgto WHERE ".($_GET[subop]=="system"?"msgfrom=0":"msgfrom<>0")." AND msgto<>0 ORDER BY $sort DESC LIMIT $limit";
+		$sql = "SELECT mail.*,accounts.login AS empfaenger FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgto WHERE ".($_GET['subop']=="system"?"msgfrom=0":"msgfrom<>0")." AND msgto<>0 ORDER BY $sort DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=mail&limit=".($page+1)."&order=$sort&subop=$_GET[subop]");
 		output("<table align='center'><tr><td>`b<a href='logs.php?op=mail&limit=$page&order=sent&subop=$_GET[subop]'>Datum</a>`b</td><td>`b<a href='logs.php?op=mail&limit=$page&order=msgfrom&subop=$_GET[subop]'>Absender</a>`b</td><td>`b<a href='logs.php?op=mail&limit=$page&order=msgto&subop=$_GET[subop]'>Empfänger</a>`b</td><td>`bBetreff`b</td></tr>",true);
@@ -92,69 +92,69 @@ if ($_GET[op]=="mail"){
 		addnav("Zurück","logs.php");
 		output("`n`iUm das Postfach eines Spielers zu sehen, auf seinen Namen unter \"Empfänger\" klicken.`nUm zu sehen, was ein Spieler gesendet hat, auf seinen Namen unter \"Absender\" klicken.`i");
 	}
-}else if ($_GET[op]=="faillog"){
-	if ($_GET[id]){
+}else if ($_GET['op']=="faillog"){
+	if ($_GET['id']){
 		$ppp=25; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Seite","logs.php?op=faillog&id=$_GET[id]&limit=".($page-1)."&order=$sort&pw=$_GET[pw]");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sort="date";
-		if ($_GET[order]) $sort=$_GET[order];
+		if ($_GET['order']) $sort=$_GET['order'];
 		$sql = "SELECT * FROM faillog WHERE acctid=$_GET[id] ORDER BY $sort DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
-		output("Fehlgeschlagene Logins (".($_GET[limit]*$ppp)."-".($_GET[limit]*$ppp+$ppp).") für ID $_GET[id]`n`n");
+		output("Fehlgeschlagene Logins (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") für ID $_GET[id]`n`n");
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=faillog&id=$_GET[id]&limit=".($page+1)."&order=$sort&pw=$_GET[pw]");
-		output("<table align='center'><tr><td>`b<a href='logs.php?op=faillog&id=$_GET[id]&limit=$page&order=date'>Datum</a>`b</td><td>`b<a href='logs.php?op=faillog&id=$_GET[id]&limit=$page&order=ip'>IP</a>`b</td>".($_GET[pw]?"<td>`bfalsches PW`b</td>":"")."</tr>",true);
+		output("<table align='center'><tr><td>`b<a href='logs.php?op=faillog&id=$_GET[id]&limit=$page&order=date'>Datum</a>`b</td><td>`b<a href='logs.php?op=faillog&id=$_GET[id]&limit=$page&order=ip'>IP</a>`b</td>".($_GET['pw']?"<td>`bfalsches PW`b</td>":"")."</tr>",true);
 		addnav("","logs.php?op=faillog&id=$_GET[id]&limit=$page&order=date");
 		addnav("","logs.php?op=faillog&id=$_GET[id]&limit=$page&order=ip");
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
-			if ($_GET[pw] && $session[user][superuser]>=3) $row[post]=unserialize($row[post]);
-			output("<tr><td>$row[date]</td><td>$row[ip]</td>".($_GET[pw]?"<td>".$row[post][password]."</td>":"")."</tr>",true);
+			if ($_GET['pw'] && $session['user']['superuser']>=3) $row['post']=unserialize($row['post']);
+			output("<tr><td>$row[date]</td><td>$row[ip]</td>".($_GET['pw']?"<td>".$row['post']['password']."</td>":"")."</tr>",true);
 		}
 		addnav("Zurück","logs.php?op=faillog&order=$_GET[order]");
 		output("</table>",true);
-		if ($session[user][superuser]>=3) addnav("PWs ".($_GET[pw]?"ausblenden":"einblenden")."","logs.php?op=faillog&id=$_GET[id]".($_GET[pw]?"":"&pw=true")."&order=$_GET[order]&limit=$_GET[limit]");
-		if ($_GET[pw] && $i>=3) output("`n`iDie Anzeige der falsch eingegebenen Passwörter dient dazu, um festzustellen, wo Passwörter geraten werden und wo nur ein Tippfehler vorliegt.`i");
-	}else if ($_GET[ip]){
+		if ($session['user']['superuser']>=3) addnav("PWs ".($_GET['pw']?"ausblenden":"einblenden")."","logs.php?op=faillog&id=$_GET[id]".($_GET['pw']?"":"&pw=true")."&order=$_GET[order]&limit=$_GET[limit]");
+		if ($_GET['pw'] && $i>=3) output("`n`iDie Anzeige der falsch eingegebenen Passwörter dient dazu, um festzustellen, wo Passwörter geraten werden und wo nur ein Tippfehler vorliegt.`i");
+	}else if ($_GET['ip']){
 		$ppp=25; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Seite","logs.php?op=faillog&ip=$_GET[ip]&limit=".($page-1)."&pw=$_GET[pw]");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sql = "SELECT faillog.*,accounts.name AS absender FROM faillog LEFT JOIN accounts ON accounts.acctid=faillog.acctid WHERE ip='$_GET[ip]' ORDER BY date DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
-		output("Fehlgeschlagene Logins (".($_GET[limit]*$ppp)."-".($_GET[limit]*$ppp+$ppp).") von IP $_GET[ip]`n`n");
+		output("Fehlgeschlagene Logins (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") von IP $_GET[ip]`n`n");
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=faillog&ip=$_GET[ip]&limit=".($page+1)."&pw=$_GET[pw]");
-		output("<table align='center'><tr><td>`bDatum`b</td><td>`bName`b</td>".($_GET[pw]?"<td>`bfalsches PW`b</td>":"")."</tr>",true);
+		output("<table align='center'><tr><td>`bDatum`b</td><td>`bName`b</td>".($_GET['pw']?"<td>`bfalsches PW`b</td>":"")."</tr>",true);
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
-			if ($_GET[pw] && $session[user][superuser]>=3) $row[post]=unserialize($row[post]);
-			output("<tr><td>$row[date]</td><td>$row[absender]</td>".($_GET[pw]?"<td>".$row[post][password]."</td>":"")."</tr>",true);
+			if ($_GET['pw'] && $session['user']['superuser']>=3) $row['post']=unserialize($row['post']);
+			output("<tr><td>$row[date]</td><td>$row[absender]</td>".($_GET['pw']?"<td>".$row['post']['password']."</td>":"")."</tr>",true);
 		}
 		addnav("Zurück","logs.php?op=faillog&order=$_GET[order]");
 		output("</table>",true);
-		if ($session[user][superuser]>=3) addnav("PWs ".($_GET[pw]?"ausblenden":"einblenden")."","logs.php?op=faillog&ip=$_GET[ip]".($_GET[pw]?"":"&pw=true")."&order=$_GET[order]&limit=$_GET[limit]");
-		if ($_GET[pw] && $i>=3) output("`n`iDie Anzeige der falsch eingegebenen Passwörter dient dazu, um festzustellen, wo Passwörter geraten werden und wo nur ein Tippfehler vorliegt.`i");
+		if ($session['user']['superuser']>=3) addnav("PWs ".($_GET['pw']?"ausblenden":"einblenden")."","logs.php?op=faillog&ip=$_GET[ip]".($_GET['pw']?"":"&pw=true")."&order=$_GET[order]&limit=$_GET[limit]");
+		if ($_GET['pw'] && $i>=3) output("`n`iDie Anzeige der falsch eingegebenen Passwörter dient dazu, um festzustellen, wo Passwörter geraten werden und wo nur ein Tippfehler vorliegt.`i");
 	}else{
 		$ppp=25; // Player Per Page to display
-		output("Fehlgeschlagene Logins (".($_GET[limit]*$ppp)."-".($_GET[limit]*$ppp+$ppp).")`n`iSpielername oder IP anklicken, um alle Fehlversuche anzuzeigen.`i`n`n");
-		if (!$_GET[limit]){
+		output("Fehlgeschlagene Logins (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).")`n`iSpielername oder IP anklicken, um alle Fehlversuche anzuzeigen.`i`n`n");
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Seite","logs.php?op=faillog&limit=".($page-1)."&order=$sort");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sort="date";
-		if ($_GET[order]) $sort=$_GET[order];
+		if ($_GET['order']) $sort=$_GET['order'];
 		$sql = "SELECT faillog.*,accounts.name AS absender FROM faillog LEFT JOIN accounts ON accounts.acctid=faillog.acctid WHERE 1 ORDER BY $sort DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=faillog&limit=".($page+1)."&order=$sort");
@@ -172,7 +172,7 @@ if ($_GET[op]=="mail"){
 		addnav("Zurück","logs.php");
 	}
 } elseif ($_GET['op']=='multi') {
-	if (!empty($_POST['setupban']) && count($_POST['userid'])>0) {
+	if (!empty($_POST['setupban']) && isset($_POST['userid']) && is_array($_POST['userid']) && count($_POST['userid'])>0) {
 		output("<form action='logs.php?op=multi&act=saveban&searchby=$_GET[searchby]' method='POST'>",true);
 		if ($_POST['setupban']=='IPs bannen') {
 			$sql = 'SELECT lastip FROM accounts WHERE acctid IN ("'.implode('","',$_POST['userid']).'") GROUP BY lastip';
@@ -201,22 +201,22 @@ if ($_GET[op]=="mail"){
 
 		foreach ($vals AS $this) {
 			$sql = "INSERT INTO bans (";
-			if ($_POST[type]=="ip"){
+			if ($_POST['type']=="ip"){
 				$sql.="ipfilter";
 			}else{
 				$sql.="uniqueid";
 			}
 			$sql.=",banexpire,banreason) VALUES (";
 			$sql.="\"$this\"";
-			$sql.=",\"".((int)$_POST[duration]==0?"0000-00-00":date("Y-m-d",strtotime("+$_POST[duration] days")))."\",";
+			$sql.=",\"".((int)$_POST['duration']==0?"0000-00-00":date("Y-m-d",strtotime("+$_POST[duration] days")))."\",";
 			$sql.="\"$_POST[reason]\")";
-			if ($_POST[type]=="ip"){
+			if ($_POST['type']=="ip"){
 				if (substr($_SERVER['REMOTE_ADDR'],0,strlen($this)) == $this){
 					$sql = "";
 					output("Du willst dich doch nicht wirklich selbst verbannen, oder?? Das ist deine eigene IP-Adresse!");
 				}
 			}else{
-				if ($_COOKIE[lgi]==$this){
+				if ($_COOKIE['lgi']==$this){
 					$sql = "";
 					output("Du willst dich doch nicht wirklich selbst verbannen, oder?? Das ist deine eigene ID!");
 				}
@@ -229,7 +229,7 @@ if ($_GET[op]=="mail"){
 		}
 		output('`n');
 	}
-	elseif (!empty($_POST['deleteuser']) && count($_POST['userid'])>0) {
+	elseif (!empty($_POST['deleteuser']) && isset($_POST['userid']) && is_array($_POST['userid']) && count($_POST['userid'])>0) {
 		$sql = "SELECT name FROM accounts WHERE acctid IN (".implode(',',$_POST['userid']).")";
 		$result = db_query($sql) or die(sql_error($sql));
 		$delnames = array();

@@ -1,6 +1,6 @@
 <?php
 if (!isset($session)) exit();
-if ($HTTP_GET_VARS[op]==""){
+if ($HTTP_GET_VARS['op']==""){
 	output("`5Du stolperst über eine Lichtung, die seltsam ruhig ist. Auf einer Seite stehen drei ordentlich verschlossene Körbe. Du findest das 
 	merkwürdig und näherst dich den Körben vorsichtig. Wie du näher kommst, hörst du ein schwaches Miauen. Du hast den Deckel des ersten 
 	Korbes schon fast in der Hand, als die verrückte Audrey wie aus dem Nichts auftaucht und wie im Fieberwahn etwas von farbigen Kätzchen daherredet. Sie zieht die Körbe zu sich heran. 
@@ -23,11 +23,11 @@ if ($HTTP_GET_VARS[op]==""){
 	addnav("Spielen","forest.php?op=play");
 	addnav("Vor Crazy Audrey wegrennen","forest.php?op=run");
 	$session['user']['specialinc']="audrey.php";
-}else if($HTTP_GET_VARS[op]=="run"){
+}else if($HTTP_GET_VARS['op']=="run"){
 	$session['user']['specialinc']="";
 	output("`5Du rennst sehr schnell vor dieser durchgedrehten Frau davon.");
 	//addnav("Zurück in den Wald","forest.php");
-}else if($HTTP_GET_VARS[op]=="play"){
+}else if($HTTP_GET_VARS['op']=="play"){
 	$session['user']['specialinc']="";
 	$kittens = array("`^G`&e`6s`7c`^h`7e`^c`&k`6t","`7G`&e`7t`&i`7g`&e`7r`&`7t","`6Orangen","`&Weiss","`^`bLanghaarig`b");
 	$c1 = e_rand(0,3);

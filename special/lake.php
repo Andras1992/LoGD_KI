@@ -15,25 +15,25 @@
 */
 output("`n`c`b`&Der Tempelsee`c`b`n");
 
-if ($HTTP_GET_VARS[op]=="norp")
+if ($HTTP_GET_VARS['op']=="norp")
 { 
-    $session[user][specialinc]="";
+    $session['user']['specialinc']="";
     output("`2Dir kommt das Ganze etwas komisch vor. Du machst lieber einen großen Bogen um diese Flüssigkeit.`n");
     $chance = e_rand(1,4);
-    if ($chance > 3 && $session[user][turns] >0)
+    if ($chance > 3 && $session['user']['turns'] >0)
     {
         output("Deine Neugier treibt Dich allerdings dazu an, diesen Ort weiter zu erkunden. Doch auch nachdem Du in jedem Winkel gestöbert hast und selbst noch `7einen Stein `2aus der Strasse gebrochen hast, kannst Du nichts von Bedeutung finden. Frustiert stapfst Du zurück in den Wald.`n`n");
         output("`^Die verlorene Zeit hättest Du besser in einen Waldkampf gesteckt!");
-        $session[user][turns]--;
+        $session['user']['turns']--;
     }
     addnav("Zurück in den Wald","forest.php"); 
 }
-else if ($HTTP_GET_VARS[op]=="trinken") 
+else if ($HTTP_GET_VARS['op']=="trinken") 
 {
     // Wasserfarbe festhalten
-    $colour = $HTTP_GET_VARS[water];
+    $colour = $HTTP_GET_VARS['water'];
 
-    $session[user][specialinc]=""; 
+    $session['user']['specialinc']=""; 
 	
     $rand = e_rand(1,3);
     if ($colour=="red") 
@@ -57,8 +57,8 @@ else if ($HTTP_GET_VARS[op]=="trinken")
         case 2:
         output("`^Du spürst wie dein Blut pulsiert und sich das blaue Glühen auf deinen Körper überträgt.`n`n"); 
         output("`^Als du deine Hand ansiehst fällt dir auf, das dort das Glühen gebündelt wird.`n");
-        $session[user][gems]++;
-        output("`^Ein Edelstein hat sich in deiner Hand gebildet. Du hast jetzt insgesamt ".$session[user][gems].", `n");
+        $session['user']['gems']++;
+        output("`^Ein Edelstein hat sich in deiner Hand gebildet. Du hast jetzt insgesamt ".$session['user']['gems'].", `n");
         output("wird es nicht Zeit langsam einen Juwelierladen zu eröffnen?");
         addnav("Zurück in den Wald","forest.php");    
         break;
@@ -67,8 +67,8 @@ else if ($HTTP_GET_VARS[op]=="trinken")
         output("`^Du fühlst wie dein Körper regeneriert.`n"); 
         output("`^Jetzt wo du weißt, dass es eine Heilquelle ist und keine Gefahr davon ausgeht, entspannst du dich noch ein wenig `n");
         output("und träumst davon den Grünen Drachen zu besiegen.");
-        if ($session[user][turns]>0) $session[user][turns]--;
-        $session[user][hitpoints] = $session[user][maxhitpoints];
+        if ($session['user']['turns']>0) $session['user']['turns']--;
+        $session['user']['hitpoints'] = $session['user']['maxhitpoints'];
         addnav("Zurück in den Wald","forest.php"); 
 	    break;
 
@@ -76,15 +76,15 @@ else if ($HTTP_GET_VARS[op]=="trinken")
         case 4: // Brogads hot Chili by Burn
         output("`^Du probierst das Wasser und stellst fest, dass es genauso schmeckt wie `\$Brogads `&heisse `\$Chilisoße`^! Verdammt, von dem Zeug hättest du schon damals die Finger lassen sollen!`n"); 
         output("`^Die extreme Schärfe lässt deine Augen tränen und dich unkontrolliert husten. Als sich die Soße ihren Weg durch Deine Eingeweide wühlt, weißt du instinktiv, dass du die nächsten Stunden heulend in den Büschen verbringen wirst.`n");
-        if ($session[user][turns]<3) $session[user][turns] = 0;
+        if ($session['user']['turns']<3) $session['user']['turns'] = 0;
         else 
-            $session[user][turns] -= 2;
+            $session['user']['turns'] -= 2;
         addnav("Zurück in den Wald","forest.php"); 
 	    break;
 
         case 5: // Dämonenblut by Burn
         output("`^Als du das Zeug hinunterschluckst, spürst du, wie sich deine Wahrnehmung leicht verändert. Die eingestürzten Säulenteile tragen zum Teil dämonische Fratzen, die dich höhnisch anzugrinsen scheinen. Du spürst eine Veränderung in deinem Körper...`n");
-		if ($session[user][specialty] == 1) // Darkarts
+		if ($session['user']['specialty'] == 1) // Darkarts
 		{
             output("da die `\$Essenz des Bösen`^ durch deine Adern rinnt! Die Dämonen wispern dir dunkle Geheimnisse zu!`n`#");
             increment_specialty();
@@ -93,8 +93,8 @@ else if ($HTTP_GET_VARS[op]=="trinken")
         {
             output("da etwas `\$Bösartiges, Fremdes`^ durch deine Adern rinnt. Du bekommst einen juckenden Ausschlag, der auch nach ein paar Tagen nicht verschwinden wird.`n");
             output("Du verlierst einen Charmpunkt!");
-            $session[user][charm]--;
-	$session[user][reputation]--;
+            $session['user']['charm']--;
+	$session['user']['reputation']--;
         }
         addnav("Zurück in den Wald","forest.php"); 
 	    break;
@@ -102,8 +102,8 @@ else if ($HTTP_GET_VARS[op]=="trinken")
         case 6:
         output("`^Du fühlst wie dein Körper regeneriert.`n"); 
         output("`^Jetzt wo du weißt, dass es eine Heilquelle ist und keine Gefahr davon ausgeht, entspannst du dich noch ein wenig. Dann kehrst Du mit neuem Mut in den Wald zurück.`nDu kannst heute ein paar Monster mehr erschlagen!`n");
-        $session[user][turns]++;
-        $session[user][hitpoints] = $session[user][maxhitpoints];
+        $session['user']['turns']++;
+        $session['user']['hitpoints'] = $session['user']['maxhitpoints'];
         addnav("Zurück in den Wald","forest.php"); 
 	    break;
 
@@ -118,26 +118,26 @@ else if ($HTTP_GET_VARS[op]=="trinken")
         output("`^Du versuchst zu schlucken, doch irgend ein kleiner Tierknochen bleibt in deinem Hals stecken.`n"); 
         output("`^Während du auf die Knie sinkst und vergeblich nach Luft schnappst, überlegst du noch, dass es eine dumme Idee war, von dem Zeug zu trinken...`n`n");
         output("`&Du bist gestorben! Du verlierst 10% deiner Erfahrung und kannst morgen wieder spielen!");
-        $session[user][alive]=false;
-        $session[user][hitpoints]=0;
-        $session[user][experience]=$session[user][experience]*0.9;
+        $session['user']['alive']=false;
+        $session['user']['hitpoints']=0;
+        $session['user']['experience']=$session['user']['experience']*0.9;
         addnav("Tägliche News","news.php");
-        addnews("`6".$session[user][name]." `6erstickte qualvoll an einem Vogelknochen!");
+        addnews("`6".$session['user']['name']." `6erstickte qualvoll an einem Vogelknochen!");
 	    break;
 
         case 9:
         output("`^Der faulige Geschmack läßt dich würgen, und du stolperst in die Büsche, während sich dein Magen umdreht.`n"); 
         output("`^Erstaunlicherweise findest du auf dem Rückweg `42 Edelsteine`^ als Du in ein verlassenes Äffchennest trittst.`n");
-        $session[user][gems] += 2;
+        $session['user']['gems'] += 2;
         addnav("Zurück in den Wald","forest.php"); 
 	    break;        
 	}
-}else if ($HTTP_GET_VARS[op]=="spiegel") {
+}else if ($HTTP_GET_VARS['op']=="spiegel") {
 	output("`2Du beugst dich über den See, um dein Spiegelbild zu betrachten. Das bläuliche Wasser zeigt tatsächlich ein Bild von dir, allerdings ist es ");
 	output("ungewöhnlich verschwommen. Als du das Bild genauer betrachtest, stellst du fest, dass es dir weit mehr zeigt, als nur dein Aussehen:`n`n");
-	output("`#Charme: ".grafbar(100,$session[user][charm],"20%",10)."`n`#Ansehen: ".grafbar(100,($session[user][reputation]+50),"20%",10),true);
+	output("`#Charme: ".grafbar(100,$session['user']['charm'],"20%",10)."`n`#Ansehen: ".grafbar(100,($session['user']['reputation']+50),"20%",10),true);
 	addnav("Zurück in den Wald","forest.php");
-	$session[user][specialinc]==""; 
+	$session['user']['specialinc']==""; 
 }
 else
 { 
@@ -176,12 +176,12 @@ else
     }
     output("Das Wasser sammelt sich in einem halbrunden Becken am Fuß der alten Mauer, doch scheint das Becken nicht überzulaufen. ");
     output("Wahrscheinlich gibt es irgendwo einen Abfluss.`n");
-    output("In dem kleinen Becken hat sich jedoch genug angesammelt, um von ".($session[user][sex]?"einer zufällig vorbeiziehenden Kriegerin":"einem zufällig vorbeiziehenden Krieger")." getrunken werden zu können ");
-    output("- wenn ".($session[user][sex]?"sie":"er")." wollte...");
+    output("In dem kleinen Becken hat sich jedoch genug angesammelt, um von ".($session['user']['sex']?"einer zufällig vorbeiziehenden Kriegerin":"einem zufällig vorbeiziehenden Krieger")." getrunken werden zu können ");
+    output("- wenn ".($session['user']['sex']?"sie":"er")." wollte...");
 	output("Das Wasser ist glatt und spiegelt die Landschaft wider.`n");
     addnav("Ich hab Durst!","forest.php?op=trinken&water=".$colour);
     addnav("Spiegelbild","forest.php?op=spiegel"); 
     addnav("Ich lasse es lieber bleiben!","forest.php?op=norp");
-    $session[user][specialinc]="lake.php"; 
+    $session['user']['specialinc']="lake.php"; 
 }
 ?>

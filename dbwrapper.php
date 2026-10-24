@@ -1,133 +1,181 @@
 <?php
 
-// 21072004
+// PDO-backed compatibility layer for the original db_* API.
+// This keeps legacy game pages working while they are migrated gradually.
 
-//do some cleanup here to make sure magic_quotes_gpc is ON, and magic_quotes_runtime is OFF, and error reporting is all but notice.
-error_reporting (E_ALL ^ E_NOTICE);
-if (!get_magic_quotes_gpc()){
-	set_magic_quotes($_GET);
-	set_magic_quotes($_POST);
-	set_magic_quotes($_SESSION);
-	set_magic_quotes($_COOKIE);
-	set_magic_quotes($HTTP_GET_VARS);
-	set_magic_quotes($HTTP_POST_VARS);
-	set_magic_quotes($HTTP_COOKIE_VARS);
-	ini_set("magic_quotes_gpc",1);
-}
-set_magic_quotes_runtime(0);
-
-function set_magic_quotes(&$vars) {
-	//eval("\$vars_val =& \$GLOBALS[$vars]$suffix;");
-	if (is_array($vars)) {
-		reset($vars);
-		while (list($key,$val) = each($vars))
-			set_magic_quotes($vars[$key]);
-	}else{
-		$vars = addslashes($vars);
-		//eval("\$GLOBALS$suffix = \$vars_val;");
-	}
-}
-
-define('DBTYPE',"mysql");
-
-$dbqueriesthishit=0;
+$dbqueriesthishit = 0;
 $dbtimethishit = 0;
+$dbLastStatement = null;
+$dbLastError = '';
 
-function db_query($sql){
-global $session,$dbqueriesthishit,$dbtimethishit;
-	$dbqueriesthishit++;
-$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_query";
-	$r = $fname($sql) or die(($session[user][superuser]>=3 || 1?"<pre>".HTMLEntities($sql)."</pre>":"").db_error(LINK));
-$dbtimethishit += getmicrotime();
-	//$x = strpos($sql,"WHERE");
-	//if ($x!==false) {
-	//	$where = substr($sql,$x+6);
-	//	$x = strpos($where,"ORDER BY");
-	//	if ($x!==false) $where = substr($where,0,$x);
-	//	$x = strpos($where,"LIMIT");
-	//	if ($x!==false) $where = substr($where,0,$x);
-	//	$where = preg_replace("/'[^']*'/","",$where);
-	//	$where = preg_replace('/"[^"]*"/',"",$where);
-	//	$where = preg_replace("/[^a-zA-Z ]/","",$where);
-	//	mysql_query("INSERT DELAYED INTO queryanalysis VALUES (0,\"".addslashes($where)."\",0)");
-	//}
-	return $r;
+// Temporary compatibility for legacy pages that relied on magic_quotes_gpc.
+// Remove this shim only after their SQL has been converted to bound parameters.
+function db_apply_legacy_quotes(&$value)
+{
+    if (is_array($value)) {
+        foreach ($value as &$item) {
+            db_apply_legacy_quotes($item);
+        }
+        unset($item);
+    } elseif (is_string($value)) {
+        $value = addslashes($value);
+    }
 }
 
-function db_insert_id($link=false) {
-global $dbtimethishit;
-$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_insert_id";	
-	if ($link===false) {
-		$r = $fname();
-	}else{
-		$r = $fname($link);
-	}
-	$dbtimethishit += getmicrotime();
-	return $r;
+foreach (array('_GET', '_POST', '_COOKIE') as $inputName) {
+    if (isset($GLOBALS[$inputName])) {
+        db_apply_legacy_quotes($GLOBALS[$inputName]);
+    }
 }
 
-function db_error($link){
-	$fname = DBTYPE."_error";
-	$r = $fname($link);
-	return $r;
+$HTTP_GET_VARS =& $_GET;
+$HTTP_POST_VARS =& $_POST;
+$HTTP_COOKIE_VARS =& $_COOKIE;
+
+// Request values still pass through the temporary magic-quotes shim above.
+// Remove that one compatibility layer before binding them with PDO.
+function db_unquote_legacy_input($value)
+{
+    if (is_string($value)) {
+        return stripslashes($value);
+    }
+
+    return is_scalar($value) || $value === null ? $value : '';
 }
 
-function db_fetch_assoc($result){
-	global $dbtimethishit;
-	$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_fetch_assoc";
-	$r = $fname($result);
-	$dbtimethishit += getmicrotime();
-	return $r;
+function db_query($sql)
+{
+    global $pdo, $dbqueriesthishit, $dbtimethishit, $dbLastStatement, $dbLastError;
+
+    $dbqueriesthishit++;
+    $start = microtime(true);
+
+    try {
+        $dbLastStatement = $pdo->query($sql);
+        $dbLastError = '';
+        return $dbLastStatement;
+    } catch (PDOException $exception) {
+        $dbLastStatement = null;
+        $dbLastError = $exception->getMessage();
+        throw $exception;
+    } finally {
+        $dbtimethishit += microtime(true) - $start;
+    }
 }
 
-function db_num_rows($result){
-	global $dbtimethishit;
-	$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_num_rows";
-	$r = $fname($result);
-	$dbtimethishit += getmicrotime();
-	return $r;
+/**
+ * Execute a prepared statement while preserving the legacy db_* result API.
+ * Values must be supplied separately from the SQL string.
+ */
+function db_query_params($sql, $params = array())
+{
+    global $pdo, $dbqueriesthishit, $dbtimethishit, $dbLastStatement, $dbLastError;
+
+    $dbqueriesthishit++;
+    $start = microtime(true);
+
+    try {
+        $statement = $pdo->prepare($sql);
+        $statement->execute($params);
+        $dbLastStatement = $statement;
+        $dbLastError = '';
+        return $statement;
+    } catch (PDOException $exception) {
+        $dbLastStatement = null;
+        $dbLastError = $exception->getMessage();
+        throw $exception;
+    } finally {
+        $dbtimethishit += microtime(true) - $start;
+    }
 }
 
-function db_affected_rows($link=false){
-	global $dbtimethishit;
-	$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_affected_rows";
-	if ($link===false) {
-		$r = $fname();
-	}else{
-		$r = $fname($link);
-	}
-	$dbtimethishit += getmicrotime();
-	return $r;
+function db_insert_id($link = false)
+{
+    global $pdo;
+    return $pdo->lastInsertId();
 }
 
-function db_pconnect($host,$user,$pass){
-	global $dbtimethishit;
-	$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_connect";
-	$r = $fname($host,$user,$pass);
-	$dbtimethishit += getmicrotime();
-	return $r;
+function db_error($link = false)
+{
+    global $pdo, $dbLastError;
+
+    if ($dbLastError !== '') {
+        return $dbLastError;
+    }
+
+    if (isset($pdo) && $pdo instanceof PDO) {
+        $error = $pdo->errorInfo();
+        return isset($error[2]) ? $error[2] : '';
+    }
+
+    return '';
 }
 
-function db_select_db($dbname){
-	global $dbtimethishit;
-	$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_select_db";
-	$r = $fname($dbname);
-	$dbtimethishit += getmicrotime();
-	return $r;
+function db_fetch_assoc($result)
+{
+    global $dbtimethishit;
+    $start = microtime(true);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $dbtimethishit += microtime(true) - $start;
+    return $row;
 }
-function db_free_result($result){
-	global $dbtimethishit;
-	$dbtimethishit -= getmicrotime();
-	$fname = DBTYPE."_free_result";
-	$r = $fname($result);
-	$dbtimethishit += getmicrotime();
-	return $r;
+
+function db_num_rows($result)
+{
+    global $dbtimethishit;
+    $start = microtime(true);
+    $count = $result->rowCount();
+    $dbtimethishit += microtime(true) - $start;
+    return $count;
+}
+
+function db_affected_rows($link = false)
+{
+    global $dbLastStatement;
+    return $dbLastStatement instanceof PDOStatement ? $dbLastStatement->rowCount() : 0;
+}
+
+function db_pconnect($host, $user, $pass, $database = '', $charset = 'utf8mb4')
+{
+    global $pdo, $dbLastError;
+
+    $dsn = 'mysql:host=' . $host;
+    if ($database !== '') {
+        $dsn .= ';dbname=' . $database;
+    }
+    if ($charset !== '') {
+        $dsn .= ';charset=' . $charset;
+    }
+
+    $options = array(
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_PERSISTENT => true,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    );
+
+    try {
+        $pdo = new PDO($dsn, $user, $pass, $options);
+        $dbLastError = '';
+        return $pdo;
+    } catch (PDOException $exception) {
+        $dbLastError = $exception->getMessage();
+        throw $exception;
+    }
+}
+
+function db_select_db($dbname)
+{
+    global $pdo;
+    $pdo->exec('USE `' . str_replace('`', '``', $dbname) . '`');
+    return true;
+}
+
+function db_free_result($result)
+{
+    if ($result instanceof PDOStatement) {
+        return $result->closeCursor();
+    }
+    return false;
 }
 ?>

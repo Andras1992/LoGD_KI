@@ -9,10 +9,10 @@ checkday();
 if ($session['user']['alive']){ }else{
 	redirect("shades.php");
 }
-$sql="SELECT acctid1,acctid2,turn FROM pvp WHERE acctid1=".$session[user][acctid]." OR acctid2=".$session[user][acctid]."";
+$sql="SELECT acctid1,acctid2,turn FROM pvp WHERE acctid1=".$session['user']['acctid']." OR acctid2=".$session['user']['acctid']."";
 $result = db_query($sql) or die(db_error(LINK));
 $row = db_fetch_assoc($result);
-if(($row[acctid1]==$session[user][acctid] && $row[turn]==1) || ($row[acctid2]==$session[user][acctid] && $row[turn]==2)){
+if(($row['acctid1']==$session['user']['acctid'] && $row['turn']==1) || ($row['acctid2']==$session['user']['acctid'] && $row['turn']==2)){
 	redirect("pvparena.php");
 }
 
@@ -20,7 +20,7 @@ if(($row[acctid1]==$session[user][acctid] && $row[turn]==1) || ($row[acctid2]==$
 if (getsetting("automaster",1) && $session['user']['seenmaster']!=2){
 	//masters hunt down truant students
 	$exparray=array(1=>100,400,1002,1912,3140,4707,6641,8985,11795,15143,19121,23840,29437,36071,43930,55000);
-	while (list($key,$val)=each($exparray)){
+	foreach ($exparray as $key => $val) {
 		$exparray[$key]= round(
 			$val + ($session['user']['dragonkills']/4) * $session['user']['level'] * 100
 			,0);
@@ -67,7 +67,7 @@ addnav("Kämpferliste","list.php");
 addnav("In die Felder (Logout)","login.php?op=logout",true);
 addnav("Spiel-Forum","http://www.logd-welt.de/forum/index.php",false,false,true);
 
-if ($session[user][superuser]>=2){
+if ($session['user']['superuser']>=2){
   addnav("X?`bAdmin Grotte`b","superuser.php");
   if (@file_exists("test.php")) addnav("Test","test.php");
 }
@@ -88,7 +88,7 @@ addnav("","stats.php");
 addnav("","viewpetition.php");
 addnav("","weaponeditor.php");
 
-if ($session[user][superuser]){
+if ($session['user']['superuser']){
   addnav("Neuer Tag","newday.php");
 }
 

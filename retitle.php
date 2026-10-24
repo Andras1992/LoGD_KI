@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "common.php";
 isnewday(3);
 
@@ -30,7 +30,7 @@ if ($_GET['op']=="rebuild"){
 					$row['name'] = $newtitle." ".$row['name'];
 				}
 			}else{
-				$row[name] = $newtitle." ".$row['name'];
+				$row['name'] = $newtitle." ".$row['name'];
 			}
 		}
         output("`@Ändere `^$oname`@ auf `^{$row['name']} `@($newtitle-{$row['dragonkills']}[{$row['sex']}]({$row['ctitle']}`@))`n");

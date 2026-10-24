@@ -13,7 +13,7 @@ checkday();
 output("`n`c`#Du stolperst auf eine grasbewachsene Lichtung`c");
 addnav("Zurück in den Wald","forest.php?op=return");
 if ($session['user']['specialmisc'] != "Hier gibt's nichts zu sehen.") {
-    if ($session[user][hashorse]>0){
+    if ($session['user']['hashorse']>0){
         $buff = unserialize($playermount['mountbuff']);
         if ($session['bufflist']['mount']['rounds'] > $buff['rounds']*.5) {
             if ($playermount['partrecharge']) {
@@ -31,17 +31,17 @@ if ($session['user']['specialmisc'] != "Hier gibt's nichts zu sehen.") {
     
         $session['bufflist']['mount']=$buff;
 
-        if ($session[user][hitpoints]<$session[user][maxhitpoints]){
+        if ($session['user']['hitpoints']<$session['user']['maxhitpoints']){
             output("`n`^Dein Nickerchen hat dich vollständig geheilt!");
-            $session[user][hitpoints] = $session[user][maxhitpoints];
+            $session['user']['hitpoints'] = $session['user']['maxhitpoints'];
         }
         $session['user']['turns']--;
         output("`n`n`^Du verlierst einen Waldkampf für heute.");
     } else {
         output("`n`n`&Du beschließt, dir einen Moment Zeit zu nehmen und deinen armen Füßen eine kurze Pause von deinen riskanten Abenteuern zu gönnen. Du genießt die wunderschöne Umgebung.");
         output("`n`n`^Du regenerierst vollständig!");
-        if ($session[user][hitpoints]<$session[user][maxhitpoints])
-            $session[user][hitpoints] = $session[user][maxhitpoints];
+        if ($session['user']['hitpoints']<$session['user']['maxhitpoints'])
+            $session['user']['hitpoints'] = $session['user']['maxhitpoints'];
     }
     $session['user']['specialmisc'] = "Hier gibt's nichts zu sehen.";
 } else {

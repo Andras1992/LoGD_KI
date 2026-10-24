@@ -12,10 +12,12 @@ require_once "common.php";
 addcommentary();
 page_header("Jägerhütte"); 
 addnav("Zurück zum Dorf","village.php"); 
-if ($_GET[op]!="points") addnav("Punkte","lodge.php?op=points");
-if ($_GET[op]=="points") addnav("Empfehlungen","referral.php"); 
+if ($_GET['op']!="points") addnav("Punkte","lodge.php?op=points");
+if ($_GET['op']=="points") addnav("Empfehlungen","referral.php"); 
 
-$config = unserialize($session['user']['donationconfig']); 
+$config = unserialize($session['user']['donationconfig']);
+if (!is_array($config)) $config = array();
+if (!isset($config['forestfights']) || !is_array($config['forestfights'])) $config['forestfights'] = array(); 
 $pointsavailable=$session['user']['donation']-$session['user']['donationspent']; 
 
 if ($_GET['op']==""){
@@ -49,9 +51,9 @@ if ($_GET['op']==""){
         		addnav("Heilerin Golinda für 30 Tage (100 Punkte)","lodge.php?op=golinda");
 		addnav("Zur Burg reiten (100 Punkte)","lodge.php?op=reiten1");
 		addnav("PvP-Immunität (300 Punkte)","lodge.php?op=immun");
-		if ($session[user][house]>0 && $session[user][housekey]==$session[user][house]) addnav("Hausschlüssel","lodge.php?op=keys1"); 
-		if ($session[user][donation]>=2000) addnav("Sonderbonus");
-		if ($session[user][donation]>=2000 && $pointsavailable>=50) addnav("Titel ändern (50 Punkte)","lodge.php?op=titeel1");
+		if ($session['user']['house']>0 && $session['user']['housekey']==$session['user']['house']) addnav("Hausschlüssel","lodge.php?op=keys1"); 
+		if ($session['user']['donation']>=2000) addnav("Sonderbonus");
+		if ($session['user']['donation']>=2000 && $pointsavailable>=50) addnav("Titel ändern (50 Punkte)","lodge.php?op=titeel1");
     	}else{ 
         		output("Du ziehst die Karte deines Lieblingsgasthauses heraus, wo 9 von 10 Slots mit dem kleinen Profil von Cederik abgestempelt sind. 
         		`n`n 
@@ -79,7 +81,7 @@ if ($_GET['op']==""){
 	- Anzeige der Charmepunkte (20 Punkte)`n
 	- Ersatzschlüssel (10) und zusätzliche Schlüssel (50) für dein Haus kaufen.`n 
 	- Ab 2000 gesammelten Punkten (ob ausgegeben oder nicht) kannst du dir für 50 Punkte einen eigenen Titel aussuchen.`n
-	`n`n`7Du hast noch `\$`b$pointsavailable`b`7 Punkte von insgesamt `4".$session[user][donation]." `7gesammelten Punkten übrig. 
+	`n`n`7Du hast noch `\$`b$pointsavailable`b`7 Punkte von insgesamt `4".$session['user']['donation']." `7gesammelten Punkten übrig. 
     	"); 
 }elseif ($_GET['op']=="golinda"){ 
     	output("30 Tage Zugang zu Golinda der Heilerin kosten 100 Punkte. Golinda heilt zum halben Preis.");
@@ -130,7 +132,7 @@ if ($_GET['op']==""){
 	}
     	addnav("Zurück zur Lodge","lodge.php"); 
     	reset($config['forestfights']); 
-    	while (list($key,$val)=each($config['forestfights'])){ 
+    	foreach ($config['forestfights'] as $key => $val) { 
         		//output("Du hast noch {$val['left']} Tage, an denen zu einen zusätzlichen Waldkampf für deine am {$val['bought]} bekommst.`n");
 		output("Du hast noch {$val['left']} Tage, an denen zu einen zusätzlichen Waldkampf für deine am {$val['bought']} bekommst.`n");
     	} 
@@ -192,17 +194,17 @@ if ($_GET['op']==""){
 }elseif ($_GET['op']=="gemsconfirm"){ 
     	if ($pointsavailable>=50){ 
         		output("J. C. Petersen gibt dir 2 Edelsteine und sagt \"Damit, mein Freund, wird dein Leben leichter werden\""); 
-        		$session[user][gems]+=2; 
+        		$session['user']['gems']+=2; 
         		$session['user']['donationspent']+=50; 
     	} 
 
 } else if ($_GET['op']=="titeel1"){
 	addnav("Zurück zur Lodge","lodge.php");
-	$n=$session[user][name];
-	if ($session[user][ctitle]){
-		$teil=$session[user][ctitle];
+	$n=$session['user']['name'];
+	if ($session['user']['ctitle']){
+		$teil=$session['user']['ctitle'];
 	} else {
-		$teil=$session[user][title];
+		$teil=$session['user']['title'];
 	}
 	output("Dein bisheriger Titel lautet: `b$teil`b, dein kompletter Name: `b$n`b`n`nWie soll dein Titel von nun an lauten?`n(Sende ein leeres Feld ab, wenn du deinen regulären Titel wieder haben willst.)`n"); 
 	$output.="<form action='lodge.php?op=titeel2' method='POST'><input name='teil' size='25' maxlength='25' value=\"".HTMLEntities($teil)."\"> <input type='submit' value='Vorschau'></form>";
@@ -211,7 +213,7 @@ if ($_GET['op']==""){
 	addnav("Zurück zur Lodge","lodge.php");
 	$falsetitle = false;
 	if ($_POST['teil']=="") {
-		$teil=$session[user][title];
+		$teil=$session['user']['title'];
 	} else {
 		$teil=stripslashes($_POST['teil']);
 		$teil = preg_replace("/`[^123456789!@#\$%^&QqRrVvGgTt]/","",$teil);
@@ -221,7 +223,7 @@ if ($_GET['op']==""){
 		
 		// Titel nicht leer, aber auch nix reguläres drin?
 		if(trim(preg_replace('/`./','',$teil))=='') {
-			$teil=$session[user][title];
+			$teil=$session['user']['title'];
 			$_POST['teil'] = '';
 		}
 		else {
@@ -250,11 +252,11 @@ if ($_GET['op']==""){
 		addnav("","lodge.php?op=titeel1"); 		
 	}
 	else {
-	$n=$session[user][name];
-	if ($session[user][ctitle]==""){
-		$neu=$teil.substr($n,strlen($session[user][title]));
+	$n=$session['user']['name'];
+	if ($session['user']['ctitle']==""){
+		$neu=$teil.substr($n,strlen($session['user']['title']));
 	} else {
-		$neu=$teil.substr($n,strlen($session[user][ctitle]));
+		$neu=$teil.substr($n,strlen($session['user']['ctitle']));
 	}
 	output("Dein neuer Titel soll $teil`0 sein, dein Name also $neu`0 ?");
 	if ($_POST['teil']=="") {
@@ -280,7 +282,7 @@ if ($_GET['op']==""){
 		
 		// Titel nicht leer, aber auch nix reguläres drin?
 		if(trim(preg_replace('/`./','',$teil))=='') {
-			$teil=$session[user][title];
+			$teil=$session['user']['title'];
 			$_POST['teil'] = '';
 		}
 
@@ -296,24 +298,24 @@ if ($_GET['op']==""){
 		}
 		else {			
 			$news = "`&{$session['user']['name']}`^ ist nun bekannt als `^";
-		$n=$session[user][name];
-		if ($session[user][ctitle]==""){
-			$neu=$teil.substr($n,strlen($session[user][title]));
+		$n=$session['user']['name'];
+		if ($session['user']['ctitle']==""){
+			$neu=$teil.substr($n,strlen($session['user']['title']));
 		} else {
-			$neu=$teil.substr($n,strlen($session[user][ctitle]));
+			$neu=$teil.substr($n,strlen($session['user']['ctitle']));
 		}
  		$session['user']['donationspent']+=50;
 		if ($teil>""){
-			$session[user][name]=$neu;
-			$session[user][ctitle]=$teil;
+			$session['user']['name']=$neu;
+			$session['user']['ctitle']=$teil;
 		}else{
-			if ($session[user][ctitle]==""){
-				$neu2=substr($n,strlen($session[user][title]));
+			if ($session['user']['ctitle']==""){
+				$neu2=substr($n,strlen($session['user']['title']));
 			} else {
-				$neu2=substr($n,strlen($session[user][ctitle]));
+				$neu2=substr($n,strlen($session['user']['ctitle']));
 			}
-			$session[user][name]="".$session[user][title]." $neu2";
-			$session[user][ctitle]="";
+			$session['user']['name']="".$session['user']['title']." $neu2";
+			$session['user']['ctitle']="";
 		} 
         		$news.="{$session['user']['name']}`&!"; 
         		addnews($news); 
@@ -332,8 +334,8 @@ if ($_GET['op']==""){
         		output("Da es deine erste Farbänderung ist kostet es dich 300 Punkte . Beim nächsten Wechsel fallen nur 25 Punkte Kosten an"); 
     	} 
     	output("`n`nDein geänderter Name muss der selbe Name sein wie vor der Farbänderung, nur dass er jetzt die Farbcodes enthalten darf.`n`n"); 
-      	$n = $session[user][name]; 
-	if ($session[user][ctitle]=="") {
+      	$n = $session['user']['name']; 
+	if ($session['user']['ctitle']=="") {
         		//$x = strpos($n,$session[user][title])+1; 
         		//$regname=str_replace("`0","",trim(substr($n,$x+strlen($session[user][title])))); 
 		        		$regname = str_replace(array($session['user']['title'].' ','`0'),'',$n);
@@ -350,8 +352,8 @@ if ($_GET['op']==""){
     	addnav("","lodge.php?op=namepreview"); 
 }elseif ($_GET['op']=="namepreview"){ 
     	addnav("Zurück zur Lodge","lodge.php"); 
-    	$n = $session[user][name]; 
-	if ($session[user][ctitle]=="") {
+    	$n = $session['user']['name']; 
+	if ($session['user']['ctitle']=="") {
 		        		//$x = strpos($n,$session[user][title])+1;
 		        		//$regname=str_replace("`0","",trim(substr($n,$x+strlen($session[user][title]))));
 		        		$regname = str_replace(array($session['user']['title'].' ','`0'),'',$n);
@@ -410,7 +412,7 @@ if ($_GET['op']==""){
     	if ($pointsavailable>=300){ 
         		output("J. C. Petersen nutzt seinen Einfluss, um dich für PvP-Spieler unangreifbar zu machen. Es kann auch kein (weiteres) Kopfgeld auf dich ausgesetzt werden.`nDenke daran, dass du nur so lange geschützt bist, bis du selbst jemanden angreifst, oder jemanden auf Dag's "); 
 		output(" Kopfgeldliste setzt. Tust du das, kann selbst Petersen dir in Zukunft nicht mehr helfen.");
-        		$session[user][pvpflag]="5013-10-06 00:42:00"; 
+        		$session['user']['pvpflag']="5013-10-06 00:42:00"; 
         		$session['user']['donationspent']+=300; 
     	}else{
 		output("Du hast nicht genug Punkte!");
@@ -422,7 +424,7 @@ if ($_GET['op']==""){
         		$session['user']['donationspent']+=$p; 
         		$config['namechange']=1; 
         		$news = "{$session['user']['name']}`^ ist nun bekannt als `0";
-		if ($session[user][ctitle]=="") {
+		if ($session['user']['ctitle']=="") {
 			$session['user']['name']=$session['user']['title']." ".$_POST['name']."`0"; 
 		} else {
 			$session['user']['name']=$session['user']['ctitle']." ".$_POST['name']."`0"; 
@@ -435,7 +437,7 @@ if ($_GET['op']==""){
     	} 
     	addnav("Zurück zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="keys1"){
-	$sql = "SELECT * FROM items WHERE owner=0 AND class='Schlüssel' AND value1=".$session[user][house]." ORDER BY id ASC";
+	$sql = "SELECT * FROM items WHERE owner=0 AND class='Schlüssel' AND value1=".$session['user']['house']." ORDER BY id ASC";
 	$result = db_query($sql) or die(db_error(LINK));
 	if (db_num_rows($result)){
 		output("`b`c`&Verlorene Schlüssel:`c`b<table cellpadding=2 align='center'><tr><td>`bNr.`b</td><td>`bAktion`b</td></tr>",true);
@@ -452,25 +454,25 @@ if ($_GET['op']==""){
 	}
 	addnav("Zurück zur Lodge","lodge.php");
 }elseif ($_GET['op']=="keys2"){
-	if ($_GET[id]=="new"){
+	if ($_GET['id']=="new"){
 		output("`b50`b ");
 	}else{
 		output("`b10`b ");
 	}
 	output("Punkte für diesen Schlüssel ausgeben?");
     	addnav("Schlüsselkauf bestätigen?"); 
-    	addnav("JA","lodge.php?op=keys3&id=".$_GET[id]."");
+    	addnav("JA","lodge.php?op=keys3&id=".$_GET['id']."");
 	addnav("Zurück zur Lodge","lodge.php");
 }elseif ($_GET['op']=="keys3"){
-	if ($_GET[id]=="new"){
+	if ($_GET['id']=="new"){
 		if ($pointsavailable<50){
 			output("Du hast nicht genug Punkte übrig.");
 		}else{
-			$sql = "SELECT * FROM items WHERE class='Schlüssel' AND value1=".$session[user][house]." ORDER BY id ASC";
+			$sql = "SELECT * FROM items WHERE class='Schlüssel' AND value1=".$session['user']['house']." ORDER BY id ASC";
 			$result = db_query($sql) or die(db_error(LINK));
 			$nummer=db_num_rows($result)+1;
 			db_free_result($result);
-			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description) VALUES ('Hausschlüssel',".$session[user][acctid].",'Schlüssel',".$session[user][house].",$nummer,0,0,'Schlüssel für Haus Nummer ".$session[user][house]."')";
+			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description) VALUES ('Hausschlüssel',".$session['user']['acctid'].",'Schlüssel',".$session['user']['house'].",$nummer,0,0,'Schlüssel für Haus Nummer ".$session['user']['house']."')";
 			db_query($sql) or die(db_error(LINK));
 			$session['user']['donationspent']+=50;
 			output("Du hast jetzt `b$nummer`b Schlüssel für dein Haus! Überlege gut, an wen du sie vergibst.");
@@ -479,8 +481,8 @@ if ($_GET['op']==""){
 		if ($pointsavailable<10){
 			output("Du hast nicht genug Punkte übrig.");
 		}else{
-			$nummer=$_GET[id];
-			$sql="UPDATE items SET owner=".$session[user][acctid].",hvalue=0 WHERE id=$nummer";
+			$nummer=$_GET['id'];
+			$sql="UPDATE items SET owner=".$session['user']['acctid'].",hvalue=0 WHERE id=$nummer";
 			db_query($sql);
 			$session['user']['donationspent']+=10;
 			output("Der Schlüssel wurde ersetzt.");

@@ -11,7 +11,7 @@ page_header("Das schwarze Brett");
 if ($_GET['op']=="del"){
 	$sql = "UPDATE accounts SET message='',msgdate='0000-00-00 00:00:00' WHERE acctid='{$_GET['userid']}'";
 	db_query($sql);
-	systemmail($_GET['userid'],"`0Nachricht gelöscht","`0Ein Administrator hat deine Nachricht vom schwarzen Brett genommen.`n`nWenn du darüber diskutieren willst, wende dich an ".$session[user][name]."`0, oder benutze bitte den Link zur Hilfeanfrage.");
+	systemmail($_GET['userid'],"`0Nachricht gelöscht","`0Ein Administrator hat deine Nachricht vom schwarzen Brett genommen.`n`nWenn du darüber diskutieren willst, wende dich an ".$session['user']['name']."`0, oder benutze bitte den Link zur Hilfeanfrage.");
 }
 
 $sql = "SELECT acctid,login,name,message,msgdate FROM accounts WHERE message>'' ORDER BY msgdate DESC";

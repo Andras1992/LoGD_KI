@@ -7,19 +7,19 @@ page_header("Mericks Ställe");
 
 $repaygold = round($playermount['mountcostgold']*2/3,0);
 $repaygems = round($playermount['mountcostgems']*2/3,0);
-$futtercost = $session[user][level]*20;
+$futtercost = $session['user']['level']*20;
 
 addnav("Zurück zum Dorf","village.php");
-if ($session['user']['hashorse']>0 && $session[user][fedmount]==0) addnav("f?{$playermount['mountname']} füttern (`^$futtercost`0 Gold)","stables.php?op=futter");
+if ($session['user']['hashorse']>0 && $session['user']['fedmount']==0) addnav("f?{$playermount['mountname']} füttern (`^$futtercost`0 Gold)","stables.php?op=futter");
 
-if ($_GET[op]==""){
+if ($_GET['op']==""){
 	checkday();
 	output("`7Hinter der Kneipe, etwas links von Pegasus' Rüstungen, befindet sich ein Stall, 
 	wie man ihn in jedem Dorf erwartungsgemäß findet. 
 	Darin kümmert sich Merick, ein stämmig wirkender Zwerg, um verschiedene Tiere.
 	`n`n
 	Du näherst dich ihm, als er plötzlich herumwirbelt und seine Heugabel in deine ungefähre Richtung streckt. \"`&Ach, 
-	'tschuldigung min ".($session[user][sex]?"Mädl":"Jung").", heb dich nit kommen hörn un heb gedenkt,
+	'tschuldigung min ".($session['user']['sex']?"Mädl":"Jung").", heb dich nit kommen hörn un heb gedenkt,
 	du bischt sicha Cedrik, der ma widda sein Zwergenweitwurf ufbessern will. Naaahw, wat 
 	kann ich für disch tun?`7\"");
 }elseif($_GET['op']=="examine"){
@@ -52,7 +52,7 @@ if ($_GET[op]==""){
 		}else{
 			if ($session['user']['hashorse']>0){
 				output("`7Du übergibst dein(e/n) {$playermount['mountname']} und bezahlst den Preis für dein neues Tier. Merick führt ein(e/n) schöne(n/s) neue(n/s) `&{$mount['mountname']}`7  für dich heraus!`n`n");
-				$session[user][reputation]--;
+				$session['user']['reputation']--;
 			}else{
 				output("`7Du bezahlst den Preis für dein neues Tier und Merick führt ein(e/n) schöne(n/s) neue(n/s) `&{$mount['mountname']}`7 für dich heraus!`n`n");
 		    }
@@ -77,9 +77,9 @@ if ($_GET[op]==""){
 	$session['user']['hashorse']=0;
 	output("`7So schwer es dir auch fällt, dich von dein(er/em) {$playermount['mountname']} zu trennen, tust du es doch und eine einsame Träne entkommt deinen Augen.`n`n");
 	output("Aber in dem Moment, in dem du die ".($repaygold>0?"`^$repaygold`7 Gold ".($repaygems>0?" und ":""):"").($repaygems>0?"`%$repaygems`7 Edelsteine":"")." erblickst, fühlst du dich gleich ein wenig besser.");
-	$session[user][reputation]-=2;
+	$session['user']['reputation']-=2;
 }elseif($_GET['op']=='futter'){
-	if ($session[user][gold]>=$futtercost) {
+	if ($session['user']['gold']>=$futtercost) {
         		$buff = unserialize($playermount['mountbuff']);
         		if ($session['bufflist']['mount']['rounds'] == $buff['rounds']) {
 			output("Dein {$playermount['mountname']} ist satt und rührt das vorgesetzte Futter nicht an. Darum gibt Merick dir dein Gold zurück.");
@@ -87,16 +87,16 @@ if ($_GET[op]==""){
 			$futtercost=$futtercost/2;
 			output("Dein {$playermount['mountname']} nascht etwas von dem vorgesetzten Futter und lässt den Rest stehen. {$playermount['mountname']} ist voll regeneriert. ");
 			output("Da aber noch über die Hälfte des Futters übrig ist, gibt dir Merick 50% Preisnachlass.`nDu bezahlst nur $futtercost Gold.");
-			$session[user][gold]-=$futtercost;
-			$session[user][reputation]--;
+			$session['user']['gold']-=$futtercost;
+			$session['user']['reputation']--;
 		}else{
-			$session[user][gold]-=$futtercost;
+			$session['user']['gold']-=$futtercost;
 			output("Dein {$playermount['mountname']} macht sich gierig über das Futter her und frisst es bis auf den letzten Krümel.`n");
 			output("Dein {$playermount['mountname']} ist vollständig regeneriert und du gibst Merick die $futtercost Gold."); 
-			$session[user][reputation]--;
+			$session['user']['reputation']--;
 		}
        		$session['bufflist']['mount']=$buff;
-		$session[user][fedmount]=1;
+		$session['user']['fedmount']=1;
 	} else {
 		output("`7Du hast nicht genug Gold dabei, um das Futter zu bezahlen. Merick weigert sich dein Tier für dich durchzufüttern und empfiehlt dir, im Wald nach einer grasbewachsenen Lichtung zu suchen.");
 	}

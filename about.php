@@ -18,9 +18,9 @@ $realsecssofartoday = round($secssofartoday / getsetting("daysperday",4),0);
 
 checkday();
 
-if ($_GET[op]==""){
+if ($_GET['op']==""){
 	$order=array("1","2");
-	while (list($key,$val)=each($order)){
+	foreach ($order as $key => $val) {
 		switch($val){
 		case "2":
 			/* NOTICE
@@ -85,7 +85,7 @@ if ($_GET[op]==""){
 	addnav("Spieleinstellungen","about.php?op=setup");
 	addnav("Modifikationen","about.php?op=modifications");
 	addnav("GNU GPL","about.php?op=gpl");
-}elseif($_GET[op]=="setup"){
+}elseif($_GET['op']=="setup"){
 	addnav("Über LoGD","about.php");
 	addnav("Modifikationen","about.php?op=modifications");
 	$setup = array(
@@ -151,7 +151,7 @@ if ($_GET[op]==""){
 	showform($setup,$settings,true);
 	//output("</table>",true);
 
-}elseif($_GET[op]=="modifications"){
+}elseif($_GET['op']=="modifications"){
 	addnav("Über LoGD","about.php");
 	addnav("Spieleinstellungen","about.php?op=setup");
 	output("`#Hier läuft `iLegend of the Green Dragon`i Version 0.9.7+jt mit folgenden Änderungen und Erweiterungen:");
@@ -214,7 +214,7 @@ if ($_GET[op]==""){
 	output("<li>Kleinere Modifikationen: 45 Titel (nicegames.de), Aprilscherz deaktiviert, Codeoptimierunge (Chaosmaker), erweiterte F.A.Q., erweiterte Superuserfunktionen, Forumlink, keine Zinsen mehr für Superreiche, konfigurierbares Impressum, Lotterie in der Kneipe (unbekannt, anpera), Multiaccount-Cheat-Schutz (anpera), neuste Schlagzeile auf dem Dorfplatz, neuste Spieler auf der Startseite, Online/Offline-Anzeige in jedem Chat, Rasse in Kämpferliste, Suchfunktion in langen Listen, Uhrzeit im Totenreich, verbessertes Login (nTE), Willkommens-News, Zox Grill in Darkhorse Tavern (Reznarth?), zusätzliche `qF`Ra`ar`9b`8e`vn`r.`V.`T.",true);
 	output("</ul>`3...und vieles mehr.",true);
 	output("`n`n\"Changes Log\" mit allen Änderungen seit 14.1.2004 gibt es `b<a href='http://www.anpera.net/forum/viewtopic.php?t=317' target='_blank'>hier</a>`b.",true);
-}elseif($_GET[op]=="gpl"){
+}elseif($_GET['op']=="gpl"){
 	output("`&`b`cGNU GENERAL PUBLIC LICENSE`b`nVersion 2, June 1991`c
 `n`n`0
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.`n
@@ -428,7 +428,7 @@ Public License instead of this License.");
 }else{
 
 }
-if ($session[user][loggedin]) {
+if ($session['user']['loggedin']) {
 	addnav("Zurück zu den News","news.php");
 }else{
 	addnav("Login","index.php");

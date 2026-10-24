@@ -30,11 +30,11 @@ if ($_GET['op']=="del"){
 if ($_GET['op']=="add"){
 	output("Item erzeugen:`n");
 	addnav("Item Editor","itemeditor.php");
-	if ($_GET[show]) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET[show])."");
-	itemform(array("class"=>$_GET[show]));
+	if ($_GET['show']) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET['show'])."");
+	itemform(array("class"=>$_GET['show']));
 }elseif ($_GET['op']=="edit"){
 	addnav("Item Editor","itemeditor.php");
-	if ($_GET[show]) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET[show])."");
+	if ($_GET['show']) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET['show'])."");
 	$sql = "SELECT * FROM items WHERE id='{$_GET['id']}'";
 	$result = db_query($sql);
 	if (db_num_rows($result)<=0){
@@ -49,7 +49,7 @@ if ($_GET['op']=="add"){
 	$buff = array();
 	reset($_POST['item']['buff']);
 	if (isset($_POST['item']['buff']['activate'])) $_POST['item']['buff']['activate']=join(",",$_POST['item']['buff']['activate']);
-	while (list($key,$val)=each($_POST['item']['buff'])){
+	foreach ($_POST['item']['buff'] as $key => $val) {
 		if ($val>""){
 			$buff[$key]=stripslashes($val);
 		}
@@ -60,7 +60,7 @@ if ($_GET['op']=="add"){
 	$vals='';
 	$sql='';
 	$i=0;
-	while (list($key,$val)=each($_POST['item'])){
+	foreach ($_POST['item'] as $key => $val) {
 		if (is_array($val)) $val = addslashes(serialize($val));
 		if ($_GET['id']>""){
 			$sql.=($i>0?",":"")."$key='$val'";
@@ -82,15 +82,15 @@ if ($_GET['op']=="add"){
 		output("Item nicht gespeichert: $sql");
 	}
 	addnav("Item Editor","itemeditor.php");
-	if ($_GET[show]) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET[show])."");
+	if ($_GET['show']) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET['show'])."");
 }else{
 	if($_GET['show']){
 		$ppp=50; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
-			addnav("Vorherige Seite","itemeditor.php?show=".urlencode($_GET[show])."&limit=".($page-1)."");
+			$page=(int)$_GET['limit'];
+			addnav("Vorherige Seite","itemeditor.php?show=".urlencode($_GET['show'])."&limit=".($page-1)."");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sql = "SELECT items.*,accounts.name AS ownername FROM items
@@ -98,7 +98,7 @@ if ($_GET['op']=="add"){
 		output("<table>",true);
 		output("<tr><td>Ops</td><td>Name</td><td>Besitzer</td><td>Beschreibung</td></tr>",true);
 		$result = db_query($sql);
-		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","itemeditor.php?show=".urlencode($_GET[show])."&limit=".($page+1)."");
+		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","itemeditor.php?show=".urlencode($_GET['show'])."&limit=".($page+1)."");
 		$cat = "";
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
@@ -114,7 +114,7 @@ if ($_GET['op']=="add"){
 		}
 		output("</table>",true);
 		addnav("Item Editor","itemeditor.php");
-		addnav("Item hinzufügen","itemeditor.php?op=add&show=".urlencode($_GET[show])."");
+		addnav("Item hinzufügen","itemeditor.php?op=add&show=".urlencode($_GET['show'])."");
 	}else{
 		$sql = "SELECT class FROM items ORDER BY class";
 		output("Verfügbare \"classes\":`n`n<table>",true);

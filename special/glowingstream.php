@@ -1,5 +1,5 @@
 <?php
-if ($HTTP_GET_VARS[op]==""){
+if ($HTTP_GET_VARS['op']==""){
   output("`#Du entdeckst einen schmalen Strom schwach glühenden Wassers, das über runde, glatte, weiße Steine blubbert. Du kannst eine magische ");
 	output("Kraft in diesem Wasser fühlen. Es zu trinken, könnte ungeahnte Kräfte in dir freisetzen - oder es könnte ");
 	output("dich zum völligen Krüppel machen. Wagst du es, von dem Wasser zu trinken?");
@@ -8,10 +8,10 @@ if ($HTTP_GET_VARS[op]==""){
 	addnav("Nicht Trinken","forest.php?op=nodrink");
 	addnav("","forest.php?op=drink");
 	addnav("","forest.php?op=nodrink");
-	$session[user][specialinc]="glowingstream.php";
+	$session['user']['specialinc']="glowingstream.php";
 }else{
-  $session[user][specialinc]="";
-	if ($HTTP_GET_VARS[op]=="drink"){
+  $session['user']['specialinc']="";
+	if ($HTTP_GET_VARS['op']=="drink"){
 	  $rand = e_rand(1,10);
 		output("`#Im Wissen, daß dieses Wasser dich auch umbringen könnte, willst du trotzdem die Chance wahrnehmen. Du kniest dich am Rand des Stroms nieder ");
 		output("und nimmst einen langen, kräftigen Schluck von diesem kalten Wasser. Du fühlst Wärme ");
@@ -30,10 +30,10 @@ if ($HTTP_GET_VARS[op]==""){
 				output("Da die Waldkreaturen die Gefahr dieses Platzes kennen, meiden sie ihn und deinen Körper als Nahrungsquelle. Du behältst dein Gold.`n");
 				output("Die Lektion, die du heute gelernt hast, gleicht jeden Erfahrungsverlust aus.`n");
 				output("Du kannst morgen wieder kämpfen.");
-				$session[user][alive]=false;
-				$session[user][hitpoints]=0;
+				$session['user']['alive']=false;
+				$session['user']['hitpoints']=0;
 				addnav("Tägliche News","news.php");
-				addnews($session[user][name]." hat seltsame Kräfte im Wald entdeckt und wurde nie wieder gesehen.");
+				addnews($session['user']['name']." hat seltsame Kräfte im Wald entdeckt und wurde nie wieder gesehen.");
 			break;
 			case 2:
         output("`igefolgt von einer bedrohlichen, beklemmenden Kälte`i. Du taumelst und greifst dir an die Brust. Du fühlst das, was ");
@@ -50,19 +50,19 @@ if ($HTTP_GET_VARS[op]==""){
 				output("aufzurappeln. Dein abruptes Aufstehen erschreckt die Fee, und noch bevor du die Möglichkeit hast, ");
 				output("ihr zu danken, fliegt sie davon.");
 				output("`n`n`^Du bist dem Tod knapp entkommen! Du hast einen Waldkampf und die meisten deiner Lebenspunkte verloren.");
-				if ($session[user][turns]>0) $session[user][turns]--;
-				if ($session[user][hitpoints]>($session[user][hitpoints]*.1)) $session[user][hitpoints]=round($session[user][hitpoints]*.1,0);
+				if ($session['user']['turns']>0) $session['user']['turns']--;
+				if ($session['user']['hitpoints']>($session['user']['hitpoints']*.1)) $session['user']['hitpoints']=round($session['user']['hitpoints']*.1,0);
 			break;
 			case 3:
 			  output("du fühlst dich GESTÄRKT!");
 				output("`n`n`^Deine Lebenspunkte wurden aufgefüllt und du spürst die Kraft für einen weiteren Waldkampf.");
-				if ($session[user][hitpoints]<$session[user][maxhitpoints]) $session[user][hitpoints]=$session[user][maxhitpoints];
-				$session[user][turns]++;
+				if ($session['user']['hitpoints']<$session['user']['maxhitpoints']) $session['user']['hitpoints']=$session['user']['maxhitpoints'];
+				$session['user']['turns']++;
 				break;
 			case 4:
 			  output("du fühlst deine SINNE GESCHÄRFT! Du bemerkst unter den Kieselsteinen am Bach etwas glitzern.");
 				output("`n`n`^Du findest einen EDELSTEIN!");
-				$session[user][gems]++;
+				$session['user']['gems']++;
 				//debuglog("found 1 gem by the stream");
 				break;
 			case 5:
@@ -70,12 +70,12 @@ if ($HTTP_GET_VARS[op]==""){
 			case 7:
 			  output("du fühlst dich VOLLER ENERGIE!");
 				output("`n`n`^Du bekommst einen zusätzlichen Waldkampf!");
-				$session[user][turns]++;
+				$session['user']['turns']++;
 				break;
 			default:
 			  output("du fühlst dich GESUND!");
 				output("`n`n`^Deine Lebenspunkte wurden vollständig aufgefüllt.");
-				if ($session[user][hitpoints]<$session[user][maxhitpoints]) $session[user][hitpoints]=$session[user][maxhitpoints];
+				if ($session['user']['hitpoints']<$session['user']['maxhitpoints']) $session['user']['hitpoints']=$session['user']['maxhitpoints'];
 		}
 	}else{
 	  output("`#Weil du die verhängnisvollen Kräfte in diesem Wasser fürchtest, entschließt du dich, es nicht zu trinken und gehst zurück in den Wald.");

@@ -297,8 +297,8 @@ Durch ne Menge Gesichtsmasken, mein Lieber!! MightyE bevorzugt speziell eine Mas
 }else{
 	popup_header("Anfrage für Hilfe");
 	if (count($_POST)>0){
-		$p = $session[user][password];
-		unset($session[user][password]);
+		$p = $session['user']['password'];
+		unset($session['user']['password']);
 		/*
 		mail(getsetting("gameadminemail","niemand@localhost"),"LoGD Anfrage",output_array($_POST,"POST:").output_array($session,"Session:"));
 		$sql = "SELECT acctid FROM accounts WHERE emailaddress='".getsetting("gameadminemail","postmaster@localhost")."'";
@@ -313,9 +313,9 @@ Durch ne Menge Gesichtsmasken, mein Lieber!! MightyE bevorzugt speziell eine Mas
 			systemmail($row[acctid],"Petition",output_array($_POST),(int)$session[user][acctid]);
 		}
 		*/
-		$sql = "INSERT INTO petitions (author,date,body,pageinfo,lastact) VALUES (".(int)$session[user][acctid].",now(),\"".addslashes(output_array($_POST))."\",\"".addslashes(output_array($session,"Session:"))."\",NOW())";
+		$sql = "INSERT INTO petitions (author,date,body,pageinfo,lastact) VALUES (".(int)$session['user']['acctid'].",now(),\"".addslashes(output_array($_POST))."\",\"".addslashes(output_array($session,"Session:"))."\",NOW())";
 		db_query($sql);
-		$session[user][password]=$p;
+		$session['user']['password']=$p;
 		output("Deine Anfrage wurde an die Admins gesendet. Bitte hab etwas Geduld, die meisten Admins 
 		haben Jobs und Verpflichtungen ausserhalb dieses Spiels. Antworten und Reaktionen können eine Weile dauern.");
 		

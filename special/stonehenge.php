@@ -1,5 +1,5 @@
 <?php
-if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
+if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
   output("`#Du wanderst auf der Suche nach etwas zum Bekämpfen ziellos durch den Wald. Plötzlich stehst du mitten auf einem Feld.");
 	output("In der Mitte kannst du einen Steinkreis sehen. Du hast das legendäre ");
 	output("Stonehenge gefunden! Du hast die Leute im Dorf über diesen mystischen Ort reden hören, aber");
@@ -10,10 +10,10 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 	addnav("Lasse es in Ruhe","forest.php?op=leavestonehenge");
 	addnav("","forest.php?op=stonehenge");
 	addnav("","forest.php?op=leavestonehenge");
-	$session[user][specialinc]="stonehenge.php";
+	$session['user']['specialinc']="stonehenge.php";
 }else{
-  $session[user][specialinc]="";
-	if ($HTTP_GET_VARS[op]=="stonehenge"){
+  $session['user']['specialinc']="";
+	if ($HTTP_GET_VARS['op']=="stonehenge"){
 	  $rand = e_rand(1,22);
 		output("`#Obwohl du weißt, daß die Kräfte der Steine unvorhersagbar wirken, nimmst du diese Chance wahr. Du ");
 		output("läufst in die Mitte der unzerstörbaren Steine und bist bereit, die fantastischen Kräfte von Stonehenge zu erfahren. ");
@@ -32,11 +32,11 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 				output("Da du physisch dorthin transportiert worden bist, hast du noch dein ganzes Gold.`n");
 				output("Du verlierst aber 5% deiner Erfahrung.`n");
 				output("Du kannst morgen wieder spielen.");
-				$session[user][alive]=false;
-				$session[user][hitpoints]=0;
-				$session[user][experience]*=0.95;
+				$session['user']['alive']=false;
+				$session['user']['hitpoints']=0;
+				$session['user']['experience']*=0.95;
 				addnav("Tägliche News","news.php");
-				addnews($session[user][name]." ist für eine Weile verschwunden und jene, welche gesucht haben, kommen nicht zurück.");
+				addnews($session['user']['name']." ist für eine Weile verschwunden und jene, welche gesucht haben, kommen nicht zurück.");
 				break;
 			case 3:
      				output(" liegt dort nur noch der Körper eines Kriegers, der die Kräfte von Stonehenge herausgefordert hat.");
@@ -44,21 +44,21 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 				output("Da dein Körper in Stonehenge liegt, verlierst du all dein Gold.`n");
 				output("Du verlierst 10% deiner Erfahrung.`n");
 				output("Du kannst morgen wieder spielen.");
-				$session[user][alive]=false;
-				$session[user][hitpoints]=0;
-				$session[user][experience]*=0.9;
+				$session['user']['alive']=false;
+				$session['user']['hitpoints']=0;
+				$session['user']['experience']*=0.9;
 				$session['user']['donation']+=1;
-				$session[user][gold] = 0;
+				$session['user']['gold'] = 0;
 				addnav("Tägliche News","news.php");
-				addnews($session[user][name]."'s lebloser Körper wurde auf einer leeren Lichtung gefunden.");
+				addnews($session['user']['name']."'s lebloser Körper wurde auf einer leeren Lichtung gefunden.");
 				break;
 			case 4:
 			case 5:
 			case 6:
 			    output("fühlst du eine zerrende Energie durch deinen Körper zucken, als ob deine Muskeln verbrennen würden. Als der schreckliche Schmerz nachlässt, bemerkst du, dass deine Muskeln VIEL grösser geworden sind.");
-			  	$reward = round($session[user][experience] * 0.1);
+			  	$reward = round($session['user']['experience'] * 0.1);
 				output("`n`n`^Du bekommst `7$reward`^ Erfahrungspunkte!");
-				$session[user][experience] += $reward;
+				$session['user']['experience'] += $reward;
 				break;
 			case 7:
 			case 8:
@@ -70,7 +70,7 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 				else if ($reward == 2) $rewardn = "ZWEI`^ Edelsteine";
 				else if ($reward == 1) $rewardn = "EINEN`^ Edelstein";
 			    output("...`n`n`^bemerkst du `%$rewardn vor deinen Füssen!`n`n");
-				$session[user][gems]+=$reward;
+				$session['user']['gems']+=$reward;
 				//debuglog("found gems from Stonehenge");  // said 4 gems ... can be less!!
 				break;
 			
@@ -80,7 +80,7 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 				output("hast du viel mehr Vertrauen in deine eigenen Fähigkeiten.`n`n");
 //                output("`^You gain four charm!");    // whoooohaa ... slow down a bit ;)
 	output("`^Dein Charme steigt!");
-                $session[user][charm] += 2;
+                $session['user']['charm'] += 2;
             	break;
 			case 14:
 			case 15:
@@ -89,7 +89,7 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 			case 18:
 			    output("fühlst du dich plötzlich extrem gesund.");
 				output("`n`n`^Deine Lebenspunkte wurden vollständig aufgefüllt.");
-				if ($session[user][hitpoints]<$session[user][maxhitpoints]) $session[user][hitpoints]=$session[user][maxhitpoints];
+				if ($session['user']['hitpoints']<$session['user']['maxhitpoints']) $session['user']['hitpoints']=$session['user']['maxhitpoints'];
 				break;
 			case 19:
 			case 20:
@@ -97,15 +97,15 @@ if ($HTTP_GET_VARS[op]=="" || $HTTP_GET_VARS[op]=="search"){
 			 // 	$reward = $session[user][maxhitpoints] * 0.1;     // uhm ... seems to be too much for permanent HP
 			  	$reward = 2;
 				output("`n`n`^Deine Lebenspunkte wurden `bpermanent`b um `7$reward `^erhöht!");
-				$session[user][maxhitpoints] += $reward;
-				$session[user][hitpoints] = $session[user][maxhitpoints];
+				$session['user']['maxhitpoints'] += $reward;
+				$session['user']['hitpoints'] = $session['user']['maxhitpoints'];
 				break;
 			case 21:
 			case 22:
-				$prevTurns = $session[user][turns];
-				if ($prevTurns >= 3) $session[user][turns]-=3;	// original value 5 - but i only offer 20 ff a day
-				else if ($prevTurns < 3) $session[user][turns]=0;
-				$currentTurns = $session[user][turns];
+				$prevTurns = $session['user']['turns'];
+				if ($prevTurns >= 3) $session['user']['turns']-=3;	// original value 5 - but i only offer 20 ff a day
+				else if ($prevTurns < 3) $session['user']['turns']=0;
+				$currentTurns = $session['user']['turns'];
 				$lostTurns = $prevTurns - $currentTurns;
 				
 				output("ist der Tag vergangen. Es scheint, als hätte Stonehenge dich für die meiste Zeit des Tages in der Zeit eingefroren.`n");

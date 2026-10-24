@@ -11,14 +11,14 @@ if (addcommentary()) {
 
 $statuses=array(0=>"`bUngelesen`b","Gelesen","Geschlossen");
 
-if ($_GET[op]=="del"){
+if ($_GET['op']=="del"){
 	$sql = "DELETE FROM petitions WHERE petitionid='$_GET[id]'";
 	db_query($sql);
 	$sql = "DELETE FROM commentary WHERE section='pet-{$_GET['id']}'";
 	db_query($sql);
 	$sql = 'DELETE FROM petitionmail WHERE petitionid="'.$_GET['id'].'"';
 	db_query($sql);
-	$_GET[op]="";
+	$_GET['op']="";
 }
 elseif ($_GET['op']=='sendmessage') {
 	$sql = 'SELECT author,body FROM petitions WHERE petitionid="'.$_GET['id'].'"';
@@ -36,13 +36,13 @@ elseif ($_GET['op']=='sendmessage') {
 page_header("Petition Viewer");
 addnav("G?Zurück zur Grotte","superuser.php");
 addnav("W?Zurück zum Weltlichen","village.php");
-if ($_GET[op]==""){
+if ($_GET['op']==""){
 	$sql = "SELECT petitionid FROM petitions WHERE status=2 AND date<'".date("Y-m-d H:i:s",strtotime(date("r")."-7 days"))."'";
 	$result = db_query($sql);
 	while ($row = db_fetch_assoc($result)) db_query('DELETE FROM petitionmail WHERE petitionid="'.$row['petitionid'].'"');
 	$sql = "DELETE FROM petitions WHERE status=2 AND date<'".date("Y-m-d H:i:s",strtotime("-7 days"))."'";
 	db_query($sql);
-	if ($_GET[setstat]!=""){
+	if ($_GET['setstat']!=""){
 		$sql = "UPDATE petitions SET status='{$_GET['setstat']}' WHERE petitionid='{$_GET['id']}'";
 		db_query($sql);
 		//output($sql);
@@ -79,7 +79,7 @@ if ($_GET[op]==""){
 	Wenn du ein Problem nicht lösen kannst, markiere die Anfrage wieder als ungelesen, damit 
 	ein anderer dem Spieler helfen kann.`n
 	Wenn eine Anfrage erfolgreich bearbeitet wurde, markiere sie als geschlossen. Sie wird nach 7 Tagen dann automatisch gelöscht.");
-}elseif($_GET[op]=="view"){
+}elseif($_GET['op']=="view"){
 	if ($_GET['viewpageinfo']==1){
 		addnav("Details ausblenden","viewpetition.php?op=view&id={$_GET['id']}");
 	}else{
@@ -100,13 +100,13 @@ if ($_GET[op]==""){
 		addnav("Usereintrag bearbeiten","user.php?op=edit&userid={$row['acctid']}&returnpetition={$_GET['id']}");
 	}
 	output("`@Von: ");
-	$row[body]=stripslashes($row[body]);
-	if ($row['login']>"") output("<a href=\"mail.php?op=write&to=".rawurlencode($row[login])."&body=".URLEncode("\n\n----- Deine Anfrage -----\n".$row[body])."&subject=RE:+Hilfeanfrage\" target=\"_blank\" onClick=\"".popup("mail.php?op=write&to=".rawurlencode($row[login])."&body=".URLEncode("\n\n----- Deine Anfrage -----\n".$row[body])."&subject=RE:+Hilfeanfrage").";return false;\"><img src='images/newscroll.GIF' width='16' height='16' alt='Mail schreiben' border='0'></a>",true);
+	$row['body']=stripslashes($row['body']);
+	if ($row['login']>"") output("<a href=\"mail.php?op=write&to=".rawurlencode($row['login'])."&body=".URLEncode("\n\n----- Deine Anfrage -----\n".$row['body'])."&subject=RE:+Hilfeanfrage\" target=\"_blank\" onClick=\"".popup("mail.php?op=write&to=".rawurlencode($row['login'])."&body=".URLEncode("\n\n----- Deine Anfrage -----\n".$row['body'])."&subject=RE:+Hilfeanfrage").";return false;\"><img src='images/newscroll.GIF' width='16' height='16' alt='Mail schreiben' border='0'></a>",true);
 	output("`^`b$row[name]`b`n");
 	output("`@Datum: `^`b$row[date]`b`n");
 	output("`@Body:`^`n");
-	$body = HTMLEntities($row[body]);
-	$body = preg_replace("'([[:alnum:]_.-]+[@][[:alnum:]_.-]{2,}([.][[:alnum:]_.-]{2,})+)'i","<a href='mailto:\\1?subject=RE: Hilfeanfrage&body=".str_replace("+"," ",URLEncode("\n\n----- Deine Anfrage -----\n".$row[body]))."'>\\1</a>",$body);
+	$body = HTMLEntities($row['body']);
+	$body = preg_replace("'([[:alnum:]_.-]+[@][[:alnum:]_.-]{2,}([.][[:alnum:]_.-]{2,})+)'i","<a href='mailto:\\1?subject=RE: Hilfeanfrage&body=".str_replace("+"," ",URLEncode("\n\n----- Deine Anfrage -----\n".$row['body']))."'>\\1</a>",$body);
 	$body = preg_replace("'([\\[][[:alnum:]_.-]+[\\]])'i","<span class='colLtRed'>\\1</span>",$body);
 	$output.="<span style='font-family: fixed-width'>".nl2br($body)."</span>";
 	output("`n`@Kommentare:`n");
@@ -135,13 +135,13 @@ if ($_GET[op]==""){
 	}	
 	if ($_GET['viewpageinfo']){
 		output("`n`n`@Seiten Info:`&`n");
-		$row[pageinfo]=stripslashes($row[pageinfo]);
-		$body = HTMLEntities($row[pageinfo]);
-		$body = preg_replace("'([[:alnum:]_.-]+[@][[:alnum:]_.-]{2,}([.][[:alnum:]_.-]{2,})+)'i","<a href='mailto:\\1?subject=RE: Hilfeanfrage&body=".str_replace("+"," ",URLEncode("\n\n----- Deine Anfrage -----\n".$row[body]))."'>\\1</a>",$body);
+		$row['pageinfo']=stripslashes($row['pageinfo']);
+		$body = HTMLEntities($row['pageinfo']);
+		$body = preg_replace("'([[:alnum:]_.-]+[@][[:alnum:]_.-]{2,}([.][[:alnum:]_.-]{2,})+)'i","<a href='mailto:\\1?subject=RE: Hilfeanfrage&body=".str_replace("+"," ",URLEncode("\n\n----- Deine Anfrage -----\n".$row['body']))."'>\\1</a>",$body);
 		$body = preg_replace("'([\\[][[:alnum:]_.-]+[\\]])'i","<span class='colLtRed'>\\1</span>",$body);
 		$output.="<span style='font-family: fixed-width'>".nl2br($body)."</span>";
 	}	
-	if ($row[status]==0) {
+	if ($row['status']==0) {
 		$sql = "UPDATE petitions SET status=1 WHERE petitionid='$_GET[id]'";
 		$result = db_query($sql);
 	}

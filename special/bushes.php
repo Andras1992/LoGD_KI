@@ -24,17 +24,17 @@ switch(e_rand(1,3)){
 		output("`2Doch bevor du dich darum kümmern kannst, ihn festzuhalten, ist er dir auch schon abgerissen und hoffnungslos im Dickicht verloren.`n`n`0");
 		output("`6Du verlierst all dein Gold.`n`0");
 		//donationpoints als entschaedigung
-		if ($session[user][gold] > 1000) {
-			$session[user][donation]+= 3;
-		} else if ($session[user][gold] > 100) {
-			$session[user][donation]+= 2;
+		if ($session['user']['gold'] > 1000) {
+			$session['user']['donation']+= 3;
+		} else if ($session['user']['gold'] > 100) {
+			$session['user']['donation']+= 2;
 		} else {
-			$session[user][donation]+= 1;
+			$session['user']['donation']+= 1;
 		}
-		$gold_lost += $session[user][gold];
-		$log_lost = $session[user][gold];
+		$gold_lost += $session['user']['gold'];
+		$log_lost = $session['user']['gold'];
 		//debuglog("verlor all sein gold ($log_lost) im gebuesch");
-		$session[user][gold]=0;
+		$session['user']['gold']=0;
 		break;
 	case 2: //goldbeutel festgehalten
 		output("`2Gerade rechtzeitig genug bemerkst du, wie sich dein Goldbeutel schon etwas gelöst hat.`n");
@@ -53,7 +53,7 @@ switch(e_rand(1,3)){
 		} else {
 			output("`6Als du den Goldbeutel aufmachst, zählst du `$ $gold_lost `6Goldstücke, die nun dein sind.`n`n`0");
 		}
-		$session[user][gold]+=$gold_lost;
+		$session['user']['gold']+=$gold_lost;
 		//debuglog("fand $gold_lost in einem gebuesch");
 		$gold_lost="0";	
 		break;

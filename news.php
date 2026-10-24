@@ -1,11 +1,11 @@
 <?php
 require_once "common.php";
 
-if ($session[user][slainby]!=""){
+if ($session['user']['slainby']!=""){
 	page_header("Du wurdest besiegt!");
-		output("`\$Du wurdest in ".$session[user][killedin]."`\$ von `%".$session[user][slainby]."`\$ besiegt und um alles Gold beraubt, das du bei dir hattest. Das kostet dich 5% deiner Erfahrung. Meinst du nicht es ist Zeit für Rache?");
+		output("`\$Du wurdest in ".$session['user']['killedin']."`\$ von `%".$session['user']['slainby']."`\$ besiegt und um alles Gold beraubt, das du bei dir hattest. Das kostet dich 5% deiner Erfahrung. Meinst du nicht es ist Zeit für Rache?");
 	addnav("Weiter",$REQUEST_URI);
-	$session[user][slainby]="";
+	$session['user']['slainby']="";
 	page_footer();
 }else{
 	
@@ -15,21 +15,21 @@ if ($session[user][slainby]!=""){
 	$newsperpage=50;
 		
 	page_header("LoGD News");
-	if ($session[user][superuser]==3){
+	if ($session['user']['superuser']==3){
 		output("`0<form action=\"news.php\" method='POST'>",true);
 		output("[Admin] Meldung manuell eingeben? <input name='meldung' size='40'> ",true);
 		output("<input type='submit' class='button' value='Eintragen'>`n`n",true);
 		addnav("","news.php");
-		if ($_POST[meldung]){
-			$sql = "INSERT INTO news(newstext,newsdate,accountid) VALUES ('".addslashes($_POST[meldung])."',NOW(),0)";
+		if ($_POST['meldung']){
+			$sql = "INSERT INTO news(newstext,newsdate,accountid) VALUES ('".addslashes($_POST['meldung'])."',NOW(),0)";
 			db_query($sql) or die(db_error($link));
-			$_POST[meldung]="";
+			$_POST['meldung']="";
 		}
 		addnav("","news.php");
 	}
-	if (!$session[user][loggedin]) {
+	if (!$session['user']['loggedin']) {
 		addnav("Login", "index.php");
-	} else if ($session[user][alive]){
+	} else if ($session['user']['alive']){
 		addnav("Dorfplatz","village.php");
 	}else{
 		if($session['user']['sex'] == 1) {
@@ -43,10 +43,10 @@ if ($session[user][slainby]!=""){
 		//addnav("News");
 	}
 		addnav("Über das Spiel","about.php");
-	if ($session[user][superuser]){
+	if ($session['user']['superuser']){
 		addnav("Neuer Tag","newday.php");
 	}
-	$offset = (int)$HTTP_GET_VARS[offset];
+	$offset = (int)$HTTP_GET_VARS['offset'];
 	$timestamp=strtotime((0-$offset)." days");
 	$sql = "SELECT count(newsid) AS c FROM news WHERE newsdate='".date("Y-m-d",$timestamp)."'";
 	$result = db_query($sql);
@@ -64,7 +64,7 @@ if ($session[user][slainby]!=""){
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
 		output("`c`2-=-`@=-=`2-=-`@=-=`2-=-`@=-=`2-=-`0`c");
-		if ($session[user][superuser]>=3){
+		if ($session['user']['superuser']>=3){
 			output("[ <a href='superuser.php?op=newsdelete&newsid=$row[newsid]&return=".URLEncode($_SERVER['REQUEST_URI'])."'>Del</a> ]&nbsp;",true);
 			addnav("","superuser.php?op=newsdelete&newsid=$row[newsid]&return=".URLEncode($_SERVER['REQUEST_URI']));
 		}

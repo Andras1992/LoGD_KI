@@ -117,7 +117,7 @@ for ($i=0;$i<db_num_rows($result);$i++){
 
 // can't send mail on anpera.net
 
-	mail($row[emailaddress],"LoGD Charakter verfällt",
+	mail($row['emailaddress'],"LoGD Charakter verfällt",
 	"
 	Einer oder mehrere deiner Charaktere von Legend of the Green Dragon auf 
 	".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."
@@ -127,7 +127,7 @@ for ($i=0;$i<db_num_rows($result);$i++){
 	"From: ".getsetting("gameadminemail","postmaster@localhost.com")
 	);
 	$sql = "UPDATE accounts SET sentnotice=1,house=0,housekey=0,marriedto=0 WHERE acctid='$row[acctid]'";
-	if ((int)$row[acctid]==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
+	if ((int)$row['acctid']==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
 	db_query($sql);
 	$sql = "UPDATE houses SET owner=0,status=3 WHERE owner=$row[acctid] AND status=1";
 	db_query($sql);
@@ -154,7 +154,8 @@ db_query($sql) or die(db_error(LINK));
 savesetting("lastdboptimize",date("Y-m-d H:i:s"));
 $result = db_query("SHOW TABLES");
 for ($i=0;$i<db_num_rows($result);$i++){
-	list($key,$val)=each(db_fetch_assoc($result));
+	$row = db_fetch_assoc($result);
+	$val = reset($row);
 	db_query("OPTIMIZE TABLE $val");
 }
 ?>

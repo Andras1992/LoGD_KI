@@ -26,18 +26,18 @@ if ($HTTP_GET_VARS['op']=="list"){
 		output("`&$row[name]`0");
 		if ($session['user']['loggedin']) output("</a>",true);
 		output("</td><td>",true);
-		$loggedin=(date("U") - strtotime($row[laston]) < getsetting("LOGINTIMEOUT",900) && $row[loggedin]);
-	if ($row[location]==0) output($loggedin?"`#Online`0":"`3Die Felder`0");
-	if ($row[location]==1) output("`3Zimmer in Kneipe`0");
-	if ($row[location]==2) output("`3Im Haus`0");
+		$loggedin=(date("U") - strtotime($row['laston']) < getsetting("LOGINTIMEOUT",900) && $row['loggedin']);
+	if ($row['location']==0) output($loggedin?"`#Online`0":"`3Die Felder`0");
+	if ($row['location']==1) output("`3Zimmer in Kneipe`0");
+	if ($row['location']==2) output("`3Im Haus`0");
 		output("</td><td>",true);
-		output($row[sex]?"`!Weiblich`0":"`!Männlich`0");
+		output($row['sex']?"`!Weiblich`0":"`!Männlich`0");
 		output("</td><td>",true);
 		//$laston=round((strtotime("0 days")-strtotime($row[laston])) / 86400,0)." Tage";
-		$laston=round((strtotime(date("r"))-strtotime($row[laston])) / 86400,0)." Tage";
+		$laston=round((strtotime(date("r"))-strtotime($row['laston'])) / 86400,0)." Tage";
 		if (substr($laston,0,2)=="1 ") $laston="1 Tag";
-		if (date("Y-m-d",strtotime($row[laston])) == date("Y-m-d")) $laston="Heute";
-		if (date("Y-m-d",strtotime($row[laston])) == date("Y-m-d",strtotime(date("r")."-1 day"))) $laston="Gestern";
+		if (date("Y-m-d",strtotime($row['laston'])) == date("Y-m-d")) $laston="Heute";
+		if (date("Y-m-d",strtotime($row['laston'])) == date("Y-m-d",strtotime(date("r")."-1 day"))) $laston="Gestern";
 		if ($loggedin) $laston="Jetzt";
 		output($laston);
 		output("</td></tr>",true);
@@ -117,7 +117,7 @@ if ($HTTP_GET_VARS['op']=="list"){
 			$fee = getsetting("bountyfee",10);
 			if ($amt < $min) {
 				output("Dag Durnick blickt finster: `7\"Glaubst im Ernst, ich arbeite für so nen Hungerlohn? Denk ma drüber nach und komm wieder, wenn du bereit bist hartes Bares zu bezahlen. Für dein Opfer brauchste mindestens " . $min . " Gold, damit's meine Zeit wert is.\"");
-			} elseif ($session[user][gold] <round($amt*1.1,0)) {
+			} elseif ($session['user']['gold'] <round($amt*1.1,0)) {
 				output("Dag Durnick schaut dich finster an: `7\"Du hast nicht genug Gold für diesen Vertrag. Wenn du meine Zeit so vergeudest, sollte ich stattdessen vielleicht n Kopfgeld auf DICH aussetzen!\"");
 			} elseif ($amt + $row['bounty'] > $max) {
 				output("Dag schaut auf den Berg Münzen und lässt ihn unberührt liegen. `7\"Ich werde diesen Vertrag ablehnen. Das is viel mehr, als `^{$row['name']} `7Wert is und das weißt du. Ich bin kein verdammter Auftragskiller. N Kopfgeld von {$row['bounty']} is schon auf diesen Kopf ausgesetzt. Ich wär bereit, es auf $max zu erhöhen, nach meinen $fee% Bearbeitungsgebühren natürlich\"`n`n");
@@ -149,14 +149,14 @@ if ($HTTP_GET_VARS['op']=="list"){
 }else{
 	output("Du schlenderst rüber zu Dag Durnick, der es nichtmal für nötig hält, zu dir aufzuschauen. Er nimmt einen langen Zug aus seiner Pfeife.`n");
 	output("`7\"Du willst wohl wissn, ob n Preis auf deinen Kopf ausgesetzt is, richtig?\"`n`n");
-	if ($session[user][bounty]>0){
-		output("`3\"Nun, es sieht so aus als ob da `^".$session[user][bounty]." Gold`3 auf deinen Kopf ausgesetzt is. Du solltest gut auf dich aufpassen.\"");
+	if ($session['user']['bounty']>0){
+		output("`3\"Nun, es sieht so aus als ob da `^".$session['user']['bounty']." Gold`3 auf deinen Kopf ausgesetzt is. Du solltest gut auf dich aufpassen.\"");
 	}else{
 		output("`3\"Da is kein Kopfgeld auf dich ausgesetzt. Ich schlag vor, du tust alles, damit das auch so bleibt.\"");
 	}
-	if ($session[user][reputation]<-25) output("`n\"Und das meine ich ernst! Mach so weiter, und ich jag dich höchstpersönlich!\"");
-	if ($session[user][reputation]<-10) output("`n`0Verächtlich schnaubend wendet er sich von dir ab.");
-	if ($session[user][reputation]>25) output("`n\"Wäre echt 'ne Schande, wenn ich so ehrenwerte Leute auf meine Liste setzen müsste.\"");
+	if ($session['user']['reputation']<-25) output("`n\"Und das meine ich ernst! Mach so weiter, und ich jag dich höchstpersönlich!\"");
+	if ($session['user']['reputation']<-10) output("`n`0Verächtlich schnaubend wendet er sich von dir ab.");
+	if ($session['user']['reputation']>25) output("`n\"Wäre echt 'ne Schande, wenn ich so ehrenwerte Leute auf meine Liste setzen müsste.\"");
 	addnav("Kopfgeldliste","dag.php?op=list");
 	addnav("Kopfgeld aussetzen","dag.php?op=addbounty");
 }

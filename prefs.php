@@ -9,11 +9,11 @@ if (isset($_POST['template'])){
 require_once "common.php";
 page_header("Einstellungen & Profil");
 
-if ($HTTP_GET_VARS[op]=="suicide" && getsetting("selfdelete",0)!=0) {
-	if($session[user][acctid]==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
+if ($HTTP_GET_VARS['op']=="suicide" && getsetting("selfdelete",0)!=0) {
+	if($session['user']['acctid']==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
 
 	// inventar und haus löschen und partner freigeben
-	if ((int)$HTTP_GET[userid]==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
+	if ((int)$HTTP_GET['userid']==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
     	$sql = "UPDATE items SET owner=0 WHERE owner=$HTTP_GET_VARS[userid]";
 	db_query($sql);
 	$sql = "UPDATE houses SET owner=0,status=3 WHERE owner=$HTTP_GET_VARS[userid] AND status=1";
@@ -31,29 +31,29 @@ if ($HTTP_GET_VARS[op]=="suicide" && getsetting("selfdelete",0)!=0) {
 	addnews("`#{$session['user']['name']} beging Selbstmord.");
 	addnav("Login Seite", "index.php");
 	$session=array();
-	$session[user] = array();
-	$session[loggedin] = false;
-	$session[user][loggedin] = false;
+	$session['user'] = array();
+	$session['loggedin'] = false;
+	$session['user']['loggedin'] = false;
 
-}else if ($HTTP_GET_VARS[op]=="inventory") {
-	$back=$_GET[back];
+}else if ($HTTP_GET_VARS['op']=="inventory") {
+	$back=$_GET['back'];
 	if ($back=="") $back="village.php";
-	if ($_GET[sorti]=="") $_GET[sorti]="class ASC, name ASC, id";
-	output("`c`bDie Besitztümer von ".$session[user][name]."`b`c`n`n");
+	if ($_GET['sorti']=="") $_GET['sorti']="class ASC, name ASC, id";
+	output("`c`bDie Besitztümer von ".$session['user']['name']."`b`c`n`n");
 	output("<table cellspacing='1' cellpadding='2' align='center'><tr><td>`b<a href='prefs.php?op=inventory&sorti=name&back=$back&limit=$_GET[limit]'>Itemname</a>`b</td><td>`b<a href='prefs.php?op=inventory&sorti=class&back=$back&limit=$_GET[limit]'>Klasse</a>`b</td><td>`bWert 1`b</td><td>`bWert 2`b</td><td>`b<a href='prefs.php?op=inventory&sorti=gems&back=$back&limit=$_GET[limit]'>Verkaufswert</a>`b</td><td>`bAktion`b</td></tr>",true);
 	addnav("","prefs.php?op=inventory&sorti=name&back=$back&limit=$_GET[limit]");
 	addnav("","prefs.php?op=inventory&sorti=class&back=$back&limit=$_GET[limit]");
 	addnav("","prefs.php?op=inventory&sorti=gems&back=$back&limit=$_GET[limit]");
 	$ppp=25; // Player Per Page to display
-	if (!$_GET[limit]){
+	if (!$_GET['limit']){
 		$page=0;
 	}else{
-		$page=(int)$_GET[limit];
+		$page=(int)$_GET['limit'];
 		addnav("Vorherige Seite","prefs.php?op=inventory&limit=".($page-1)."&back=$back"."&sorti=$_GET[sorti]");
 	}
 	$limit="".($page*$ppp).",".($ppp+1);
 
-	$sql = "SELECT * FROM items WHERE owner=".$session[user][acctid]." ORDER BY $_GET[sorti] ASC LIMIT $limit";
+	$sql = "SELECT * FROM items WHERE owner=".$session['user']['acctid']." ORDER BY $_GET[sorti] ASC LIMIT $limit";
 	$result = db_query($sql) or die(db_error(LINK));
 	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","prefs.php?op=inventory&limit=".($page+1)."&sorti=$_GET[sorti]"."&back=$back");
 	if (db_num_rows($result)==0){
@@ -63,7 +63,7 @@ if ($HTTP_GET_VARS[op]=="suicide" && getsetting("selfdelete",0)!=0) {
 			$item = db_fetch_assoc($result);
 			$bgcolor=($i%2==1?"trlight":"trdark");
 			output("<tr class='$bgcolor'><td>`&$item[name]`0</td><td>`!$item[class]`0</td><td align='right'>$item[value1]</td><td align='right'>$item[value2]</td><td>",true);
-			if ($item[gold]==0 && $item[gems]==0){
+			if ($item['gold']==0 && $item['gems']==0){
 				output("`4Unverkäuflich`0");
 			}else{
 				output("`^$item[gold]`0 Gold, `#$item[gems]`0 Edelsteine");
@@ -75,7 +75,7 @@ if ($HTTP_GET_VARS[op]=="suicide" && getsetting("selfdelete",0)!=0) {
 			}else if ($item['class']=="Geschenk"){
 				output("<a href='invhandler.php?op=throw&id=$item[id]&back=$back'>Wegwerfen</a>",true);
 				addnav("","invhandler.php?op=throw&id=$item[id]&back=$back");
-				if ($session[user][housekey]>0 && $session[user][house]==$session[user][housekey]){
+				if ($session['user']['housekey']>0 && $session['user']['house']==$session['user']['housekey']){
 					output(" | <a href='invhandler.php?op=house&id=$item[id]&back=$back'>Einlagern</a>",true);
 					addnav("","invhandler.php?op=house&id=$item[id]&back=$back");	
 				}
@@ -85,7 +85,7 @@ if ($HTTP_GET_VARS[op]=="suicide" && getsetting("selfdelete",0)!=0) {
 			output("]</td></tr><tr class='$bgcolor'><td align='right'>Beschreibung:</td><td colspan=5>$item[description]</td></tr>",true);
 		}
 	}
-	if (getsetting("hasegg",0)==$session[user][acctid]){
+	if (getsetting("hasegg",0)==$session['user']['acctid']){
 			$bgcolor=($i%2==1?"trdark":"trlight");
 			output("<tr class='$bgcolor'><td>`^Das goldene Ei`0</td><td></td><td></td><td></td><td>`4Unverkäuflich`0</td><td></td></tr>",true);
 	}
@@ -95,19 +95,19 @@ if ($HTTP_GET_VARS[op]=="suicide" && getsetting("selfdelete",0)!=0) {
 } else {
 
 checkday();
-if ($session[user][alive]){
+if ($session['user']['alive']){
 	addnav("Zurück zum Dorf","village.php");
 }else{
 	addnav("Zurück zu den News","news.php");
 }
 if (count($_POST)==0){
 }else{
-	if ($_POST[pass1]!=$_POST[pass2]){
+	if ($_POST['pass1']!=$_POST['pass2']){
 		output("`#Deine Passwörter stimmen nicht überein.`n");
 	}else{
-		if ($_POST[pass1]!=""){
-			if (strlen($_POST[pass1])>3){
-				$session[user][password]=md5($_POST[pass1]);
+		if ($_POST['pass1']!=""){
+			if (strlen($_POST['pass1'])>3){
+				$session['user']['password']=md5($_POST['pass1']);
 				output("`#Dein Passwort wurde geändert.`n");
 			}else{
 				output("`#Dein Passwort ist zu kurz. Es muss mindestens 4 Zeichen lang sein.`n");
@@ -116,7 +116,7 @@ if (count($_POST)==0){
 	}
 	reset($_POST);
 	$nonsettings = array("pass1"=>1,"pass2"=>1,"email"=>1,"template"=>1,"bio"=>1,"avatar"=>1);
-	while (list($key,$val)=each($_POST)){
+	foreach ($_POST as $key => $val) {
 		if (!$nonsettings[$key]) $session['user']['prefs'][$key]=$_POST[$key];
 	}
 	if (closetags(stripslashes($_POST['bio']),'`i`b`c`H')!=$session['user']['bio']){
@@ -130,27 +130,27 @@ if (count($_POST)==0){
 	if (getsetting("avatare",0)==1) {
 		if (stripslashes($_POST['avatar'])!=$session['user']['avatar']){
 			$session['user']['avatar']=stripslashes(preg_replace("'[\"\'\\><@?*&#; ]'","",$_POST['avatar']));
-			$url=$session[user][avatar];
+			$url=$session['user']['avatar'];
 			if ($url>"" && strpos($url,".gif")<1 && strpos($url,".GIF")<1 && strpos($url,".jpg")<1 && strpos($url,".JPG")<1 && strpos($url,".png")<1 && strpos($url,".PNG")<1){
-				$session[user][avatar]="";
+				$session['user']['avatar']="";
 				$msg.="`\$Ungültiger Avatar! Nur .jpg, .png, oder .gif`0`n";
 			}
 		}
 	}
-	if ($_POST[email]!=$session[user][emailaddress]){
-		if (is_email($_POST[email])){
+	if ($_POST['email']!=$session['user']['emailaddress']){
+		if (is_email($_POST['email'])){
 			if (getsetting("requirevalidemail",0)==1){
 				output("`#Die E-Mail Adresse kann nicht geändert werden, die Systemeinstellungen verbieten es. (E-Mail Adressen können nur geändert werden, wenn der Server mehr als einen Account pro Adresse zulässt.) Sende eine Petition, wenn du deine Adresse ändern willst, weil sie nicht mehr länger gültig ist.`n");
 			}else{
 				output("`#Deine E-Mail Adresse wurde geändert.`n");
-				$session[user][emailaddress]=$_POST[email];
+				$session['user']['emailaddress']=$_POST['email'];
 			}
 		}else{
 			if (getsetting("requireemail",0)==1){
 				output("`#Das ist keine gültige E-Mail Adresse.`n");
 			}else{
 				output("`#Deine E-Mail Adresse wurde geändert.`n");
-				$session[user][emailaddress]=$_POST[email];
+				$session['user']['emailaddress']=$_POST['email'];
 			}
 		}
 	}
@@ -181,7 +181,7 @@ if (count($_POST)==0){
 			output("`b`@Argh, dein Admin hat entschieden, daß du keine Skins benutzen darfst. Beschwer dich bei ihm, nicht bei mir.`n");
 		}else{
 			output("<b>Skin:</b><br>",true);
-			while (list($key,$val)=each($skins)){
+			foreach ($skins as $key => $val) {
 				output("<input type='radio' name='template' value='$val'".($_COOKIE['template']==""&&$val=="yarbrough.htm" || $_COOKIE['template']==$val?" checked":"").">".substr($val,0,strpos($val,".htm"))."<br>",true);
 			}
 		}
@@ -206,7 +206,7 @@ if (count($_POST)==0){
 	</form>",true);
 	addnav("","prefs.php?op=save");
 	addnav("Inventar anzeigen","prefs.php?op=inventory");
-	$biolink="bio.php?char=".rawurlencode($session[user][login])."&ret=".urlencode($_SERVER['REQUEST_URI']);
+	$biolink="bio.php?char=".rawurlencode($session['user']['login'])."&ret=".urlencode($_SERVER['REQUEST_URI']);
 	addnav("Bio", $biolink);
 
 	// Stop clueless lusers from deleting their character just because a

@@ -26,7 +26,7 @@ if ($_GET['resurrection']=="true") {
  ** End Settings **
  ******************/
 if (count($session['user']['dragonpoints']) <$session['user']['dragonkills']&&$_GET['dk']!=""){
-	array_push($session['user']['dragonpoints'],$_GET[dk]);
+	array_push($session['user']['dragonpoints'],$_GET['dk']);
 	switch($_GET['dk']){
 	case "hp":
 		$session['user']['maxhitpoints']+=5;
@@ -151,23 +151,23 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 			output("`@Du bist wiedererweckt worden! Dies ist der Tag deiner ".ordinal($session['user']['resurrections'])." Wiederauferstehung.`0`n");
 			$session['user']['alive']=true;
 		}
-		$session[user][age]++;
-		$session[user][seenmaster]=0;
+		$session['user']['age']++;
+		$session['user']['seenmaster']=0;
 		output("Du öffnest deine Augen und stellst fest, dass dir ein neuer Tag geschenkt wurde. Dies ist dein `^".ordinal($session['user']['age'])."`0 Tag in diesem Land. ");
 		output("Du fühlst dich frisch und bereit für die Welt!`n");
 		output("`2Runden für den heutigen Tag: `^$turnsperday`n");
 
 
-		if ($session[user][goldinbank]<0 && abs($session[user][goldinbank])<(int)getsetting("maxinbank",10000)){
+		if ($session['user']['goldinbank']<0 && abs($session['user']['goldinbank'])<(int)getsetting("maxinbank",10000)){
 			output("`2Heutiger Zinssatz: `^".(($interestrate-1)*100)."% `n");
 			output("`2Zinsen für Schulden: `^".-(int)($session['user']['goldinbank']*($interestrate-1))."`2 Gold.`n");
-		}else if ($session[user][goldinbank]<0 && abs($session[user][goldinbank])>=(int)getsetting("maxinbank",10000)){
+		}else if ($session['user']['goldinbank']<0 && abs($session['user']['goldinbank'])>=(int)getsetting("maxinbank",10000)){
 			output("`4Die Bank erlässt dir deine Zinsen, da du schon hoch genug verschuldet bist.`n");
 			$interestrate=1;
-		}else if ($session[user][goldinbank]>=0 && $session[user][goldinbank]>=(int)getsetting("maxinbank",10000) && $session['user']['turns']<=getsetting("fightsforinterest",4)){
+		}else if ($session['user']['goldinbank']>=0 && $session['user']['goldinbank']>=(int)getsetting("maxinbank",10000) && $session['user']['turns']<=getsetting("fightsforinterest",4)){
 			$interestrate=1;
 			output("`4Die Bank kann dir heute keinen Zinsen zahlen. Sie würde früher oder später an dir pleite gehen.`n");
-		}else if ($session[user][goldinbank]>=0 && $session[user][goldinbank]<(int)getsetting("maxinbank",10000) && $session['user']['turns']<=getsetting("fightsforinterest",4)){
+		}else if ($session['user']['goldinbank']>=0 && $session['user']['goldinbank']<(int)getsetting("maxinbank",10000) && $session['user']['turns']<=getsetting("fightsforinterest",4)){
 			output("`2Heutiger Zinssatz: `^".(($interestrate-1)*100)."% `n");
 			output("`2Durch Zinsen verdientes Gold: `^".(int)($session['user']['goldinbank']*($interestrate-1))."`n");
 		}else{
@@ -208,16 +208,16 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 			output("`n`%Du bist verheiratet, es gibt also keinen Grund mehr, das perfekte Image aufrecht zu halten. Du lässt dich heute ein bisschen gehen.`n Du verlierst einen Charmepunkt.`n");
 			$session['user']['charm']--;
 			if ($session['user']['charm']<=0){
-				output("`n`bAls du heute aufwachst, findest du folgende Notiz neben dir im Bett:`n`5".($session[user][sex]?"Liebste":"Liebster")."");
+				output("`n`bAls du heute aufwachst, findest du folgende Notiz neben dir im Bett:`n`5".($session['user']['sex']?"Liebste":"Liebster")."");
 				output("".$session['user']['name']."`5.");
 				output("`nTrotz vieler großartiger Küsse, fühle ich mich einfach nicht mehr so zu dir hingezogen wie es früher war.`n`n");
-				output("Nenne mich wankelmütig, aber ich muss weiterziehen. Es gibt andere Krieger".($session[user][sex]?"innen":"")." in diesem Dorf und ich glaube, ");
+				output("Nenne mich wankelmütig, aber ich muss weiterziehen. Es gibt andere Krieger".($session['user']['sex']?"innen":"")." in diesem Dorf und ich glaube, ");
 				output("einige davon sind wirklich heiss. Es liegt also nicht an dir, sondern an mir, usw. usw.");
-  				$sql = "SELECT acctid,name FROM accounts WHERE locked=0 AND acctid=".$session[user][marriedto]."";
+  				$sql = "SELECT acctid,name FROM accounts WHERE locked=0 AND acctid=".$session['user']['marriedto']."";
   				$result = db_query($sql) or die(db_error(LINK));
 				$row = db_fetch_assoc($result);
-				$partner=$row[name];
-				if ($partner=="") $partner = $session[user][sex]?"Seth":"Violet";
+				$partner=$row['name'];
+				if ($partner=="") $partner = $session['user']['sex']?"Seth":"Violet";
 				output("`n`nSei nicht traurig!`nIn Liebe, $partner`b`n");
 				addnews("`\$$partner `\$hat {$session['user']['name']}`\$ für \"andere Interessen\" verlassen!");
 				if ($session['user']['marriedto']==4294967295) $session['user']['marriedto']=0;
@@ -226,7 +226,7 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 					$session['user']['marriedto']=0;
 					$sql = "UPDATE accounts SET charisma=0,marriedto=0 WHERE acctid='$row[acctid]'";
 					db_query($sql);
-					systemmail($row['acctid'],"`\$Wieder solo!`0","`6Du hast `&{$session['user']['name']}`6 verlassen. ".($session[user][sex]?"Sie":"Er")." war einfach widerlich in letzter Zeit.");
+					systemmail($row['acctid'],"`\$Wieder solo!`0","`6Du hast `&{$session['user']['name']}`6 verlassen. ".($session['user']['sex']?"Sie":"Er")." war einfach widerlich in letzter Zeit.");
 				}
 			}
 		}
@@ -235,7 +235,7 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 		$tempbuf = unserialize($session['user']['bufflist']);
 		$session['user']['bufflist']="";
 		$session['bufflist']=array();
-		while(list($key,$val)=@each($tempbuff)){
+		foreach ($tempbuff as $key => $val) {
 			if ($val['survivenewday']==1){
 				$session['bufflist'][$key]=$val;
 				output("{$val['newdaymessage']}`n");
@@ -244,12 +244,12 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 
 		reset($session['user']['dragonpoints']);
 		$dkff=0;
-		while(list($key,$val)=each($session['user']['dragonpoints'])){
+		foreach ($session['user']['dragonpoints'] as $key => $val) {
 			if ($val=="ff"){
 				$dkff++;
 			}
 		}
-		if ($session[user][hashorse]){
+		if ($session['user']['hashorse']){
 			$session['bufflist']['mount']=unserialize($playermount['mountbuff']);
 		}
 		if ($dkff>0) output("`n`2Du erhöhst deine Waldkämpfe um `^$dkff`2 durch verteilte Drachenpunkte!"); 
@@ -298,8 +298,8 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 			//debuglog(($nbgold >= 0 ? "earned " : "paid ") . abs($nbgold) . " gold in interest");
 		}
 		$session['user']['turns']=$turnsperday+$spirits+$dkff;
-		if ($session[user][maxhitpoints]<6) $session[user][maxhitpoints]=6;
-		$session['user']['hitpoints'] = $session[user][maxhitpoints];
+		if ($session['user']['maxhitpoints']<6) $session['user']['maxhitpoints']=6;
+		$session['user']['hitpoints'] = $session['user']['maxhitpoints'];
 		$session['user']['spirits'] = $spirits;
 		$session['user']['playerfights'] = $dailypvpfights;
 		$session['user']['transferredtoday'] = 0;
@@ -360,15 +360,15 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 	if ($_GET['resurrection']==""){
 		if ($session['user']['specialty']==1 && $settings['weather']=="Regnerisch"){
 			output("`^`nDer Regen schlägt dir aufs Gemüt, aber erweitert deine Dunklen Künste. Du bekommst eine zusätzliche Anwendung.`n");
-			$session[user][darkartuses]++;
+			$session['user']['darkartuses']++;
 			}	
 		if ($session['user']['specialty']==2 and $settings['weather']=="Gewittersturm"){
 			output("`^`nDie Blitze fördern deine Mystischen Kräfte. Du bekommst eine zusätzliche Anwendung.`n");
-			$session[user][magicuses]++;
+			$session['user']['magicuses']++;
 			}	
 		if ($session['user']['specialty']==3 and $settings['weather']=="Neblig"){
 			output("`^`nDer Nebel bietet Dieben einen zusätzlichen Vorteil. Du bekommst eine zusätzliche Anwendung.`n");
-			$session[user][thieveryuses]++;
+			$session['user']['thieveryuses']++;
 			}		
 	}
 //End global newdaysemaphore code and weather mod.
@@ -393,7 +393,7 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 		$config = unserialize($session['user']['donationconfig']);
 		if (!is_array($config['forestfights'])) $config['forestfights']=array();
 		reset($config['forestfights']);
-		while (list($key,$val)=each($config['forestfights'])){
+		foreach ($config['forestfights'] as $key => $val) {
 			$config['forestfights'][$key]['left']--;
 			output("`@Du bekommst eine Extrarunde für die Punkte auf `^{$val['bought']}`@.");
 			$session['user']['turns']++;
@@ -445,19 +445,19 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 		$session['user']['drunkenness']=0;
 		$session['user']['bounties']=0;
 		// Buffs from items
-		$sql="SELECT * FROM items WHERE (class='Fluch' OR class='Geschenk' OR class='Zauber') AND owner=".$session[user][acctid]." ORDER BY id";
+		$sql="SELECT * FROM items WHERE (class='Fluch' OR class='Geschenk' OR class='Zauber') AND owner=".$session['user']['acctid']." ORDER BY id";
 		$result=db_query($sql);
 		for ($i=0;$i<db_num_rows($result);$i++){
 		  	$row = db_fetch_assoc($result);
-			if (strlen($row[buff])>8){
-				$row[buff]=unserialize($row[buff]);
-				if ($row['class']!='Zauber') $session[bufflist][$row[buff][name]]=$row[buff];
+			if (strlen($row['buff'])>8){
+				$row['buff']=unserialize($row['buff']);
+				if ($row['class']!='Zauber') $session['bufflist'][$row['buff']['name']]=$row['buff'];
 				if ($row['class']=='Fluch') output("`n`G$row[name]`G nagt an dir.");
 				if ($row['class']=='Geschenk') output("`n`1$row[name]`1: $row[description]");
 			}
-			if ($row[hvalue]>0){
-				$row[hvalue]--;
-				if ($row[hvalue]<=0){
+			if ($row['hvalue']>0){
+				$row['hvalue']--;
+				if ($row['hvalue']<=0){
 					db_query("DELETE FROM items WHERE id=$row[id]");
 					if ($row['class']=='Fluch') output(" Aber nur noch heute.");
 					if ($row['class']=='Zauber') output("`n`Q$row[name]`Q hat seine Kraft verloren.");

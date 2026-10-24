@@ -1,4 +1,4 @@
-<?
+<?php
 /* Format for translator.php
  Each translatable page has its own entry below, locate the page where the text you want
  to translate is, and populate the $replace array with "From"=>"To" translation combinations.
@@ -38,7 +38,7 @@ if (file_exists("translator_".$language.".php")){
 function replacer($input,$replace){
 	$originput = $input;
 	if (!is_array($replace)) return $input;
-	while (list($s,$r)=each($replace)){
+	foreach ($replace as $s => $r) {
 		if (is_array($r)){
 			$input = str_replace(array_keys($r),array_values($r),$input);
 		}else{

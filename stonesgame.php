@@ -22,7 +22,7 @@ checkday();
 page_header("Steinchenglücksspiel");
 
 output("`c`b`&Steinchenglücksspiel`0`b`c`n`n");
-if ($HTTP_GET_VARS[op] == ""){
+if ($HTTP_GET_VARS['op'] == ""){
 	output("`tDu fragst nach dem Glückspiel. Der alte Mann schaut dich ernst an und macht dir klar, dass er diese Spiel nur um Edelsteine spielen wird!`n");
 	output("Dann erklärt er dir das Spiel:`n");
 	output("Er wird nacheinander 3 Steine aus seiner Tasche ziehen. Folgende Gewinne sind möglich:`n`#");
@@ -31,7 +31,7 @@ if ($HTTP_GET_VARS[op] == ""){
 	output("<IMG SRC=\"images/stone1.gif\" align='middle'><IMG SRC=\"images/stone1.gif\" align='middle'><IMG SRC=\"images/stone1.gif\" align='middle'> = 4 Edelsteine.`n",true);
 	output("<IMG SRC=\"images/stone2.gif\" align='middle'><IMG SRC=\"images/stone2.gif\" align='middle'><IMG SRC=\"images/stone2.gif\" align='middle'> = 8 Edelsteine.`n",true);
 	addnav("Edelstein setzen","stonesgame.php?op=play");
-}else if ($HTTP_GET_VARS[op] == "play" && $session['user']['gems']>0){
+}else if ($HTTP_GET_VARS['op'] == "play" && $session['user']['gems']>0){
 	output("`tDu wirfst einen Edelstein auf den Tisch und der Alte fängt an, Steine aus seinem Beute fallen zu lassen.`n`n");
 	$session['user']['gems']-=1;
 	$stoneone=e_rand(1,3000);
@@ -76,8 +76,8 @@ if ($HTTP_GET_VARS[op] == ""){
 }else{
 	output("`tDu hast keine Edelsteine dabei. Wie peinlich.`n");
 }
-if ($session[user][specialinc]=="darkhorse.php") addnav("Zurück zur Taverne","forest.php?specialinc=darkhorse.php&op=oldman");
-else if ($session[user][specialinc]=="castle.php") addnav("Zurück zur Burg","forest.php?specialinc=castle.php&op=return");
+if ($session['user']['specialinc']=="darkhorse.php") addnav("Zurück zur Taverne","forest.php?specialinc=darkhorse.php&op=oldman");
+else if ($session['user']['specialinc']=="castle.php") addnav("Zurück zur Burg","forest.php?specialinc=castle.php&op=return");
 else addnav("Zurück zum Dorf","village.php");
 
 //I cannot make you keep this line here but would appreciate it left in.

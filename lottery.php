@@ -10,14 +10,14 @@ Modifications and translation by anpera
 require_once "common.php";
 page_header("Lotterie");
 
-$myname = $session[user][name];
+$myname = $session['user']['name'];
 $jackpot = getsetting("jackpot",100);
 $winnumber = getsetting("lottonumber",123);
-$cost = $session[user][level]*5;
+$cost = $session['user']['level']*5;
 
-switch($HTTP_GET_VARS[op]){
+switch($HTTP_GET_VARS['op']){
 	case "":
-	if($session[user][lottery]<1){
+	if($session['user']['lottery']<1){
 		addnav("Los kaufen","lottery.php?op=buy");
 		addnav("Zurück zur Bar","inn.php");
 		output("`^Du kannst jeden Tag ein Los kaufen und dein Glück damit versuchen, den Jackpot zu knacken. ");
@@ -32,21 +32,21 @@ switch($HTTP_GET_VARS[op]){
 	}
 	break;
 	case "buy":
-	if($session[user][gold]<$cost){
+	if($session['user']['gold']<$cost){
 		output("`^Ein Los kostet $cost Gold! Soviel hast du nicht dabei.`n");
 		addnav("Zurück zur Kneipe","inn.php");
 	}else{
 		addnav("Zurück zur Kneipe","inn.php");
-		$session[user][lottery] = e_rand(100,500);
-		$session[user][gold]-=$cost;
+		$session['user']['lottery'] = e_rand(100,500);
+		$session['user']['gold']-=$cost;
 		savesetting("jackpot",(string)(getsetting("jackpot",0)+ ($cost)));
-		output("`^Die Nummer auf deinem Los ist `b`@".$session[user][lottery]."`b`^...`n");
-		if ($session[user][lottery] == $winnumber){
+		output("`^Die Nummer auf deinem Los ist `b`@".$session['user']['lottery']."`b`^...`n");
+		if ($session['user']['lottery'] == $winnumber){
 			output("`^`cDU HAST GEWONNEN!!!!! DIE NUMMERN STIMMEN ÜBEREIN! DU GEWINNST `b$jackpot`b GOLD!`n");
-			$session[user][gold]+=getsetting("jackpot",0);
+			$session['user']['gold']+=getsetting("jackpot",0);
 			savesetting("jackpot",100);
 			savesetting("lottonumber",e_rand(100,500));
-			addnews($session[user][name]." `^hat den Jackpot geknackt und $jackpot Gold gewonnen.");
+			addnews($session['user']['name']." `^hat den Jackpot geknackt und $jackpot Gold gewonnen.");
 			
 			output("<SCRIPT Language='JavaScript'>
 count = 40;

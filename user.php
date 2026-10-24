@@ -5,7 +5,7 @@
 require_once "common.php";
 isnewday(3);
 
-if ($_GET[op]=="search"){
+if ($_GET['op']=="search"){
 	$sql = "SELECT acctid FROM accounts WHERE ";
 	$where="
 	login LIKE '%{$_POST['q']}%' OR 
@@ -19,19 +19,19 @@ if ($_GET[op]=="search"){
 	$result = db_query($sql.$where);
 	if (db_num_rows($result)<=0){
 		output("`\$Keine Ergebnisse gefunden`0");
-		$_GET[op]="";
+		$_GET['op']="";
 		$where="";
 	}elseif (db_num_rows($result)>100){
 		output("`\$Zu viele Ergebnisse gefunden. Bitte Suche einengen.`0");
-		$_GET[op]="";
+		$_GET['op']="";
 		$where="";
 	}elseif (db_num_rows($result)==1){
 		//$row = db_fetch_assoc($result);
 		//redirect("user.php?op=edit&userid=$row[acctid]");
-		$_GET[op]="";
+		$_GET['op']="";
 		$_GET['page']=0;
 	}else{
-		$_GET[op]="";
+		$_GET['op']="";
 		$_GET['page']=0;
 	}
 }
@@ -49,10 +49,10 @@ $sql = "SELECT count(acctid) AS count FROM accounts";
 $result = db_query($sql);
 $row = db_fetch_assoc($result);
 $page=0;
-while ($row[count]>0){
+while ($row['count']>0){
 	$page++;
 	addnav("$page Seite $page","user.php?page=".($page-1)."&sort=$_GET[sort]");
-	$row[count]-=100;
+	$row['count']-=100;
 }
 
 $mounts=",0,Keins";
@@ -162,14 +162,14 @@ $userinfo = array(
 	"donationconfig"=>"Spendenkäufe,viewonly"
 	);
 
-if ($_GET[op]=="lasthit"){
+if ($_GET['op']=="lasthit"){
 	$output="";
 	$sql = "SELECT output FROM accounts WHERE acctid='{$_GET['userid']}'";
 	$result = db_query($sql);
 	$row = db_fetch_assoc($result);
 	echo str_replace("<iframe src=","<iframe Xsrc=",$row['output']);
 	exit();
-}elseif ($_GET[op]=="edit"){
+}elseif ($_GET['op']=="edit"){
 	$result = db_query("SELECT * FROM accounts WHERE acctid='$_GET[userid]'") or die(db_error(LINK));
 	$row = db_fetch_assoc($result) or die(db_error(LINK));
 	output("<form action='user.php?op=special&userid=$_GET[userid]".($_GET['returnpetition']!=""?"&returnpetition={$_GET['returnpetition']}":"")."' method='POST'>",true);
@@ -194,12 +194,12 @@ if ($_GET[op]=="lasthit"){
 	output("</form>",true);
 	output("<iframe src='user.php?op=lasthit&userid={$_GET['userid']}' width='100%' height='400'>Dein Browser muss iframes unterstützen, um die letzte Seite des Users anzeigen zu können. Benutze den Link im Menü stattdessen.</iframe>",true);
 	addnav("","user.php?op=lasthit&userid={$_GET['userid']}");
-}elseif ($_GET[op]=="special"){
-	if ($_POST[newday]!=""){
+}elseif ($_GET['op']=="special"){
+	if ($_POST['newday']!=""){
 		$sql = "UPDATE accounts SET lasthit='".date("Y-m-d H:i:s",strtotime(date("r")."-".(86500/getsetting("daysperday",4))." seconds"))."' WHERE acctid='$_GET[userid]'";
-	}elseif($_POST[fixnavs]!=""){
+	}elseif($_POST['fixnavs']!=""){
 		$sql = "UPDATE accounts SET allowednavs='',output='' WHERE acctid=$_GET[userid]";
-	}elseif($_POST[clearvalidation]!=""){
+	}elseif($_POST['clearvalidation']!=""){
 		$sql = "UPDATE accounts SET emailvalidation='' WHERE acctid='$_GET[userid]'";
 	}
 	db_query($sql);
@@ -209,7 +209,7 @@ if ($_GET[op]=="lasthit"){
 	}else{
 		redirect("viewpetition.php?op=view&id={$_GET['returnpetition']}");
 	}
-}elseif ($_GET[op]=="save"){
+}elseif ($_GET['op']=="save"){
 	$sql = "UPDATE accounts SET ";
 	// Ein paar Sicherheiten für Änderungen
 	// Gesamtname geändert
@@ -261,7 +261,7 @@ if ($_GET[op]=="lasthit"){
 	}
 
 	reset($_POST);
-	while (list($key,$val)=each($_POST)){
+	foreach ($_POST as $key => $val) {
 		if (isset($userinfo[$key])){
 			if ($key=="newpassword" ){
 				if ($val>"") $sql.="password = MD5(\"$val\"),";
@@ -289,11 +289,11 @@ if ($_GET[op]=="lasthit"){
 	}
 
 	exit();
-}elseif ($_GET[op]=="del"){
+}elseif ($_GET['op']=="del"){
 	$sql = "SELECT name from accounts WHERE acctid='$_GET[userid]'";
 	$res = db_query($sql);
 	// inventar und haus löschen und partner und ei freigeben
-	if ($_GET[userid]==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
+	if ($_GET['userid']==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
     	$sql = "UPDATE items SET owner=0 WHERE owner=$_GET[userid]";
 	db_query($sql);
 	$sql = "UPDATE houses SET owner=0,status=3 WHERE owner=$_GET[userid] AND status=1";
@@ -310,42 +310,42 @@ if ($_GET[op]=="lasthit"){
 	while ($row = db_fetch_assoc($res)) {
 		addnews("`#{$row['name']} wurde von den Göttern aufgelöst.");
 	}
-}elseif($_GET[op]=="setupban"){
+}elseif($_GET['op']=="setupban"){
 	$sql = "SELECT name,lastip,uniqueid FROM accounts WHERE acctid=\"$_GET[userid]\"";
 	$result = db_query($sql) or die(db_error(LINK));
 	$row = db_fetch_assoc($result);
-	if ($row[name]!="") output("Setting up ban information based on `\$$row[name]`0");
+	if ($row['name']!="") output("Setting up ban information based on `\$$row[name]`0");
 	output("<form action='user.php?op=saveban' method='POST'>",true);
 	output("Verbannung über IP oder ID (IP bevorzugt. Bei Usern hinter NAT kannst du eine Verbannung über ID versuchen, die aber leicht ungangen werden kann)`n");
-	output("<input type='radio' value='ip' name='type' checked> IP: <input name='ip' value=\"".HTMLEntities($row[lastip])."\">`n",true);
-	output("<input type='radio' value='id' name='type'> ID: <input name='id' value=\"".HTMLEntities($row[uniqueid])."\">`n",true);
+	output("<input type='radio' value='ip' name='type' checked> IP: <input name='ip' value=\"".HTMLEntities($row['lastip'])."\">`n",true);
+	output("<input type='radio' value='id' name='type'> ID: <input name='id' value=\"".HTMLEntities($row['uniqueid'])."\">`n",true);
 	output("Dauer: <input name='duration' id='duration' size='3' value='14'> days (0 for permanent)`n",true);
 	output("Grund für die Verbannung: <input name='reason' value=\"Ärger mich nicht.\">`n",true);
 	output("<input type='submit' class='button' value='Post Ban' onClick='if (document.getElementById(\"duration\").value==0) {return confirm(\"Willst du wirklich eine permanente Verbannung aussprechen?\");} else {return true;}'></form>",true);
 	output("Bei einem IP-Bann gib entweder eine komplette IP ein, oder gebe nur den Anfang der IP ein, wenn du einen IP-Bereich sperren willst.");
 	addnav("","user.php?op=saveban");
-}elseif($_GET[op]=="saveban"){
+}elseif($_GET['op']=="saveban"){
 	$sql = "INSERT INTO bans (";
-	if ($_POST[type]=="ip"){
+	if ($_POST['type']=="ip"){
 		$sql.="ipfilter";
 	}else{
 		$sql.="uniqueid";
 	}
 	$sql.=",banexpire,banreason) VALUES (";
-	if ($_POST[type]=="ip"){
+	if ($_POST['type']=="ip"){
 		$sql.="\"$_POST[ip]\"";
 	}else{
 		$sql.="\"$_POST[id]\"";
 	}
-	$sql.=",\"".((int)$_POST[duration]==0?"0000-00-00":date("Y-m-d",strtotime(date("r")."+$_POST[duration] days")))."\",";
+	$sql.=",\"".((int)$_POST['duration']==0?"0000-00-00":date("Y-m-d",strtotime(date("r")."+$_POST[duration] days")))."\",";
 	$sql.="\"$_POST[reason]\")";
-	if ($_POST[type]=="ip"){
-		if (substr($_SERVER['REMOTE_ADDR'],0,strlen($_POST[ip])) == $_POST[ip]){
+	if ($_POST['type']=="ip"){
+		if (substr($_SERVER['REMOTE_ADDR'],0,strlen($_POST['ip'])) == $_POST['ip']){
 			$sql = "";
 			output("Du willst dich doch nicht wirklich selbst verbannen, oder?? Das ist deine eigene IP-Adresse!");
 		}
 	}else{
-		if ($_COOKIE[lgi]==$_POST[id]){
+		if ($_COOKIE['lgi']==$_POST['id']){
 			$sql = "";
 			output("Du willst dich doch nicht wirklich selbst verbannen, oder?? Das ist deine eigene ID!");
 		}
@@ -355,12 +355,12 @@ if ($_GET[op]=="lasthit"){
 		output(db_affected_rows()." Bann eingetragen.`n`n");
 		output(db_error(LINK));
 	}
-}elseif($_GET[op]=="delban"){
+}elseif($_GET['op']=="delban"){
 	$sql = "DELETE FROM bans WHERE ipfilter = '$_GET[ipfilter]' AND uniqueid = '$_GET[uniqueid]'";
 	db_query($sql);
 	//output($sql);
 	redirect("user.php?op=removeban");
-}elseif($_GET[op]=="removeban"){	
+}elseif($_GET['op']=="removeban"){	
 	db_query("DELETE FROM bans WHERE banexpire < \"".date("Y-m-d")."\" AND banexpire>'0000-00-00'");
 	
 	$sql = "SELECT * FROM bans ORDER BY banexpire";
@@ -368,20 +368,20 @@ if ($_GET[op]=="lasthit"){
 	output("<table><tr><td>Ops</td><td>IP/ID</td><td>Dauer</td><td>Text</td><td>Betrifft:</td></tr>",true);
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
-		output("<tr class='".($i%2?"trlight":"trdark")."'><td><a href='user.php?op=delban&ipfilter=".URLEncode($row[ipfilter])."&uniqueid=".URLEncode($row[uniqueid])."'>Bann&nbsp;aufheben</a>",true);
-		addnav("","user.php?op=delban&ipfilter=".URLEncode($row[ipfilter])."&uniqueid=".URLEncode($row[uniqueid]));
+		output("<tr class='".($i%2?"trlight":"trdark")."'><td><a href='user.php?op=delban&ipfilter=".URLEncode($row['ipfilter'])."&uniqueid=".URLEncode($row['uniqueid'])."'>Bann&nbsp;aufheben</a>",true);
+		addnav("","user.php?op=delban&ipfilter=".URLEncode($row['ipfilter'])."&uniqueid=".URLEncode($row['uniqueid']));
 		output("</td><td>",true);
-		output($row[ipfilter]);
-		output($row[uniqueid]);
+		output($row['ipfilter']);
+		output($row['uniqueid']);
 		output("</td><td>",true);
-		$expire=round((strtotime($row[banexpire])-strtotime(date("r"))) / 86400,0)." Tage";
+		$expire=round((strtotime($row['banexpire'])-strtotime(date("r"))) / 86400,0)." Tage";
 		if (substr($expire,0,2)=="1 ") $expire="1 Tag";
-		if (date("Y-m-d",strtotime($row[banexpire])) == date("Y-m-d")) $expire="Heute";
-		if (date("Y-m-d",strtotime($row[banexpire])) == date("Y-m-d",strtotime("1 day"))) $expire="Morgen";
-		if ($row[banexpire]=="0000-00-00") $expire="Nie";
+		if (date("Y-m-d",strtotime($row['banexpire'])) == date("Y-m-d")) $expire="Heute";
+		if (date("Y-m-d",strtotime($row['banexpire'])) == date("Y-m-d",strtotime("1 day"))) $expire="Morgen";
+		if ($row['banexpire']=="0000-00-00") $expire="Nie";
 		output($expire);
 		output("</td><td>",true);
-		output($row[banreason]);
+		output($row['banreason']);
 		output("</td><td>",true);
 		$sql = "SELECT DISTINCT accounts.name FROM bans, accounts WHERE (ipfilter='".addslashes($row['ipfilter'])."' AND bans.uniqueid='".addslashes($row['uniqueid'])."') AND ((substring(accounts.lastip,1,length(ipfilter))=ipfilter AND ipfilter<>'') OR (bans.uniqueid=accounts.uniqueid AND bans.uniqueid<>''))";
 		$r = db_query($sql);
@@ -392,7 +392,7 @@ if ($_GET[op]=="lasthit"){
 		output("</td></tr>",true);
 	}
 	output("</table>",true);
-}elseif ($_GET[op]=="debuglog"){
+}elseif ($_GET['op']=="debuglog"){
 	$id = $_GET['userid'];
 	$sql = "SELECT debuglog.*,a1.name as actorname,a2.name as targetname FROM debuglog LEFT JOIN accounts as a1 ON a1.acctid=debuglog.actor LEFT JOIN accounts as a2 ON a2.acctid=debuglog.target WHERE debuglog.actor=$id OR debuglog.target=$id ORDER by debuglog.date DESC,debuglog.id ASC LIMIT 500";
 	addnav("User Info bearbeiten","user.php?op=edit&userid=$id");
@@ -410,10 +410,10 @@ if ($_GET[op]=="lasthit"){
 		if ($row['target']) output(" {$row['targetname']}");
 		output("`n");
 	}
-}elseif ($_GET[op]==""){
+}elseif ($_GET['op']==""){
 	if (isset($_GET['page'])){
 		$order = "acctid";
-		if ($_GET[sort]!="") $order = "$_GET[sort]";
+		if ($_GET['sort']!="") $order = "$_GET[sort]";
 		$offset=(int)$_GET['page']*100;
 		$sql = "SELECT acctid,login,name,level,laston,gentimecount,lastip,uniqueid,emailaddress FROM accounts ".($where>""?"WHERE $where ":"")."ORDER BY \"$order\" LIMIT $offset,100";
 		$result = db_query($sql) or die(db_error(LINK));
@@ -439,12 +439,12 @@ if ($_GET[op]=="lasthit"){
 		$rn=0;
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row=db_fetch_assoc($result);
-			$laston=round((strtotime(date("r"))-strtotime($row[laston])) / 86400,0)." Tage";
+			$laston=round((strtotime(date("r"))-strtotime($row['laston'])) / 86400,0)." Tage";
 			if (substr($laston,0,2)=="1 ") $laston="1 Tag";
-			if (date("Y-m-d",strtotime($row[laston])) == date("Y-m-d")) $laston="Heute";
-			if (date("Y-m-d",strtotime($row[laston])) == date("Y-m-d",strtotime(date("r")."-1 day"))) $laston="Gestern";
+			if (date("Y-m-d",strtotime($row['laston'])) == date("Y-m-d")) $laston="Heute";
+			if (date("Y-m-d",strtotime($row['laston'])) == date("Y-m-d",strtotime(date("r")."-1 day"))) $laston="Gestern";
 			if ($loggedin) $laston="Jetzt";
-			$row[laston]=$laston;
+			$row['laston']=$laston;
 			if ($row[$order]!=$oorder) $rn++;
 			$oorder = $row[$order];
 			output("<tr class='".($rn%2?"trlight":"trdark")."'>",true);
@@ -459,24 +459,24 @@ if ($_GET[op]=="lasthit"){
 			addnav("","user.php?op=setupban&userid=$row[acctid]");
 			addnav("","user.php?op=debuglog&userid=$row[acctid]");
 			output("</td><td>",true);
-			output($row[login]);
+			output($row['login']);
 			output("</td><td>",true);
-			output($row[name]);
+			output($row['name']);
 			output("</td><td>",true);
-			output($row[level]);
+			output($row['level']);
 			output("</td><td>",true);
-			output($row[laston]);
+			output($row['laston']);
 			output("</td><td>",true);
-			output($row[gentimecount]);
+			output($row['gentimecount']);
 			output("</td><td>",true);
-			output($row[lastip]);
+			output($row['lastip']);
 			output("</td><td>",true);
-			output($row[uniqueid]);
+			output($row['uniqueid']);
 			output("</td><td>",true);
-			output($row[emailaddress]);
+			output($row['emailaddress']);
 			output("</td>",true);
-			$gentimecount+=$row[gentimecount];
-			$gentime+=$row[gentime];
+			$gentimecount+=$row['gentimecount'];
+			$gentime+=$row['gentime'];
 	
 			output("</tr>",true);
 		}

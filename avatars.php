@@ -12,10 +12,10 @@ if ($_GET['op']=="block"){
 	db_query($sql);
 }
 $ppp=25; // Player Per Page to display
-if (!$_GET[limit]){
+if (!$_GET['limit']){
 	$page=0;
 }else{
-	$page=(int)$_GET[limit];
+	$page=(int)$_GET['limit'];
 	addnav("Vorherige Seite","avatars.php?limit=".($page-1)."");
 }
 $limit="".($page*$ppp).",".($ppp+1);
@@ -29,7 +29,7 @@ for ($i=0;$i<db_num_rows($result);$i++){
     output("`![<a href='avatars.php?op=block&userid={$row['acctid']}'>Entfernen</a>]",true);
     addnav("","avatars.php?op=block&userid={$row['acctid']}");
     output("`&{$row['name']}: `^");
-	$pic_size = @getimagesize($row[avatar]);
+	$pic_size = @getimagesize($row['avatar']);
 	$pic_width = $pic_size[0];
 	$pic_height = $pic_size[1];
 	output("<img src=\"$row[avatar]\" ",true);

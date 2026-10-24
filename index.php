@@ -4,7 +4,7 @@
 
 require_once "common.php";
 
-if ($session[loggedin]){
+if ($session['loggedin']){
 	redirect("badnav.php");
 }
 page_header();
@@ -31,7 +31,7 @@ $onlinecount = $result['onlinecount'];
 
 // do not check if playerlimit is not reached!
 if ($onlinecount >= getsetting("maxonline",10) && getsetting("maxonline",10)!=0) {
-$id=$_COOKIE[lgi]; 
+$id=$_COOKIE['lgi']; 
 $sql = "SELECT superuser,uniqueid FROM accounts WHERE uniqueid='$id' AND superuser>0"; 
 $result = db_query($sql) or die(db_error(LINK)); 
 if (db_num_rows($result)>0) $is_superuser=1; 
@@ -47,7 +47,7 @@ if ($_GET['op']=="timeout"){
 		$session['message'].=" Es scheint, als ob die Cookies dieser Seite von deinem System blockiert werden.  Zumindest Sessioncookies müssen für diese Seite zugelassen werden.`n";
 	}
 }
-if ($session[message]>"") output("`b`\$$session[message]`b`n");
+if ($session['message']>"") output("`b`\$$session[message]`b`n");
 output("<form action='login.php' method='POST'>"
 .templatereplace("login",array("username"=>"<u>N</u>ame","password"=>"<u>P</u>asswort","button"=>"Einloggen"))
 ."</form>`c",true);
@@ -61,14 +61,14 @@ if ($_GET['op']=="timeout"){
 		$session['message'].=" Es scheint, als ob die Cookies dieser Seite von deinem System blockiert werden.  Zumindest Sessioncookies müssen für diese Seite zugelassen werden.`n";
 	}
 }
-if ($session[message]>"") output("`b`\$$session[message]`b`n");
+if ($session['message']>"") output("`b`\$$session[message]`b`n");
 output(templatereplace("full")."`c",true);
 }
 
 
 //output("`n`b`&**BETA**`0 This is a BETA of this website, things are likely to change now and again, as it is under active development (when I have time ;-)) `&**BETA**`0`n");
 output("`n`b`&".getsetting("loginbanner","*BETA* This is a BETA of this website, things are likely to change now and again, as it is under active development *BETA*")."`0`b`n");
-$session[message]="";
+$session['message']="";
 output("`c`2Version auf diesem Gameserver: `@{$logd_version}`0`c");
 
 clearnav();

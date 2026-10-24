@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "common.php";
 
 isnewday(2);
@@ -23,7 +23,7 @@ addnav("","badword.php?op=test");
 $sql = "SELECT * FROM nastywords";
 $result = db_query($sql);
 $row = db_fetch_assoc($result);
-$words = split(" ",$row['words']);
+$words = explode(" ",$row['words']);
 reset($words);
 
 if ($_GET['op']=="add"){
@@ -37,7 +37,7 @@ if ($_GET['op']=="test"){
 }
 sort($words);
 $lastletter="";
-while (list($key,$val)=each($words)){
+foreach ($words as $key => $val) {
     if (trim($val)==""){
         unset($words[$key]);
     }else{

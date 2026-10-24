@@ -1,4 +1,4 @@
-<?
+<?php
 
 // found at logd.dragoncat.net
 // translation by anpera

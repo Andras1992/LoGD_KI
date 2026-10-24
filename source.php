@@ -17,7 +17,7 @@ $legal_dirs = array(
 $illegal_files = array(
 	($subdir=="//"?"/":$subdir)."dbconnect.php"=>"X",
 	($subdir=="//"?"/":$subdir)."topwebvote.php"=>"X", // hide completely
-	($session[user][donation]>500?"none":($subdir=="//"?"/":$subdir)."lodge.php")=>"Spiele und sammle 500 Donationpoints, um dieses Script zu sehen ;)",
+	($session['user']['donation']>500?"none":($subdir=="//"?"/":$subdir)."lodge.php")=>"Spiele und sammle 500 Donationpoints, um dieses Script zu sehen ;)",
 	($subdir=="//"?"/":$subdir)."translator_de.php"=>"Hol dir lieber die vollständige Datei von <a href='http://www.anpera.net/forum/viewtopic.php?t=341' target='_blank'>hier</a>!",
 	($subdir=="//"?"/":$subdir)."translator_it.php"=>"Noch nicht veröffentlicht.",
 	($subdir=="//"?"/":$subdir)."source.php"=>"uh, da stehen ein paar Sachen drin, ich sag dir.... ;)",
@@ -27,21 +27,21 @@ $illegal_files = array(
 	($subdir=="//"?"/":$subdir)."chat.php"=>"X",
 	($subdir=="//"?"/":$subdir)."translator_de(komplett).php"=>"X",
 	($subdir=="//"?"/":$subdir)."test.php"=>"X",
-	($session[user][dragonkills]?"none":($subdir=="//"?"/":$subdir)."dragon.php")=>"Wenn du das Drachenskript lesen willst, schlage ich vor, du besiegst erst den Drachen!",
+	($session['user']['dragonkills']?"none":($subdir=="//"?"/":$subdir)."dragon.php")=>"Wenn du das Drachenskript lesen willst, schlage ich vor, du besiegst erst den Drachen!",
 	($subdir=="//"?"/":$subdir)."special/alice.php"=>"Servergebunden! ein sprechender Felsen mit künstlicher Intelligenz",
-	($session[user][specialinc]=="vampire.php"?($subdir=="//"?"/":$subdir)."special/vampire.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="gladiator.php"?($subdir=="//"?"/":$subdir)."special/gladiator.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="alter.php"?($subdir=="//"?"/":$subdir)."special/alter.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="darkhorse.php"?($subdir=="//"?"/":$subdir)."special/darkhorse.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="necromancer.php"?($subdir=="//"?"/":$subdir)."special/necromancer.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="sacrificealtar.php"?($subdir=="//"?"/":$subdir)."special/sacrificealtar.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="stonehenge.php"?($subdir=="//"?"/":$subdir)."special/stonehenge.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="castle.php"?($subdir=="//"?"/":$subdir)."special/castle.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="randdragon.php"?($subdir=="//"?"/":$subdir)."special/randdragon.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="forestlake.php"?($subdir=="//"?"/":$subdir)."special/forestlake.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="remains.php"?($subdir=="//"?"/":$subdir)."special/remains.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="wannabe.php"?($subdir=="//"?"/":$subdir)."special/wannabe.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
-	($session[user][specialinc]=="graeultat.php"?($subdir=="//"?"/":$subdir)."special/graeultat.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="vampire.php"?($subdir=="//"?"/":$subdir)."special/vampire.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="gladiator.php"?($subdir=="//"?"/":$subdir)."special/gladiator.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="alter.php"?($subdir=="//"?"/":$subdir)."special/alter.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="darkhorse.php"?($subdir=="//"?"/":$subdir)."special/darkhorse.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="necromancer.php"?($subdir=="//"?"/":$subdir)."special/necromancer.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="sacrificealtar.php"?($subdir=="//"?"/":$subdir)."special/sacrificealtar.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="stonehenge.php"?($subdir=="//"?"/":$subdir)."special/stonehenge.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="castle.php"?($subdir=="//"?"/":$subdir)."special/castle.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="randdragon.php"?($subdir=="//"?"/":$subdir)."special/randdragon.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="forestlake.php"?($subdir=="//"?"/":$subdir)."special/forestlake.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="remains.php"?($subdir=="//"?"/":$subdir)."special/remains.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="wannabe.php"?($subdir=="//"?"/":$subdir)."special/wannabe.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
+	($session['user']['specialinc']=="graeultat.php"?($subdir=="//"?"/":$subdir)."special/graeultat.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
 	($subdir=="//"?"/":$subdir)."remotebackup.php"=>"X" // hide completely
 );
 
@@ -55,11 +55,11 @@ echo "<h1>Zeige Source: ", htmlentities($url), "</h1>";
 echo "<a href='#source'>Hier klicken für den Source,</a> ODER<br>";
 echo "<b>Weitere Dateien, von denen du den Quelltext sehen kannst:</b><br>(Das Lesen des Source, um sich spielerische Vorteile zu verschaffen, ist nicht erlaubt.
  Solltest du Schwachstellen oder Fehler entdecken, bist du als Spieler verpflichtet, diese zu melden.)<ul>";
-while (list($key,$val)=each($legal_dirs)){
+foreach ($legal_dirs as $key => $val) {
 	//echo "<pre>$key</pre>";
 	$skey = substr($key,strlen($subdir));
 	//echo $skey." ".$key;
-	if ($key==dirname($_SERVER[SCRIPT_NAME])) $skey="";
+	if ($key==dirname($_SERVER['SCRIPT_NAME'])) $skey="";
 	$d = dir("./$skey");
 	if (substr($key,0,2)=="//") $key = substr($key,1);
 	if ($key=="//") $key="/";

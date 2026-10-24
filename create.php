@@ -9,9 +9,9 @@ $old = getsetting("expireoldacct",45);
 
 checkban();
 
-if ($_GET[op]=="val"){
-	$sql = "SELECT login,name FROM accounts WHERE emailvalidation='$_GET[id]' AND emailvalidation!=''";
-	$result = db_query($sql);
+if ($_GET['op']=="val"){
+	$sql = "SELECT login,name FROM accounts WHERE emailvalidation=? AND emailvalidation<>?";
+$result = db_query_params($sql, array(db_unquote_legacy_input($_GET["id"]), ""));
 	if (db_num_rows($result)>0) {
 		$row = db_fetch_assoc($result);
 		if (substr($_GET['id'],0,1)=='x') {
@@ -21,8 +21,8 @@ if ($_GET[op]=="val"){
 					output("`#Deine Passwörter stimmen nicht überein.`n");
 				}else{
 					if (strlen($_POST['pass1'])>3){
-						$sql = "UPDATE accounts SET emailvalidation='',password=MD5('$_POST[pass1]') WHERE emailvalidation='$_GET[id]' AND emailvalidation!=''";
-						db_query($sql);
+						$sql = "UPDATE accounts SET emailvalidation=?,password=MD5(?) WHERE emailvalidation=? AND emailvalidation<>?";
+db_query_params($sql, array("", db_unquote_legacy_input($_POST["pass1"]), db_unquote_legacy_input($_GET["id"]), ""));
 						output("`#`cDein Passwort wurde geändert. Du kannst jetzt einloggen.`c`0");
 						output("<form action='login.php' method='POST'><input name='name' value=\"$row[login]\" type='hidden'><input name='password' value=\"$_POST[pass1]\" type='hidden'>
 						Dein Passwort wurde geändert. Dein Login Name ist `^$row[login]`0.  `n`n<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n",true);
@@ -42,8 +42,8 @@ if ($_GET[op]=="val"){
 				output("</form>",true);				
 			}
 		}else {
-			$sql = "UPDATE accounts SET emailvalidation='' WHERE emailvalidation='$_GET[id]' AND emailvalidation!=''";
-			db_query($sql);
+			$sql = "UPDATE accounts SET emailvalidation=? WHERE emailvalidation=? AND emailvalidation<>?";
+db_query_params($sql, array("", db_unquote_legacy_input($_GET["id"]), ""));
 			output("`#`cDeine E-Mail Adresse wurde bestätigt. Du kannst jetzt einloggen.`c`0");
 			output("<form action='login.php' method='POST'><input name='name' value=\"$row[login]\" type='hidden'><input name='password' value=\"$row[password]\" type='hidden'>
 			Deine E-Mail Adresse wurde bestätigt. Dein Login Name ist `^$row[login]`0.  `n`n<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n"
@@ -52,26 +52,26 @@ if ($_GET[op]=="val"){
 			.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivität gelöscht.":"")
 			."",true);
 			output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und trägst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauenswürdige Sites\" - Sites`i und trägst dort die Adressen ein. Bei anderen Browsern gibt es ähnliche Einstellungen."); 
-			savesetting("newplayer",addslashes($row[name]));
+			savesetting("newplayer",addslashes($row['name']));
 		}
 	}else{
 		output("`#Deine E-Mail Adresse konnte nicht bestätigt werden. Möglicherweise wurde sie schon bestätigt. Versuch mal dich einzuloggen und informiere den Webmaster, wenn es nicht klappt.");
 	}
 }
-if ($_GET[op]=="forgot"){
-	if ($_POST[charname]!=""){
-		$sql = "SELECT login,emailaddress,emailvalidation,password FROM accounts WHERE login='$_POST[charname]'";
-		$result = db_query($sql);
+if ($_GET['op']=="forgot"){
+	if ($_POST['charname']!=""){
+		$sql = "SELECT login,emailaddress,emailvalidation,password FROM accounts WHERE login=?";
+$result = db_query_params($sql, array(db_unquote_legacy_input($_POST["charname"])));
 		if (db_num_rows($result)>0){
 			$row = db_fetch_assoc($result);
-			if (trim($row[emailaddress])!=""){
-				if ($row[emailvalidation]==""){
-					$row[emailvalidation]=substr("x".md5(date("Y-m-d H:i:s").$row[password]),0,32);
-					$sql = "UPDATE accounts SET emailvalidation='$row[emailvalidation]' where login='$row[login]'";
-					db_query($sql);
+			if (trim($row['emailaddress'])!=""){
+				if ($row['emailvalidation']==""){
+					$row['emailvalidation']=substr("x".md5(date("Y-m-d H:i:s").$row['password']),0,32);
+					$sql = "UPDATE accounts SET emailvalidation=? WHERE login=?";
+db_query_params($sql, array($row["emailvalidation"], $row["login"]));
 				}
 				mail(
-					$row[emailaddress],
+					$row['emailaddress'],
 					"LoGD Account Verification",
 					"Jemand von ".$_SERVER['REMOTE_ADDR']." hat ein vergessenes Passwort von deinem Accoount angefordert.  Wenn du das warst, ist hier dein"
 					." Link. Du kannst damit einloggen und dein Passwort im Profil vom Dorfplatz aus einstellen.\n\n"
@@ -95,31 +95,31 @@ if ($_GET[op]=="forgot"){
 	}
 }
 page_header("Charakter erstellen");
-if ($HTTP_GET_VARS[op]=="create"){
+if ($HTTP_GET_VARS['op']=="create"){
 	if(getsetting("spaceinname",0) == 0) {
-  		$shortname = preg_replace("([^[:alpha:]_-])","",$HTTP_POST_VARS[name]);
+  		$shortname = preg_replace("([^[:alpha:]_-])","",$HTTP_POST_VARS['name']);
 	} else {
-  		$shortname = preg_replace("([^[:alpha:] _-])","",$HTTP_POST_VARS[name]);
+  		$shortname = preg_replace("([^[:alpha:] _-])","",$HTTP_POST_VARS['name']);
 	}
 
 	if (soap($shortname)!=$shortname){
 		output("`\$Fehler`^: Unzulässiger Name. Bitte überdenke deinen Namen nochmal.");
-		$HTTP_GET_VARS[op]="";
+		$HTTP_GET_VARS['op']="";
 	}else{
 		$blockaccount=false;
 		if (getsetting("blockdupeemail",0)==1 && getsetting("requireemail",0)==1){
-			$sql = "SELECT login FROM accounts WHERE emailaddress='$_POST[email]'";
-			$result = db_query($sql); 
+			$sql = "SELECT login FROM accounts WHERE emailaddress=?";
+$result = db_query_params($sql, array(db_unquote_legacy_input($_POST["email"])));
 			if (db_num_rows($result)>0){
 				$blockaccount=true;
 				$msg.="Du kannst nur einen Account haben.`n";
 			}
 		}
-		if (strlen($HTTP_POST_VARS[pass1])<=3){
+		if (strlen($HTTP_POST_VARS['pass1'])<=3){
 			$msg.="Dein Passwort muss mindestens 4 Zeichen lang sein.`n";
 			$blockaccount=true;
 		}
-		if ($_POST[pass1]!=$_POST[pass2]){
+		if ($_POST['pass1']!=$_POST['pass2']){
 			$msg.="Die Passwörter stimmen nicht überein.`n";
 			$blockaccount=true;
 		}
@@ -131,7 +131,7 @@ if ($HTTP_GET_VARS[op]=="create"){
 			$msg.="Der Name ist zu lang. Maximal 25 Buchstaben zugelassen.`n";
 			$blockaccount=true;
 		}
-		if (getsetting("requireemail",0)==1 && is_email($_POST[email]) || getsetting("requireemail",0)==0){
+		if (getsetting("requireemail",0)==1 && is_email($_POST['email']) || getsetting("requireemail",0)==0){
 		}else{
 			$msg.="Du musst eine gültige E-Mail Adresse eingeben.`n";
 			$blockaccount=true;
@@ -148,63 +148,33 @@ if ($HTTP_GET_VARS[op]=="create"){
 				)
 		){*/
 		if (!$blockaccount){
-			$sql = "SELECT name FROM accounts WHERE login='$shortname'";
-			$result = db_query($sql) or die(db_error(LINK));
+			$sql = "SELECT name FROM accounts WHERE login=?";
+$result = db_query_params($sql, array($shortname));
 			if (db_num_rows($result)>0){
 				output("`\$Fehler`^: Diesen Namen gibt es schon. Bitte versuchs nochmal.");
-				$HTTP_GET_VARS[op]="";
+				$HTTP_GET_VARS['op']="";
 			}else{
-				$title = ($HTTP_POST_VARS[sex]?"Bauernmädchen":"Bauernjunge");
+				$title = ($HTTP_POST_VARS['sex']?"Bauernmädchen":"Bauernjunge");
+				$emailverification = "";
 				if (getsetting("requirevalidemail",0)){
-					$emailverification=md5(date("Y-m-d H:i:s").$_POST[email]);
+					$emailverification=md5(date("Y-m-d H:i:s").$_POST['email']);
 				}
-				if ($_GET['r']>""){
-					$sql = "SELECT acctid FROM accounts WHERE login='".rawurldecode($_GET['r'])."'";
-					//$sql = "SELECT acctid FROM accounts WHERE login='{$_GET['r']}'";
-					$result = db_query($sql);
+if (isset($_GET["r"]) && $_GET["r"] !== ""){
+					$sql = "SELECT acctid FROM accounts WHERE login=?";
+					$result = db_query_params($sql, array(rawurldecode(db_unquote_legacy_input($_GET["r"]))));
 					$ref = db_fetch_assoc($result);
 					$referer=$ref['acctid'];
 				}else{
 					$referer=0;
 				}
-				$sql = "INSERT INTO accounts 
-					(name,
-					title,
-					password,
-					sex,
-					login,
-					laston,
-					uniqueid,
-					lastip,
-					superuser,
-					gold,
-					emailaddress,
-					emailvalidation,
-					referer,
-					birthday
-				) VALUES (
-					'$title $shortname',
-					'$title',
-					MD5('$HTTP_POST_VARS[pass1]'),
-					'$HTTP_POST_VARS[sex]',
-					'$shortname',
-					'".date("Y-m-d H:i:s",strtotime(date("r")."-1 day"))."',
-					'$_COOKIE[lgi]',
-					'".$_SERVER['REMOTE_ADDR']."',
-					".getsetting("superuser",0).",
-					".getsetting("newplayerstartgold",50).",
-					'$_POST[email]',
-					'$emailverification',
-					'$referer',
-					'".(getsetting("activategamedate","0")?getgamedate():"")."'
-				)";
-				db_query($sql) or die(db_error(LINK));
+				$sql = "INSERT INTO accounts (name,title,password,sex,login,laston,uniqueid,lastip,superuser,gold,emailaddress,emailvalidation,referer,birthday) VALUES (?, ?, MD5(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				db_query_params($sql, array($title . " " . $shortname, $title, db_unquote_legacy_input($HTTP_POST_VARS["pass1"]), (int)db_unquote_legacy_input($HTTP_POST_VARS["sex"]), $shortname, date("Y-m-d H:i:s",strtotime(date("r")."-1 day")), db_unquote_legacy_input($HTTP_COOKIE_VARS["lgi"]), $_SERVER["REMOTE_ADDR"], (int)getsetting("superuser",0), (int)getsetting("newplayerstartgold",50), db_unquote_legacy_input($_POST["email"]), isset($emailverification) ? $emailverification : "", (int)$referer, getsetting("activategamedate","0") ? getgamedate() : "")) or die(db_error(LINK));
 				if (db_affected_rows(LINK)<=0){
 					output("`\$Fehler`^: Dein Account konnte aus unbekannten Gründen nicht erstellt werden. Versuchs bitte einfach nochmal. ");
 				}else{
 					if ($emailverification!=""){
 						mail(
-							$_POST[email],
+							$_POST['email'],
 							"LoGD Account Verification",
 							"Um deinen LoGD-Account freizuschalten, musst du nur noch auf den folgenden Link klicken.\n\n  http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?op=val&id=$emailverification\n\nDanke für's Spielen!",
 							"From: ".getsetting("gameadminemail","postmaster@localhost.com")
@@ -225,11 +195,11 @@ if ($HTTP_GET_VARS[op]=="create"){
 			}
 		}else{
 			output("`\$Fehler`^:`n$msg");
-			$HTTP_GET_VARS[op]="";
+			$HTTP_GET_VARS['op']="";
 		}
 	}
 }
-if ($HTTP_GET_VARS[op]==""){
+if ($HTTP_GET_VARS['op']==""){
 	output("`&`c`bCharakter erstellen`b`c`n");
 	output("`0<form action=\"create.php?op=create".($_GET['r']>""?"&r=".$_GET['r']:"")."\" method='POST'>",true);
 	output("`nWie willst du in dieser Welt heissen? <input name='name'>`n",true);

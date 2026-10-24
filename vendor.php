@@ -20,16 +20,16 @@
 require_once "common.php";
 page_header("Wanderhändler");
 
-if ($_GET[op]=="buy"){ // Wig-Wam Bam
-	if (!$_GET[id]){
-		$sorti=($_GET[sorti]?"$_GET[sorti]":"class DESC, name");
+if ($_GET['op']=="buy"){ // Wig-Wam Bam
+	if (!$_GET['id']){
+		$sorti=($_GET['sorti']?"$_GET[sorti]":"class DESC, name");
 		output("`qStolz präsentiert dir der Händler `tAeki`q seinen Wagen. Zu jedem der seltsamen Gegenstände, Artefakte und Zauber scheint er eine kleine Geschichte zu kennen. Dabei scheint er auffällig oft darauf ");
 		output("hinzuweisen, dass viele Leute, von denen er etwas gekauft hat, den wahren Wert dieser Dinge nicht zu kennen scheinen.`n ");
 		$ppp=25; // Player Per Page to display
-		if (!$_GET[limit]){
+		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET[limit];
+			$page=(int)$_GET['limit'];
 			addnav("Vorherige Waren","vendor.php?op=buy&sorti=$sorti&limit=".($page-1));
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
@@ -57,33 +57,33 @@ if ($_GET[op]=="buy"){ // Wig-Wam Bam
 		$sql="SELECT * FROM items WHERE id=$_GET[id]";
 		$result=db_query($sql);
 	  	$row = db_fetch_assoc($result);
-		if ($session[user][gems]<$row[gems] || $session[user][gold]<$row[gold]){
+		if ($session['user']['gems']<$row['gems'] || $session['user']['gold']<$row['gold']){
 			output("`qHoppla! Das kannst du dir nicht leisten. Der Händler schüttelt nur traurig den Kopf und verstaut $row[name] wieder in seinem Wagen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
-		}else if ($row['class']=="Möbel.Prot" && $session[user][housekey]<=0 ){
+		}else if ($row['class']=="Möbel.Prot" && $session['user']['housekey']<=0 ){
 			output("`q$row[name]`q gefällt dir wirklich gut, aber da du kein eigenes Haus besitzt, kannst du mit Möbeln auch nichts anfangen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
-		}else if (db_num_rows(db_query("SELECT id FROM items WHERE name='$row[name]' AND owner=".$session[user][acctid]." AND class='Möbel'"))>0){
+		}else if (db_num_rows(db_query("SELECT id FROM items WHERE name='$row[name]' AND owner=".$session['user']['acctid']." AND class='Möbel'"))>0){
 			output("`qDu hast $row[name]`q schon. Du überlegst, ob sich eine Neuanschaffung wirklich lohnt. Allerdings müsstest du dazu auch erst den alten Krempel verkaufen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
 		}else{
-			output("`qDer Händler reibt sich die Hände und übergibt dir $row[name], während du ".($row[gold]?"`^$row[gold] `qGold":"")." ".($row[gems]?"`#$row[gems]`q Edelsteine":"")." abzählst. ");
+			output("`qDer Händler reibt sich die Hände und übergibt dir $row[name], während du ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." abzählst. ");
 			if ($row['class']=="Möbel.Prot") output(" Er ist dir noch kurz beim Transport behilflich, bevor er sich seinem nächsten Kunden zuwendet.");
 			addnav("Mehr kaufen","vendor.php?op=buy");
-			$sql="UPDATE items SET owner=".$session[user][acctid]." WHERE id=$_GET[id]";
+			$sql="UPDATE items SET owner=".$session['user']['acctid']." WHERE id=$_GET[id]";
 			// insert SQL for special classes here to reset their values
-			if ($row['class']=="Möbel.Prot") $sql="INSERT INTO items(name,class,owner,value1,gold,gems,description) VALUES ('$row[name]','Möbel',".$session[user][acctid].",".$session[user][house].",1,".(round($row[gems]/2)).",'$row[description]')";
-			$session[user][gold]-=$row[gold];
-			$session[user][gems]-=$row[gems];
+			if ($row['class']=="Möbel.Prot") $sql="INSERT INTO items(name,class,owner,value1,gold,gems,description) VALUES ('$row[name]','Möbel',".$session['user']['acctid'].",".$session['user']['house'].",1,".(round($row['gems']/2)).",'$row[description]')";
+			$session['user']['gold']-=$row['gold'];
+			$session['user']['gems']-=$row['gems'];
 			db_query($sql);
 		}
 	}
 	addnav("Zurück","vendor.php");
 	addnav("Zurück zum Dorf","village.php");
-}else if ($_GET[op]=="sell"){ // Ballroom Blitz
-	if (!$_GET[id]){
+}else if ($_GET['op']=="sell"){ // Ballroom Blitz
+	if (!$_GET['id']){
 		output("`qDer Händler begutachtet deinen Besitz. Mit dem geübten Auge eines Kenners sortiert er die Dinge aus, die ihn interessieren würden und nennt dir einen Preis dafür.`n`n");
-		$sql="SELECT * FROM items WHERE owner=".$session[user][acctid]." AND (gold>0 OR gems>0) AND class<>'Fluch' AND class<>'Zauber'";
+		$sql="SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND (gold>0 OR gems>0) AND class<>'Fluch' AND class<>'Zauber'";
 		$result=db_query($sql);
 		if (db_num_rows($result)){
 			output("<table border='0' cellpadding='0'>",true);
@@ -103,7 +103,7 @@ if ($_GET[op]=="buy"){ // Wig-Wam Bam
 		$sql="SELECT * FROM items WHERE id=$_GET[id]";
 		$result=db_query($sql);
 	  	$row = db_fetch_assoc($result);
-		output("`qMit einem breiten und siegessicheren Grinsen gibt er dir die vereinbarten ".($row[gold]?"`^$row[gold] `qGold":"")." ".($row[gems]?"`#$row[gems]`q Edelsteine":"")." und schnappt sich $row[name]. ");
+		output("`qMit einem breiten und siegessicheren Grinsen gibt er dir die vereinbarten ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." und schnappt sich $row[name]. ");
 		if ($row['class']=="Beute") output(" Noch bevor du fragen kannst, wofür $row[name] wirklich zu gebrauchen ist, lässt der Händler das Teil in seinem Wagen verschwinden, grinst immer noch und fragt, ob du sonst noch etwas für ihn hast.");
 		addnav("Mehr verkaufen","vendor.php?op=sell");
 		$sql="UPDATE items SET owner=0 WHERE id=$_GET[id]";
@@ -112,8 +112,8 @@ if ($_GET[op]=="buy"){ // Wig-Wam Bam
 		if ($row['class']=="Beute") $sql="DELETE FROM items WHERE id=$_GET[id]";
 		if ($row['class']=="Waffe" || $row['class']=="Rüstung") $sql="DELETE FROM items WHERE id=$_GET[id]";
 		if ($row['class']=="Schmuck" AND $row['name']=="Elfenkunst") $sql="DELETE FROM items WHERE id=$_GET[id]";
-		$session[user][gold]+=$row[gold];
-		$session[user][gems]+=$row[gems];
+		$session['user']['gold']+=$row['gold'];
+		$session['user']['gems']+=$row['gems'];
 		db_query($sql);
 	}
 	addnav("Zurück zum Dorf","village.php");

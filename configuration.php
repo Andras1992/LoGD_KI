@@ -5,11 +5,11 @@
 require_once "common.php";
 isnewday(3);
 
-if ($_GET[op]=="save"){
-	if ($_POST[blockdupeemail]==1) $_POST[requirevalidemail]=1;
-	if ($_POST[requirevalidemail]==1) $_POST[requireemail]=1;
+if ($_GET['op']=="save"){
+	if ($_POST['blockdupeemail']==1) $_POST['requirevalidemail']=1;
+	if ($_POST['requirevalidemail']==1) $_POST['requireemail']=1;
 	reset($_POST);
-	while (list($key,$val)=each($_POST)){
+	foreach ($_POST as $key => $val) {
 		savesetting($key,stripslashes($val));
 		output("Setze $key auf ".stripslashes($val)."`n");
 	}
@@ -157,7 +157,7 @@ $setup = array(
 	"Spieleinstellungen Ende,title"
 	);
 	
-if ($_GET[op]==""){
+if ($_GET['op']==""){
 	loadsettings();
 	output("<form action='configuration.php?op=save' method='POST'>",true);
 	addnav("","configuration.php?op=save");

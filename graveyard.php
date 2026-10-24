@@ -40,7 +40,7 @@ if ($_GET['op']=="search"){
 		$session['user']['badguy']=createstring($badguy);
 	}
 }
-if ($HTTP_GET_VARS[op]=="fight" || $HTTP_GET_VARS[op]=="run"){
+if ($HTTP_GET_VARS['op']=="fight" || $HTTP_GET_VARS['op']=="run"){
 	if ($_GET['op']=="run"){
 		if (e_rand(0,2)==1) {
 			output("`\$Ramius`) verflucht dich für deine Feigheit.`n`n");
@@ -52,7 +52,7 @@ if ($HTTP_GET_VARS[op]=="fight" || $HTTP_GET_VARS[op]=="run"){
 				$session['user']['deathpower']-=$favor;
 			}
 			addnav("Zurück zum Friedhof","graveyard.php");
-			$session[user][reputation]--;
+			$session['user']['reputation']--;
 		} else {
 			output("`)Als du zu fliehen versuchst, wirst du zum Kampf zurückberufen!`n`n");
 			$battle=true;
@@ -90,15 +90,15 @@ if ($battle){
 			$sql = "SELECT taunt FROM taunts ORDER BY rand(".e_rand().") LIMIT 1";
 			$result = db_query($sql) or die(db_error(LINK));
 			$taunt = db_fetch_assoc($result);
-			$taunt = str_replace("%s",($session[user][sex]?"sie":"ihn"),$taunt[taunt]);
-			$taunt = str_replace("%o",($session[user][sex]?"sie":"er"),$taunt);
-			$taunt = str_replace("%p",($session[user][sex]?"ihre(m/r)":"seine(r/m)"),$taunt);
-			$taunt = str_replace("%x",($session[user][weapon]),$taunt);
-			$taunt = str_replace("%X",$badguy[creatureweapon],$taunt);
-			$taunt = str_replace("%W",$badguy[creaturename],$taunt);
-			$taunt = str_replace("%w",$session[user][name],$taunt);
+			$taunt = str_replace("%s",($session['user']['sex']?"sie":"ihn"),$taunt['taunt']);
+			$taunt = str_replace("%o",($session['user']['sex']?"sie":"er"),$taunt);
+			$taunt = str_replace("%p",($session['user']['sex']?"ihre(m/r)":"seine(r/m)"),$taunt);
+			$taunt = str_replace("%x",($session['user']['weapon']),$taunt);
+			$taunt = str_replace("%X",$badguy['creatureweapon'],$taunt);
+			$taunt = str_replace("%W",$badguy['creaturename'],$taunt);
+			$taunt = str_replace("%w",$session['user']['name'],$taunt);
 			
-			addnews("`)".$session[user][name]."`) wurde auf dem Friedhof von {$badguy['creaturename']} erniedrigt.`n$taunt");
+			addnews("`)".$session['user']['name']."`) wurde auf dem Friedhof von {$badguy['creaturename']} erniedrigt.`n$taunt");
 			output("`b`&Du wurdest von `%{$badguy['creaturename']} `&erniedrigt!!!`n");
 			output("Du kannst heute keine weiteren Seelen mehr quälen.");
 			$session['user']['donation']+=1;
@@ -163,9 +163,9 @@ if ($_GET['op']==""){
 		output("`\$Ramius`) spricht: \"`7Du hast mich tatsächlich beeindruckt. Ich sollte dir die Möglichkeit gewähren, deine Feinde in der Welt der Sterblichen zu besuchen.`)\"");
 		addnav("Ramius' Gefallen");
 		addnav("h?Feind heimsuchen (25 Gefallen)","graveyard.php?op=haunt");
-		if ($session[user][reputation]<=-10) output(" Er weist dich noch darauf hin, dass er keinen Einfluss auf das Gedächtnis der Lebenden - und besonders der Händler -  hat.");
-		if ($session[user][reputation]<=-40) output("`n`n\"`7Wegen der Unehrenhaftigkeit deines Lebens kann ich dir nicht erlauben, vorzeitig zu den Lebenden zurückzukehren, obwohl du mir gute Dienste geleistet hast.`)\"");
-		if ($session[user][reputation]>-40) addnav("e?Wiedererwecken (100 Gefallen)","newday.php?resurrection=true");
+		if ($session['user']['reputation']<=-10) output(" Er weist dich noch darauf hin, dass er keinen Einfluss auf das Gedächtnis der Lebenden - und besonders der Händler -  hat.");
+		if ($session['user']['reputation']<=-40) output("`n`n\"`7Wegen der Unehrenhaftigkeit deines Lebens kann ich dir nicht erlauben, vorzeitig zu den Lebenden zurückzukehren, obwohl du mir gute Dienste geleistet hast.`)\"");
+		if ($session['user']['reputation']>-40) addnav("e?Wiedererwecken (100 Gefallen)","newday.php?resurrection=true");
 		addnav("5 Donationpoints (100 Gefallen)","graveyard.php?op=dona");
 		addnav("Sonstiges");
 	}elseif ($session['user']['deathpower'] >= 25){

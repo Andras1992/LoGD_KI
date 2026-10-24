@@ -43,7 +43,7 @@ if ($session['user']['loggedin']){
 	output("<li>Besiege andere Spieler im Zweikampf - oder heirate sie",true);
 	output("<li>Finde und vernichte den grünen Drachen, um im Ansehen zu steigen",true);
 	output("<li>Und vieles mehr`n`n",true);
-	if ($_GET[r]) output("`@Du wurdest von ".$_GET[r]." hierher eingeladen, damit ihr gemeinsam gegen das Böse kämpfen könnt.");
+	if ($_GET['r']) output("`@Du wurdest von ".$_GET['r']." hierher eingeladen, damit ihr gemeinsam gegen das Böse kämpfen könnt.");
 	output("`@ Melde dich jetzt kostenlos an und werde Teil dieser Welt.");
 	addnav("Navigation");
 	addnav("Charakter erstellen","create.php?r=".$_GET['r']);
