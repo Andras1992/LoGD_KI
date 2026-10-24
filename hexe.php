@@ -126,8 +126,9 @@ if ($_GET['op'] == "wkkauf"){
 	forest(true);
 } else if ($_GET['op'] == "cursep"){
 	if ($_GET['id']>"" && $_GET['pid']>""){
-		$sql="SELECT * FROM items WHERE id=$_GET[id]";
-		$row = db_fetch_assoc(db_query($sql));
+		// Die URL-ID wird als Zahl gebunden; zusaetzlich darf nur der eigene Fluch gelesen werden.
+		$sql = "SELECT * FROM items WHERE id=? AND owner=? AND class=?";
+		$row = db_fetch_assoc(db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id']), (int)$session['user']['acctid'], "Fluch")));
 		$goldcost=$row['gold']*$session['user']['level'];
 		$klappt=e_rand(1,10);
 		$sql="SELECT * FROM items WHERE owner=$_GET[pid] AND name='$row[name]' AND class='Fluch'";
@@ -227,8 +228,9 @@ if ($_GET['op'] == "wkkauf"){
 	output("Wovon soll ich dich befreien?`!\"`n");
 	addnav("Vergiss es","forest.php");
 } else if ($_GET['op'] == "fluch2"){
-	$sql="SELECT * FROM items WHERE id=$_GET[id]";
-	$row = db_fetch_assoc(db_query($sql));
+	// Die Gegenstands-ID kommt aus der URL; gelesen wird nur ein Fluch, der dem Spieler gehoert.
+	$sql = "SELECT * FROM items WHERE id=? AND owner=? AND class=?";
+	$row = db_fetch_assoc(db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id']), (int)$session['user']['acctid'], "Fluch")));
 	output("`!Die knochigen Finger der Hexe scheinen plötzlich überall an dir zu sein und du fühlst etwas Ekel bei dieser merkwürdigen Behandlung. Aber du hast keine Ahnung, wie man Flüche normalerweise ");
 	output("behandelt und hältst deswegen die Klappe.");
 	if ($session['user']['gold']<$row['gold'] || $session['user']['gems']<$row['gems']){
@@ -239,7 +241,8 @@ if ($_GET['op'] == "wkkauf"){
 		output(" Schließlich scheint die Hexe gefunden zu haben, was sie offenbar gesucht hat, lässt $row[gold] Gold und $row[gems] Edelsteine von dir in ihrer Schatzkiste verschwinden und schenkt dir keine weitere Beachtung mehr.");
 		output("Gerade, als du den Mund zum Protestieren öffnen willst, fühlst du die Veränderung: `bDer Fluch wurde aufgehoben!`b. Glücklich verlässt du die Hütte der Hexe.");
 		if ($row['name']=="Der Ring") $session['user']['maxhitpoints']+=$row['value1'];
-		db_query("DELETE FROM items WHERE id=$_GET[id]");
+		// Die Loeschung verwendet dieselben Grenzen wie die Suche: nur diesen eigenen Fluch.
+		db_query_params("DELETE FROM items WHERE id=? AND owner=? AND class=?", array((int)db_unquote_legacy_input($_GET['id']), (int)$session['user']['acctid'], "Fluch"));
 		$session['user']['gold']-=$row['gold'];
 		$session['user']['gems']-=$row['gems'];
 		addnav("Zurück in den Wald","forest.php");
