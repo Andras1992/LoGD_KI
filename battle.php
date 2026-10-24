@@ -217,7 +217,9 @@ if ($badguy['pvp']) $adjustment=1;
 if ($HTTP_GET_VARS['op']=="fight"){
 // spells
 	if ($HTTP_GET_VARS['skill']=="zauber"){
-		$resultz=db_query("SELECT * FROM items WHERE id=$_GET[itemid]") or die(db_error(LINK));
+		// Die Gegenstandsnummer kommt aus der URL und wird als Zahl behandelt, nicht als SQL-Text.
+		$spellItemId = (int)db_unquote_legacy_input($_GET['itemid']);
+		$resultz=db_query_params("SELECT * FROM items WHERE id=?", array($spellItemId)) or die(db_error(LINK));
 		$zauber = db_fetch_assoc($resultz);
 		$spellbuff=unserialize($zauber['buff']);
 		$session['bufflist'][$spellbuff['name']]=$spellbuff;
@@ -225,9 +227,11 @@ if ($HTTP_GET_VARS['op']=="fight"){
 		$zauber['gems']=round($zauber['gems']*($zauber['value1']/($zauber['value2']+1)));
 		$zauber['value1']--;
 		if ($zauber['value1']<=0 && $zauber['hvalue']<=0){
-			db_query("DELETE FROM items WHERE id=$_GET[itemid]");
+			// Der verbrauchte Zauber wird ueber dieselbe gepruefte Gegenstandsnummer geloescht.
+			db_query_params("DELETE FROM items WHERE id=?", array($spellItemId));
 		}else{
-			db_query("UPDATE items SET value1=$zauber[value1], gems=$zauber[gems], gold=$zauber[gold] WHERE id=$_GET[itemid]");
+			// Zauberwerte und Gegenstandsnummer werden getrennt als Daten an die Datenbank uebergeben.
+			db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((int)$zauber['value1'], (int)$zauber['gems'], (int)$zauber['gold'], $spellItemId));
 		}
 	}
 // end spells
