@@ -313,8 +313,13 @@ Durch ne Menge Gesichtsmasken, mein Lieber!! MightyE bevorzugt speziell eine Mas
 			systemmail($row[acctid],"Petition",output_array($_POST),(int)$session[user][acctid]);
 		}
 		*/
-		$sql = "INSERT INTO petitions (author,date,body,pageinfo,lastact) VALUES (".(int)$session['user']['acctid'].",now(),\"".addslashes(output_array($_POST))."\",\"".addslashes(output_array($session,"Session:"))."\",NOW())";
-		db_query($sql);
+		// Die Anzeige verarbeitet den gespeicherten Text weiterhin wie bei alten Hilfeanfragen.
+		$petitionBody=output_array($_POST);
+		// Sitzungsdaten bleiben wie bisher als lesbarer Seitenkontext Teil der Hilfeanfrage.
+		$petitionPageInfo=output_array($session,"Session:");
+		// Text und Spieler-ID werden getrennt vom SQL-Befehl gespeichert.
+		$sql = "INSERT INTO petitions (author,date,body,pageinfo,lastact) VALUES (?,NOW(),?,?,NOW())";
+		db_query_params($sql,array((int)$session['user']['acctid'],$petitionBody,$petitionPageInfo));
 		$session['user']['password']=$p;
 		output("Deine Anfrage wurde an die Admins gesendet. Bitte hab etwas Geduld, die meisten Admins 
 		haben Jobs und Verpflichtungen ausserhalb dieses Spiels. Antworten und Reaktionen können eine Weile dauern.");
