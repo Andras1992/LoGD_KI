@@ -291,7 +291,6 @@ $sql = "SELECT lastip,uniqueid,banoverride FROM accounts WHERE login=?";
 	}
 $sql = "SELECT * FROM bans WHERE ((substring(?,1,length(ipfilter))=ipfilter AND ipfilter<>?) OR (uniqueid=? AND uniqueid<>?)) AND (banexpire=? OR banexpire>?)";
     $result = db_query_params($sql, array($ip, "", $id, "", "0000-00-00", date("Y-m-d"))) or die(db_error(LINK));
-	$result = db_query($sql) or die(db_error(LINK));
 	if (db_num_rows($result)>0){
 	    // $msg.=$session['message'];
 		$session=array();
@@ -385,8 +384,9 @@ function fightnav($allowspecial=true, $allowflee=true){
 			addnav("!?`&&#149; __GOD MODE","$script?op=fight&skill=godmode",true);
 		}
 // spells by anpera
-		$sql="SELECT * FROM items WHERE class='Zauber' AND owner=".$session['user']['acctid']." AND value1>0 ORDER BY name ASC";
-		$result=db_query($sql) or die(db_error(LINK));
+		// Der Besitzer ist eine Spieler-ID und wird deshalb als Zahl an PDO übergeben.
+		$sql="SELECT * FROM items WHERE class='Zauber' AND owner=? AND value1>0 ORDER BY name ASC";
+		$result=db_query_params($sql,array((int)$session['user']['acctid'])) or die(db_error(LINK));
 		if (db_num_rows($result)>0) addnav("Zauber");
 		for ($i=0;$i<db_num_rows($result);$i++){
   			$row = db_fetch_assoc($result);
@@ -686,9 +686,11 @@ function charstats(){
 	}else{
 		//return "Your character info will appear here after you've logged in.";
 		//$sql = "SELECT name,alive,location,sex,level,laston,loggedin,lastip,uniqueid FROM accounts WHERE locked=0 AND loggedin=1 ORDER BY level DESC";
-		$sql="SELECT name,alive,location,sex,level,laston,loggedin,lastip,uniqueid FROM accounts WHERE locked=0 AND loggedin=1 AND laston>'".date("Y-m-d H:i:s",strtotime(date("r")."-".getsetting("LOGINTIMEOUT",900)." seconds"))."' ORDER BY level DESC";
-		$result = db_query($sql) or die(sql_error($sql));
-		$count = db_num_rows($result); 
+		// Der Zeitpunkt wird als Datum gebunden; die Anzahl Sekunden kommt aus den Spieleinstellungen.
+		$lastActiveAfter=date("Y-m-d H:i:s",strtotime(date("r")."-".getsetting("LOGINTIMEOUT",900)." seconds"));
+		$sql="SELECT name,alive,location,sex,level,laston,loggedin,lastip,uniqueid FROM accounts WHERE locked=0 AND loggedin=1 AND laston>? ORDER BY level DESC";
+		$result=db_query_params($sql,array($lastActiveAfter)) or die(sql_error($sql));
+		$count = db_num_rows($result);
 		$ret.=appoencode("`b$count Spieler Online:`b`n");
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
@@ -966,8 +968,9 @@ function loadtemplate($templatename){
 
 function maillink(){
 	global $session;
-	$sql = "SELECT sum(if(seen=1,1,0)) AS seencount, sum(if(seen=0,1,0)) AS notseen FROM mail WHERE msgto=\"".$session['user']['acctid']."\"";
-	$result = db_query($sql) or die(db_error(LINK));
+	// Die Konto-ID wird als Zahl gebunden, damit nur die eigene Mail gezählt wird.
+	$sql = "SELECT sum(if(seen=1,1,0)) AS seencount, sum(if(seen=0,1,0)) AS notseen FROM mail WHERE msgto=?";
+	$result = db_query_params($sql,array((int)$session['user']['acctid'])) or die(db_error(LINK));
 	$row = db_fetch_assoc($result);
 	db_free_result($result);
 	$row['seencount']=(int)$row['seencount'];
@@ -1142,8 +1145,9 @@ $paypalstr .= '</td></tr></table>';
 		// Neue Petitionen; schauen, ob Sternchen nötig ist
 		$petitions['star'] = '';
 		if ($petitions['unread']) {
-			$sql = 'SELECT petitionid, lastact FROM petitions WHERE lastact > "'.$session['lastlogoff'].'"';
-			$result = db_query($sql);
+			// Der letzte Login-Zeitpunkt wird als sicherer SQL-Wert übergeben.
+			$sql = 'SELECT petitionid, lastact FROM petitions WHERE lastact > ?';
+			$result = db_query_params($sql,array($session['lastlogoff']));
 			while ($row = db_fetch_assoc($result)) {
 				if (!$session['petitions'][$row['petitionid']]) {
 					$petitions['star'] = '<span class="colDkRed">*</span>';
@@ -1785,8 +1789,9 @@ if (strpos($REQUEST_URI,"?")){
 $allowanonymous=array("index.php"=>true,"login.php"=>true,"create.php"=>true,"about.php"=>true,"list.php"=>true,"petition.php"=>true,"connector.php"=>true,"logdnet.php"=>true,"referral.php"=>true,"news.php"=>true,"motd.php"=>true,"topwebvote.php"=>true,"source.php"=>true);
 $allownonnav = array("badnav.php"=>true,"motd.php"=>true,"petition.php"=>true,"mail.php"=>true,"topwebvote.php"=>true,"chat.php"=>true,"source.php"=>true);
 if ($session['loggedin']){
-	$sql = "SELECT * FROM accounts WHERE acctid = '".$session['user']['acctid']."'";
-	$result = db_query($sql);
+	// Die aktive Spieler-ID wird als Zahl gebunden und bleibt außerhalb des SQL-Befehls.
+	$sql = "SELECT * FROM accounts WHERE acctid = ?";
+	$result = db_query_params($sql,array((int)$session['user']['acctid']));
 	if (db_num_rows($result)==1){
 		$session['user']=db_fetch_assoc($result);
 		$session['output']=$session['user']['output'];
@@ -1860,22 +1865,25 @@ if (strlen($_COOKIE['lgi'])<32){
 $url = "http://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']);
 $url = substr($url,0,strlen($url)-1);
 
-if (substr($_SERVER['HTTP_REFERER'],0,strlen($url))==$url || $_SERVER['HTTP_REFERER']==""){
-
-}else{
-	$sql = "SELECT * FROM referers WHERE uri='{$_SERVER['HTTP_REFERER']}'";
-	$result = db_query($sql);
+$referer=isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+if ($referer!="" && substr($referer,0,strlen($url))!=$url){
+	// Die Browser-Adresse wird als einzelner Wert gebunden, nicht in SQL hineinkopiert.
+	$sql = "SELECT * FROM referers WHERE uri=?";
+	$result = db_query_params($sql,array($referer));
 	$row = db_fetch_assoc($result);
 	db_free_result($result);
-	$site = str_replace("http://","",$_SERVER['HTTP_REFERER']);
-	if (strpos($site,"/")) 
+	$site = str_replace("http://","",$referer);
+	if (strpos($site,"/"))
 		$site = substr($site,0,strpos($site,"/"));
-	if ($row['refererid']>""){
-		$sql = "UPDATE referers SET count=count+1,last=now(),site='".addslashes($site)."' WHERE refererid='{$row['refererid']}'";
+	if (isset($row['refererid']) && $row['refererid']>""){
+		// Die letzte Besuchszeit und die Anzahl werden für den passenden Eintrag aktualisiert.
+		$sql = "UPDATE referers SET count=count+1,last=NOW(),site=? WHERE refererid=?";
+		db_query_params($sql,array($site,(int)$row['refererid']));
 	}else{
-		$sql = "INSERT INTO referers (uri,count,last,site) VALUES ('{$_SERVER['HTTP_REFERER']}',1,now(),'".addslashes($site)."')";
+		// Neue Verweise werden ebenfalls mit getrennten und sicheren Werten gespeichert.
+		$sql = "INSERT INTO referers (uri,count,last,site) VALUES (?,1,NOW(),?)";
+		db_query_params($sql,array($referer,$site));
 	}
-	db_query($sql);
 }
 if ($_COOKIE['template']!="") $templatename=$_COOKIE['template'];
 if ($templatename=="" || !file_exists("templates/$templatename")) $templatename="yarbrough.htm";
