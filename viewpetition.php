@@ -5,8 +5,9 @@
 require_once "common.php";
 isnewday(2);
 if (addcommentary()) {
-	$sql = 'UPDATE petitions SET lastact=NOW() WHERE petitionid="'.$_GET['id'].'"';
-	db_query($sql);
+	// Die Petitionsnummer wird als Zahl gebunden, statt in den SQL-Befehl eingesetzt zu werden.
+	$sql = 'UPDATE petitions SET lastact=NOW() WHERE petitionid=?';
+	db_query_params($sql,array((int)$_GET['id']));
 }
 
 $statuses=array(0=>"`bUngelesen`b","Gelesen","Geschlossen");
@@ -21,16 +22,23 @@ if ($_GET['op']=="del"){
 	$_GET['op']="";
 }
 elseif ($_GET['op']=='sendmessage') {
-	$sql = 'SELECT author,body FROM petitions WHERE petitionid="'.$_GET['id'].'"';
-	$row = db_fetch_assoc(db_query($sql));
-	$_POST['subject']=closetags(str_replace("`n","",$_POST['subject']),'`c`i`b');
-	$_POST['body']=str_replace("`n","\n",$_POST['body']);
-	$_POST['body']=str_replace("\r\n","\n",$_POST['body']);
-	$_POST['body']=str_replace("\r","\n",$_POST['body']);
-	$_POST['body']=substr($_POST['body'],0,(int)getsetting("mailsizelimit",1024));
-	$_POST['body'] = closetags($_POST['body'],'`c`i`b');
-	systemmail($row['author'],$_POST['subject'],$_POST['body']);
-	petitionmail($_POST['subject'],$_POST['body'],$_GET['id'],$session['user']['acctid'],1,$row['author'],db_insert_id(LINK));
+	// Die ID wird als Zahl gebunden, damit sie den SQL-Befehl nicht verändern kann.
+	$sql = 'SELECT author,body FROM petitions WHERE petitionid=?';
+	$result = db_query_params($sql,array((int)$_GET['id']));
+	$row = db_fetch_assoc($result);
+	// Formulareingaben vor der Textbearbeitung von der alten Backslash-Zusatzschicht befreien.
+	$subject=db_unquote_legacy_input(isset($_POST['subject']) ? $_POST['subject'] : '');
+	$body=db_unquote_legacy_input(isset($_POST['body']) ? $_POST['body'] : '');
+	// Betreff und Nachricht wie bisher von Spiel-Tags und Zeilenumbrüchen bereinigen.
+	$subject=closetags(str_replace(chr(96).'n',"",$subject),chr(96).'c'.chr(96).'i'.chr(96).'b');
+	$body=str_replace(chr(96).'n',"\n",$body);
+	$body=str_replace("\r\n","\n",$body);
+	$body=str_replace("\r","\n",$body);
+	$body=substr($body,0,(int)getsetting("mailsizelimit",1024));
+	$body=closetags($body,chr(96).'c'.chr(96).'i'.chr(96).'b');
+	// Derselbe bereinigte Text geht an den Empfänger und in den Petitionsverlauf.
+	systemmail($row['author'],$subject,$body);
+	petitionmail($subject,$body,$_GET['id'],$session['user']['acctid'],1,$row['author'],db_insert_id(LINK));
 	redirect('viewpetition.php?op=view&id='.$_GET['id']);
 }
 page_header("Petition Viewer");

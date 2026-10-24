@@ -78,74 +78,65 @@ return ($out);
 } 
 
 
-function safeescape($input){
-	return preg_replace('/([^\\\\])(["\'])/s',"\\1\\\\\\2",$input);
-
-}
-
-//by Chaosmaker
+// Petitionstexte und E-Mails werden als Daten gebunden, damit Sonderzeichen sicher bleiben.
 function petitionmail($subject,$body,$petition,$from,$seen=0,$to=0,$messageid=0) {
-	$subject = safeescape($subject);
+	// chr(96) steht für das Zeichen, mit dem LoGD Spiel-Formatierungen markiert.
+	// Der Betreff bleibt einzeilig, wie im bisherigen Spiel vorgesehen.
 	$subject=str_replace("\n","",$subject);
-	$subject=str_replace("`n","",$subject);
-	$body = safeescape($body);
-	
-	$sql = "INSERT INTO petitionmail (petitionid,messageid,msgfrom,msgto,subject,body,sent,seen) VALUES ('".(int)$petition."','".(int)$messageid."','".(int)$from."','".(int)$to."','$subject','$body',now(),'$seen')";
-	db_query($sql);
-	$sql = 'UPDATE petitions SET lastact=NOW() WHERE petitionid="'.(int)$petition.'"';
-	db_query($sql);
+	$subject=str_replace(chr(96).'n',"",$subject);
+	// Platzhalter halten IDs und Texte aus dem SQL-Befehl heraus.
+	$sql="INSERT INTO petitionmail (petitionid,messageid,msgfrom,msgto,subject,body,sent,seen) VALUES (?,?,?,?,?,?,NOW(),?)";
+	db_query_params($sql,array((int)$petition,(int)$messageid,(int)$from,(int)$to,$subject,$body,(int)$seen));
+	// Die letzte Aktivität wird mit der Petitions-ID als sicher gebundenem Wert aktualisiert.
+	$sql='UPDATE petitions SET lastact=NOW() WHERE petitionid=?';
+	db_query_params($sql,array((int)$petition));
 }
-//end petitionmail 
 
 function systemmail($to,$subject,$body,$from=0,$noemail=false){
-	$subject = safeescape($subject);
+	// PDO schützt Betreff und Nachricht; der Inhalt muss dafür nicht mit Backslashes verändert werden.
 	$subject=str_replace("\n","",$subject);
-	$subject=str_replace("`n","",$subject);
-	$body = safeescape($body);
-	//echo $subject."<br>".$body;
-	$sql = "SELECT prefs,emailaddress FROM accounts WHERE acctid='$to'";
-	$result = db_query($sql);
-	$row = db_fetch_assoc($result);
+	$subject=str_replace(chr(96).'n',"",$subject);
+	// Empfänger-ID als Zahl binden, statt sie in den SQL-Befehl einzusetzen.
+	$sql="SELECT prefs,emailaddress FROM accounts WHERE acctid=?";
+	$result=db_query_params($sql,array((int)$to));
+	$row=db_fetch_assoc($result);
 	db_free_result($result);
-	$prefs = unserialize($row['prefs']);
-	
-	if ($prefs['dirtyemail']){
+	$prefs=unserialize($row['prefs']);
+	if($prefs['dirtyemail']){
 		//output("Not cleaning: $prefs[dirtyemail]");
 	}else{
 		//output("Cleaning: $prefs[dirtyemail]");
 		$subject=soap($subject);
 		$body=soap($body);
 	}
-
-	$sql = "INSERT INTO mail (msgfrom,msgto,subject,body,sent) VALUES ('".(int)$from."','".(int)$to."','$subject','$body',now())";
-	db_query($sql);
+	// Betreff und Nachricht werden getrennt vom SQL-Befehl gespeichert.
+	$sql="INSERT INTO mail (msgfrom,msgto,subject,body,sent) VALUES (?,?,?,?,NOW())";
+	db_query_params($sql,array((int)$from,(int)$to,$subject,$body));
 	$email=false;
-	if ($prefs['emailonmail'] && $from>0){
+	if($prefs['emailonmail'] && $from>0){
 		$email=true;
 	}elseif($prefs['emailonmail'] && $from==0 && $prefs['systemmail']){
 		$email=true;
 	}
-	if (!is_email($row['emailaddress'])) $email=false;
-	if ($email && !$noemail){
-		$sql = "SELECT name FROM accounts WHERE acctid='$from'";
-		$result = db_query($sql);
+	if(!is_email($row['emailaddress'])) $email=false;
+	if($email && !$noemail){
+		// Auch die Absender-ID wird sicher als Zahl gebunden.
+		$sql="SELECT name FROM accounts WHERE acctid=?";
+		$result=db_query_params($sql,array((int)$from));
 		$row1=db_fetch_assoc($result);
 		db_free_result($result);
-		if ($row1['name']!="") $fromline="From: ".preg_replace("'[`].'","",$row1['name'])."\n";
-		// We've inserted it into the database, so.. strip out any formatting
-		// codes from the actual email we send out... they make things
-		// unreadable
-		$body = preg_replace("'[`]n'", "\n", $body);
-		$body = preg_replace("'[`].'", "", $body);
+		if($row1['name']!="") $fromline="From: ".preg_replace("'[".chr(96)."].'","",$row1['name'])."\n";
+		// Wir entfernen nur Spiel-Formatierung; echte Backslashes im Text bleiben erhalten.
+		$body=preg_replace("'[".chr(96)."]n'","\n",$body);
+		$body=preg_replace("'[".chr(96)."].'","",$body);
 		mail($row['emailaddress'],"Neue LoGD Mail","Du hast eine neue Nachricht von LoGD @ http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])." empfangen.\n\n$fromline"
-			."Betreff: ".preg_replace("'[`].'","",stripslashes($subject))."\n"
-			."Body: ".stripslashes($body)."\n"
+			."Betreff: ".preg_replace("'[".chr(96)."].'","",$subject)."\n"
+			."Body: ".$body."\n"
 			."\nDu kannst diese Meldungen in deinen Einstellungen abschalten.",
 			"From: ".getsetting("gameadminemail","postmaster@localhost")
 		);
 	}
 }
-
 function isnewday($level){
 	global $session;
 	if ($session['user']['superuser']<$level) {
@@ -1436,11 +1427,18 @@ function addcommentary() {
 	global $HTTP_POST_VARS,$session,$REQUEST_URI,$HTTP_GET_VARS,$doublepost;
 	$doublepost=0;
 
-	$section=$HTTP_POST_VARS['section'];
-	$talkline=$HTTP_POST_VARS['talkline'];
-	if ($HTTP_POST_VARS['insertcommentary'][$section]!==NULL &&
-		trim($HTTP_POST_VARS['insertcommentary'][$section])!="") {
-		$commentary = str_replace("`n","",soap($HTTP_POST_VARS['insertcommentary'][$section]));
+	// Formularwerte werden von der alten Kompatibilitätsschicht mit Backslashes ergänzt; das entfernen wir hier.
+	$section=db_unquote_legacy_input(isset($HTTP_POST_VARS['section']) ? $HTTP_POST_VARS['section'] : '');
+	$talkline=db_unquote_legacy_input(isset($HTTP_POST_VARS['talkline']) ? $HTTP_POST_VARS['talkline'] : '');
+	// Fehlende Kommentarfelder prüfen wir vorher, damit PHP 8 keine Warnung ausgibt.
+	if(isset($HTTP_POST_VARS['insertcommentary'][$section])){
+		$commentInput=db_unquote_legacy_input($HTTP_POST_VARS['insertcommentary'][$section]);
+	}else{
+		$commentInput='';
+	}
+	// Leere Texte werden ignoriert; nur ein echter Kommentar wird weiterverarbeitet.
+	if(trim($commentInput)!=""){
+		$commentary=str_replace(chr(96).'n',"",soap($commentInput));
 		$y = strlen($commentary);
 		for ($x=0;$x<$y;$x++){
 			if (substr($commentary,$x,1)=="`"){
@@ -1501,14 +1499,16 @@ function addcommentary() {
 		&& substr($commentary,0,2)!="::" 
 		&& substr($commentary,0,3)!="/me") 
 			$commentary = ":`3$talkline: \\\"`#$commentary`3\\\"";
-		$sql = "SELECT commentary.comment,commentary.author FROM commentary WHERE section='$section' ORDER BY commentid DESC LIMIT 1";
-		$result = db_query($sql) or die(db_error(LINK));
+		// Der Abschnitt wird als Wert gebunden, damit Sonderzeichen den SQL-Befehl nicht verändern.
+		$sql = "SELECT commentary.comment,commentary.author FROM commentary WHERE section=? ORDER BY commentid DESC LIMIT 1";
+		$result = db_query_params($sql,array($section)) or die(db_error(LINK));
 		$row = db_fetch_assoc($result);
 		db_free_result($result);
-		if ($row['comment']!=stripslashes($commentary) || $row['author']!=$session['user']['acctid']){
-		// if ($row[comment]!=$commentary || $row[author]!=$session[user][acctid]){
-		  $sql = "INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'$section',".$session['user']['acctid'].",\"$commentary\")";
-			db_query($sql) or die(db_error(LINK));
+		// Beide Texte sind unverändert; wir vergleichen sie ohne zusätzliche Backslash-Entfernung.
+		if($row['comment']!=$commentary || $row['author']!=$session['user']['acctid']){
+			// Abschnitt, Spieler-ID und Kommentar werden sicher als getrennte Werte gespeichert.
+			$sql="INSERT INTO commentary (postdate,section,author,comment) VALUES (NOW(),?,?,?)";
+			db_query_params($sql,array($section,(int)$session['user']['acctid'],$commentary)) or die(db_error(LINK));
 			return true;
 		} else {
 			$doublepost = 1;
