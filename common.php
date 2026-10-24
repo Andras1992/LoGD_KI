@@ -1526,20 +1526,21 @@ function viewcommentary($section,$message="Kommentar hinzufügen?",$limit=10,$tal
 	$message = translate($message);
 
 	$com=(int)$HTTP_GET_VARS['comscroll'];
-  $sql = "SELECT commentary.*, 
+	// Der Abschnitt wird als sicherer Wert gebunden; Seitenlimit und Startposition werden vorher in Zahlen umgewandelt.
+	$sql = "SELECT commentary.*,
 	               accounts.name,
 	               accounts.login,
-		accounts.loggedin,
-		accounts.location,
-		accounts.laston
+	               accounts.loggedin,
+	               accounts.location,
+	               accounts.laston
 	          FROM commentary
 	         INNER JOIN accounts
 	            ON accounts.acctid = commentary.author
-	         WHERE section = '$section'
-	           AND accounts.locked=0 
+	         WHERE section = ?
+	           AND accounts.locked=0
 	         ORDER BY commentid DESC
-	         LIMIT ".($com*$limit).",$limit";
-	$result = db_query($sql) or die(db_error(LINK));
+	         LIMIT ".(int)($com*$limit).",".(int)$limit;
+	$result = db_query_params($sql,array($section)) or die(db_error(LINK));
 	$counttoday=0;
 	for ($i=0;$i < db_num_rows($result);$i++){
 	  $row = db_fetch_assoc($result);

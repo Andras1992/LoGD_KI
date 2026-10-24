@@ -13,12 +13,13 @@ if (addcommentary()) {
 $statuses=array(0=>"`bUngelesen`b","Gelesen","Geschlossen");
 
 if ($_GET['op']=="del"){
-	$sql = "DELETE FROM petitions WHERE petitionid='$_GET[id]'";
-	db_query($sql);
-	$sql = "DELETE FROM commentary WHERE section='pet-{$_GET['id']}'";
-	db_query($sql);
-	$sql = 'DELETE FROM petitionmail WHERE petitionid="'.$_GET['id'].'"';
-	db_query($sql);
+	// Alle drei Löschbefehle binden die Petitionsnummer als Zahl; so bleibt sie getrennt vom SQL-Code.
+	$sql = 'DELETE FROM petitions WHERE petitionid=?';
+	db_query_params($sql,array((int)$_GET['id']));
+	$sql = 'DELETE FROM commentary WHERE section=?';
+	db_query_params($sql,array('pet-'.(int)$_GET['id']));
+	$sql = 'DELETE FROM petitionmail WHERE petitionid=?';
+	db_query_params($sql,array((int)$_GET['id']));
 	$_GET['op']="";
 }
 elseif ($_GET['op']=='sendmessage') {
@@ -45,15 +46,22 @@ page_header("Petition Viewer");
 addnav("G?Zurück zur Grotte","superuser.php");
 addnav("W?Zurück zum Weltlichen","village.php");
 if ($_GET['op']==""){
-	$sql = "SELECT petitionid FROM petitions WHERE status=2 AND date<'".date("Y-m-d H:i:s",strtotime(date("r")."-7 days"))."'";
-	$result = db_query($sql);
-	while ($row = db_fetch_assoc($result)) db_query('DELETE FROM petitionmail WHERE petitionid="'.$row['petitionid'].'"');
-	$sql = "DELETE FROM petitions WHERE status=2 AND date<'".date("Y-m-d H:i:s",strtotime("-7 days"))."'";
-	db_query($sql);
+	// Das Datum wird als Wert gebunden, damit MariaDB es sicher als Datum vergleicht.
+	$petitionMailExpiry=date("Y-m-d H:i:s",strtotime(date("r")."-7 days"));
+	$sql = "SELECT petitionid FROM petitions WHERE status=2 AND date<?";
+	$result = db_query_params($sql,array($petitionMailExpiry));
+	while ($row = db_fetch_assoc($result)) {
+		// Jede gefundene Petition wird getrennt und sicher aus dem Nachrichtenverlauf entfernt.
+		$sql = 'DELETE FROM petitionmail WHERE petitionid=?';
+		db_query_params($sql,array((int)$row['petitionid']));
+	}
+	$petitionExpiry=date("Y-m-d H:i:s",strtotime("-7 days"));
+	$sql = "DELETE FROM petitions WHERE status=2 AND date<?";
+	db_query_params($sql,array($petitionExpiry));
 	if ($_GET['setstat']!=""){
-		$sql = "UPDATE petitions SET status='{$_GET['setstat']}' WHERE petitionid='{$_GET['id']}'";
-		db_query($sql);
-		//output($sql);
+		// Status und Petitionsnummer werden als Zahlen gebunden.
+		$sql = "UPDATE petitions SET status=? WHERE petitionid=?";
+		db_query_params($sql,array((int)$_GET['setstat'],(int)$_GET['id']));
 	}
 	$sql = "SELECT petitions.petitionid,petitions.lastact,accounts.name,petitions.date,petitions.status,petitions.body, IF(petitionmail.petitionid > 0,COUNT(*),0) AS petmails FROM petitions LEFT JOIN petitionmail USING(petitionid) LEFT JOIN accounts ON accounts.acctid=petitions.author GROUP BY petitions.petitionid ORDER BY petitions.status ASC, petitions.lastact DESC, petitions.date DESC";
 	$result = db_query($sql);
@@ -61,8 +69,9 @@ if ($_GET['op']==""){
 	output("<table border='0'><tr class='trhead'><td>Num</td><td>Ops</td><td>Von</td><td>Sent</td><td>Status</td><td>Kommentare</td></tr>",true);
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
-		$sql = "SELECT count(commentid) AS c FROM commentary WHERE section='pet-{$row['petitionid']}'";
-		$res = db_query($sql);
+		// Die Petitionsnummer wird als Teil des Abschnitts sicher an die Abfrage übergeben.
+		$sql = "SELECT count(commentid) AS c FROM commentary WHERE section=?";
+		$res = db_query_params($sql,array('pet-'.(int)$row['petitionid']));
 		$counter = db_fetch_assoc($res);
 		output("<tr class='".($i%2?"trlight":"trdark")."'><td>{$row['petitionid']}</td><td>[<a href='viewpetition.php?op=view&id={$row['petitionid']}'>Anzeigen</a>|<a href='viewpetition.php?op=del&id={$row['petitionid']}' onClick='return confirm(\"Diese Anfrage wirklich löschen?\");'>Del</a>|<a href='viewpetition.php?setstat=0&id={$row['petitionid']}'>Ungelesen</a>|<a href='viewpetition.php?setstat=1&id={$row['petitionid']}'>Gelesen</a>|<a href='viewpetition.php?setstat=2&id={$row['petitionid']}'>Geschlossen</a>]</td>",true);
 		output("<td>",true);
@@ -100,8 +109,9 @@ if ($_GET['op']==""){
 	addnav("U?Als Ungelesen markieren","viewpetition.php?setstat=0&id=$_GET[id]");
 	addnav("S?Als GeleSen markieren","viewpetition.php?setstat=1&id=$_GET[id]");
 	
-	$sql = "SELECT accounts.name,accounts.login,accounts.acctid,petitions.date,petitions.status,petitionid,body,pageinfo FROM petitions LEFT JOIN accounts ON accounts.acctid=petitions.author WHERE petitionid='$_GET[id]' ORDER BY date ASC";
-	$result = db_query($sql);
+	// Die angezeigte Petitionsnummer wird als Zahl gebunden.
+	$sql = "SELECT accounts.name,accounts.login,accounts.acctid,petitions.date,petitions.status,petitionid,body,pageinfo FROM petitions LEFT JOIN accounts ON accounts.acctid=petitions.author WHERE petitionid=? ORDER BY date ASC";
+	$result = db_query_params($sql,array((int)$_GET['id']));
 	$row = db_fetch_assoc($result);
 	$session['petitions'][$_GET['id']] = date('Y-m-d H:i:s');
 	if ($row['acctid']>0){
@@ -123,8 +133,9 @@ if ($_GET['op']==""){
 		$answerbody = "\n\n----- Deine Anfrage -----\n".$row['body'];
 		$answersubject = 'RE: Hilfeanfrage';
 		output('`n`n`@Mailverkehr:`n<table><tr><td>',true);
-		$sql = 'SELECT petitionmail.*, accounts.login FROM petitionmail LEFT JOIN accounts ON petitionmail.msgfrom=accounts.acctid WHERE petitionid="'.$_GET['id'].'" ORDER BY sent ASC';
-		$result = db_query($sql);
+		// Die Petitionsnummer wird gebunden, damit sie den SQL-Befehl nicht verändern kann.
+		$sql = 'SELECT petitionmail.*, accounts.login FROM petitionmail LEFT JOIN accounts ON petitionmail.msgfrom=accounts.acctid WHERE petitionid=? ORDER BY sent ASC';
+		$result = db_query_params($sql,array((int)$_GET['id']));
 		while ($row2 = db_fetch_assoc($result)) {
 			output('<table class="input" width="100%"><tr><td>',true);
 			output('`4Datum:`& '.$row2['sent'].'`n`4Von:`& '.$row2['login'].'`n`4Betreff:`& '.$row2['subject'].'`n`4Text:`& ');
@@ -138,8 +149,9 @@ if ($_GET['op']==""){
 		output('`@Ingame-Mail schreiben`n');
 		output('Betreff: <input type="text" name="subject" value="'.$answersubject.'">`nText:`n<textarea name="body" class="input" cols="40" rows="9">'.$answerbody.'</textarea>`n<input type="submit" class="button" value="Senden"></form>`n',true);
 		addnav('','viewpetition.php?op=sendmessage&id='.$_GET['id']);
-		$sql = 'UPDATE petitionmail SET seen=1 WHERE petitionid="'.$_GET['id'].'"';
-		db_query($sql);
+		// Nur die Nachrichten zu dieser Petition werden als gelesen markiert.
+		$sql = 'UPDATE petitionmail SET seen=1 WHERE petitionid=?';
+		db_query_params($sql,array((int)$_GET['id']));
 	}	
 	if ($_GET['viewpageinfo']){
 		output("`n`n`@Seiten Info:`&`n");
@@ -150,8 +162,9 @@ if ($_GET['op']==""){
 		$output.="<span style='font-family: fixed-width'>".nl2br($body)."</span>";
 	}	
 	if ($row['status']==0) {
-		$sql = "UPDATE petitions SET status=1 WHERE petitionid='$_GET[id]'";
-		$result = db_query($sql);
+		// Der Status wird mit der gebundenen Petitionsnummer auf "gelesen" gesetzt.
+		$sql = "UPDATE petitions SET status=1 WHERE petitionid=?";
+		$result = db_query_params($sql,array((int)$_GET['id']));
 	}
 }
 page_footer();
