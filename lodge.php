@@ -232,8 +232,9 @@ if ($_GET['op']==""){
 			//$teil = closetags($teil,'`c`i`b');
 					
 			$cleartitle = strtolower(preg_replace("/`./","",$teil));
-			foreach ($titles AS $this) {
-				if (strtolower($this[0])==$cleartitle || strtolower($this[1])==$cleartitle) {
+			// In PHP 8 ist $this fuer Objekte reserviert; der Titel-Eintrag bekommt deshalb einen normalen Variablennamen.
+			foreach ($titles AS $titleEntry) {
+				if (strtolower($titleEntry[0])==$cleartitle || strtolower($titleEntry[1])==$cleartitle) {
 					$falsetitle = true;
 					break;
 				}

@@ -219,8 +219,9 @@ if ($_GET['op']=="lasthit"){
 		if (substr_count($clearedname,$_POST['login'])) {
 			// Titel rausfinden
 			$replace = '(`.)*';
+			// PHP 8 liest ein Zeichen per eckiger Klammer und Zeichenposition aus.
 			for ($i=0;$i<strlen($_POST['login']);$i++) {
-				$replace .= $_POST['login']{$i}.'(`.)*';
+				$replace .= $_POST['login'][$i].'(`.)*';
 			}
 			$_POST['ctitle'] = rtrim(preg_replace('/'.$replace.'/','',$_POST['name']));
 			if ($_POST['ctitle']=='') $_POST['title'] = '';

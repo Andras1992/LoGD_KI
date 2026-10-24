@@ -199,7 +199,8 @@ if ($_GET['op']=="mail"){
 		if ($_POST['type']=='ip') $vals = explode('|',$_POST['ip']);
 		else $vals = explode('|',$_POST['id']);
 
-		foreach ($vals AS $this) {
+		// PHP 8 reserviert $this fuer Objekte; hier speichern wir den gerade bearbeiteten Ban-Wert in einer normalen Variable.
+		foreach ($vals AS $loopValue) {
 			$sql = "INSERT INTO bans (";
 			if ($_POST['type']=="ip"){
 				$sql.="ipfilter";
@@ -207,16 +208,16 @@ if ($_GET['op']=="mail"){
 				$sql.="uniqueid";
 			}
 			$sql.=",banexpire,banreason) VALUES (";
-			$sql.="\"$this\"";
+			$sql.="\"$loopValue\"";
 			$sql.=",\"".((int)$_POST['duration']==0?"0000-00-00":date("Y-m-d",strtotime("+$_POST[duration] days")))."\",";
 			$sql.="\"$_POST[reason]\")";
 			if ($_POST['type']=="ip"){
-				if (substr($_SERVER['REMOTE_ADDR'],0,strlen($this)) == $this){
+				if (substr($_SERVER['REMOTE_ADDR'],0,strlen($loopValue)) == $loopValue){
 					$sql = "";
 					output("Du willst dich doch nicht wirklich selbst verbannen, oder?? Das ist deine eigene IP-Adresse!");
 				}
 			}else{
-				if ($_COOKIE['lgi']==$this){
+				if ($_COOKIE['lgi']==$loopValue){
 					$sql = "";
 					output("Du willst dich doch nicht wirklich selbst verbannen, oder?? Das ist deine eigene ID!");
 				}
@@ -260,8 +261,9 @@ if ($_GET['op']=="mail"){
 	}
 	elseif ($_GET['act']=='dodeleteuser') {
 		$userid = explode(',',$_GET['userid']);
-		foreach ($userid AS $this) {
-			deleteuser($this,$_POST['stdreason'],$_POST['reason'],$_POST['savereason']);
+		// Diese Schleife verarbeitet jede ausgewaehlte Spieler-ID einzeln.
+		foreach ($userid AS $loopValue) {
+			deleteuser($loopValue,$_POST['stdreason'],$_POST['reason'],$_POST['savereason']);
 		}
 		output('`n');
 	}
@@ -325,13 +327,14 @@ if ($_GET['op']=="mail"){
 		if (count($list)<3) continue;
 		$tmpstr = '';
 		$ips = $ids = $accts = array();
-		foreach ($list AS $this) {
-			$tmpstr .= ('<tr><td><input type="checkbox" name="userid[]" value="'.$this['acctid'].'"></td>
-							<td>'.$this['name'].'</td>
-							<td>'.$this['lastip'].'</td>
-							<td>'.$this['uniqueid'].'</td>
-							<td>'.$this['dragonkills'].'</td>
-							<td>'.$this['level'].'</td></tr>');
+		// Diese Schleife zeigt die Spieler aus der Ergebnisliste einzeln an.
+		foreach ($list AS $loopValue) {
+			$tmpstr .= ('<tr><td><input type="checkbox" name="userid[]" value="'.$loopValue['acctid'].'"></td>
+							<td>'.$loopValue['name'].'</td>
+							<td>'.$loopValue['lastip'].'</td>
+							<td>'.$loopValue['uniqueid'].'</td>
+							<td>'.$loopValue['dragonkills'].'</td>
+							<td>'.$loopValue['level'].'</td></tr>');
 		}
 		output('<form action="logs.php?op=multi&searchby='.$_GET['searchby'].'" method="post">',true);
 		addnav('','logs.php?op=multi&searchby='.$_GET['searchby']);
