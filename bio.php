@@ -4,7 +4,9 @@
 
 require_once "common.php";
 checkday();
-$result = db_query("SELECT login,name,level,sex,title,specialty,hashorse,acctid,age,marriedto,pvpflag,charisma,resurrections,bio,dragonkills,race,avatar,housekey,punch,reputation,birthday FROM accounts WHERE login='$_GET[char]'");
+// Der gesuchte Charaktername kommt aus der URL und wird deshalb als sicherer SQL-Wert uebergeben.
+$sql = "SELECT login,name,level,sex,title,specialty,hashorse,acctid,age,marriedto,pvpflag,charisma,resurrections,bio,dragonkills,race,avatar,housekey,punch,reputation,birthday FROM accounts WHERE login=?";
+$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['char'])));
 $row = db_fetch_assoc($result);
 $row['login'] = rawurlencode($row['login']);
 
@@ -62,7 +64,9 @@ if (getsetting("avatare",0)==1)output ("</td></tr></table>",true);
 if ($row['bio']>"")
 	output("`n`^Bio: `@`n".soap($row['bio'])."`n");
 output("`n`^Letzte Leistungen (und Niederlagen) von $row[name]`^");
-$result = db_query("SELECT * FROM news WHERE accountid=$row[acctid] ORDER BY newsdate DESC,newsid ASC LIMIT 100");
+// Die Konto-ID kommt aus der zuvor gelesenen Biografie und wird als Zahl gebunden.
+$sql = "SELECT * FROM news WHERE accountid=? ORDER BY newsdate DESC,newsid ASC LIMIT 100";
+$result = db_query_params($sql, array((int)$row['acctid']));
 $odate="";
 for ($i=0;$i<db_num_rows($result);$i++){
 	$row = db_fetch_assoc($result);

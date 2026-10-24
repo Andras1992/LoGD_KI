@@ -26,14 +26,17 @@ if ($newplayer!="") output("`@Unser jüngster Spieler ist `^$newplayer`@!`0`n");
 $newdk=stripslashes(getsetting("newdragonkill","")); 
 if ($newdk!="") output("`@Der letzte Drachentöter war: `&$newdk`@!`0`n`n"); 
 
-$result = db_fetch_assoc(db_query("SELECT COUNT(acctid) AS onlinecount FROM accounts WHERE locked=0 AND loggedin=1 AND laston>'".date("Y-m-d H:i:s",strtotime("-".getsetting("LOGINTIMEOUT",900)." seconds"))."'"));
+// Der Stichtag wird aus der eingestellten Sitzungsdauer berechnet und sicher als Wert uebergeben.
+$onlineCutoff = date("Y-m-d H:i:s",strtotime("-".getsetting("LOGINTIMEOUT",900)." seconds"));
+$result = db_fetch_assoc(db_query_params("SELECT COUNT(acctid) AS onlinecount FROM accounts WHERE locked=0 AND loggedin=1 AND laston>?", array($onlineCutoff)));
 $onlinecount = $result['onlinecount'];
 
 // do not check if playerlimit is not reached!
 if ($onlinecount >= getsetting("maxonline",10) && getsetting("maxonline",10)!=0) {
-$id=$_COOKIE['lgi']; 
-$sql = "SELECT superuser,uniqueid FROM accounts WHERE uniqueid='$id' AND superuser>0"; 
-$result = db_query($sql) or die(db_error(LINK)); 
+$id = db_unquote_legacy_input($_COOKIE['lgi']);
+// Das Login-Cookie wird als normaler Textwert gebunden, damit es keinen SQL-Befehl veraendern kann.
+$sql = "SELECT superuser,uniqueid FROM accounts WHERE uniqueid=? AND superuser>0";
+$result = db_query_params($sql, array($id)) or die(db_error(LINK));
 if (db_num_rows($result)>0) $is_superuser=1; 
 else $is_superuser=0; 
 }
