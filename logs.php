@@ -231,14 +231,18 @@ if ($_GET['op']=="mail"){
 		output('`n');
 	}
 	elseif (!empty($_POST['deleteuser']) && isset($_POST['userid']) && is_array($_POST['userid']) && count($_POST['userid'])>0) {
-		$sql = "SELECT name FROM accounts WHERE acctid IN (".implode(',',$_POST['userid']).")";
-		$result = db_query($sql) or die(sql_error($sql));
+		// Formularwerte werden zu Zahlen gemacht, damit sie keinen SQL-Befehl einschleusen können.
+		$userIds = array_map('intval', $_POST['userid']);
+		// Für jede Konto-ID gibt es ein Fragezeichen; die Zahlen werden separat und sicher an SQL übergeben.
+		$idPlaceholders = implode(',', array_fill(0, count($userIds), '?'));
+		$sql = "SELECT name FROM accounts WHERE acctid IN ($idPlaceholders)";
+		$result = db_query_params($sql, $userIds) or die(sql_error($sql));
 		$delnames = array();
 		while ($row = db_fetch_assoc($result)) {
 			$delnames[] = '`$'.$row['name'].'`0';
 		}
 		output('User '.implode(', ',$delnames).' aus folgendem Grund löschen: ');
-		output("<form action='logs.php?op=multi&act=dodeleteuser&searchby=$_GET[searchby]&userid=".implode(',',$_POST['userid'])."' method='POST'>",true);
+		output("<form action='logs.php?op=multi&act=dodeleteuser&searchby=$_GET[searchby]&userid=".implode(',',$userIds)."' method='POST'>",true);
 		output('Begründung auswählen: ');
 		output('<select name="stdreason" size="1">',true);
 		output('<option value="0">--- keine Begründung angeben ---</option>',true);
@@ -257,7 +261,7 @@ if ($_GET['op']=="mail"){
 
 		output('<input type="Submit" value="löschen">',true);
 		output('</form>',true);
-		addnav('','logs.php?op=multi&act=dodeleteuser&searchby='.$_GET['searchby'].'&userid='.implode(',',$_POST['userid']));
+		addnav('','logs.php?op=multi&act=dodeleteuser&searchby='.$_GET['searchby'].'&userid='.implode(',',$userIds));
 	}
 	elseif ($_GET['act']=='dodeleteuser') {
 		$userid = explode(',',$_GET['userid']);
