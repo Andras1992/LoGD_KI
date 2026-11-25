@@ -8,8 +8,8 @@ require_once "anticheat.php";
 // Alte Spielseiten erwarten diese Namen; sie zeigen auf dieselben Eingaben wie $_GET und $_POST.
 $HTTP_GET_VARS =& $_GET;
 $HTTP_POST_VARS =& $_POST;
-// Beim ersten Seitenaufruf sind Aktion, Unteraktion, Kampffertigkeit und Seitenzahl noch leer.
-foreach (array('op' => '', 'op1' => '', 'op2' => '', 'skill' => '', 'action' => '', 'limit' => '') as $requestKey => $emptyValue) {
+// Beim ersten Seitenaufruf sind Aktion, Nebenaktion, Kampfskill und Seitenzahl noch leer.
+foreach (array('op' => '', 'op1' => '', 'op2' => '', 'skill' => '', 'action' => '', 'act' => '', 'limit' => '') as $requestKey => $emptyValue) {
 	if (!isset($_GET[$requestKey])) $_GET[$requestKey] = $emptyValue;
 }
 
@@ -22,9 +22,10 @@ function pvpwarning($dokill=false) {
 	global $session;
 	$days = getsetting("pvpimmunity", 5);
 	$exp = getsetting("pvpminexp", 1500);
+	// Der PvP-Schutzwert pk liegt direkt im Spieler-Datensatz, nicht in einem zweiten user-Unterfeld.
 	if ($session['user']['age'] <= $days &&
 		$session['user']['dragonkills'] == 0 &&
-		$session['user']['user']['pk'] == 0 &&
+		$session['user']['pk'] == 0 &&
 		$session['user']['experience'] <= $exp) {
 		if ($dokill) {
 			output("`\$Warnung!`^ Da du selbst noch vor PvP geschützt warst, aber jetzt einen anderen Spieler angreifst, hast du deine Immunität verloren!!`n`n");
