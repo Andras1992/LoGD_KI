@@ -5,8 +5,8 @@
 require_once "common.php";
 isnewday(2);
 
-$sql = "DELETE FROM referers WHERE last<'".date("Y-m-d H:i:s",strtotime(date ("r")."-".getsetting("expirecontent",180)." days"))."'";
-db_query($sql);
+$expireBefore=date("Y-m-d H:i:s",strtotime(date("r")."-".getsetting("expirecontent",180)." days")); // Das Loeschdatum wird einmal berechnet und danach sicher gebunden.
+db_query_params("DELETE FROM referers WHERE last<?",array($expireBefore)); // Aeltere Eintraege werden ohne SQL-Textverkettung entfernt.
 if ($_GET['op']=="rebuild"){
 	$sql = "SELECT * FROM referers";
 	$result = db_query($sql);
@@ -14,10 +14,10 @@ if ($_GET['op']=="rebuild"){
 		$row = db_fetch_assoc($result);
 		$site = str_replace("http://","",$row['uri']);
 		if (strpos($site,"/")) $site = substr($site,0,strpos($site,"/"));
-		$sql = "UPDATE referers SET site='".addslashes($site)."' WHERE refererid='{$row['refererid']}'";
-		db_query($sql);
-	}
-}
+		$sql = "UPDATE referers SET site=? WHERE refererid=?"; // Die aus der Adresse abgeleitete Website wird sicher gespeichert.
+		db_query_params($sql,array($site,(int)$row["refererid"]));
+	} // Ende der Schleife, die jede Adresse neu einsortiert.
+} // Ende des Neuaufbaus der Referer-Liste.
 addnav("G?Zurück zur Grotte","superuser.php");
 addnav("W?Zurück zum Weltlichen","village.php");
 addnav("Referer Optionen");
@@ -30,8 +30,9 @@ addnav("Z?Nach Zeit sortieren","referers.php?sort=last".($_GET['sort']=="last DE
 addnav("Neu aufbauen","referers.php?op=rebuild");
 
 page_header("Referers");
-$order = "count DESC";
-if ($_GET['sort']!="") $order=$_GET['sort'];
+$sortOptions=array("count"=>"count ASC","count DESC"=>"count DESC","uri"=>"site ASC","uri DESC"=>"site DESC","last"=>"last ASC","last DESC"=>"last DESC"); // Nur diese festen Sortierfelder duerfen in den SQL-Befehl gelangen.
+$order=$sortOptions["count DESC"]; // Ohne gueltige Auswahl sortieren wir nach der Anzahl.
+if (isset($sortOptions[$_GET["sort"]])) $order=$sortOptions[$_GET["sort"]]; // URL-Text wird nur gegen die erlaubte Liste geprueft.
 $sql = "SELECT SUM(count) AS count, MAX(last) AS last,site FROM referers GROUP BY site ORDER BY $order";
 output("<table><tr><td>Anzahl</td><td>Zuletzt</td><td>URL</td></tr>",true);
 $result = db_query($sql);
@@ -43,9 +44,8 @@ for ($i=0;$i<db_num_rows($result);$i++){
 	$diffsecs = strtotime(date("r"))-strtotime($row['last']);
 		output((int)($diffsecs/86400)."d ".(int)($diffsecs/3600%3600)."h ".(int)($diffsecs/60%60)."m ".(int)($diffsecs%60)."s");
 	output("`b</td><td>`b".HTMLEntities($row['site']==""?"`iKeine`i":$row['site'])."`b</td></tr>",true);
-	$sql = "SELECT count,last,uri FROM referers WHERE site='".addslashes($row['site'])."' ORDER BY {$order}";
-	$result1 = db_query($sql);
-	$skippedcount=0;
+	$sql = "SELECT count,last,uri FROM referers WHERE site=? ORDER BY {$detailOrder}"; // Website wird gebunden; die Sortierung kommt aus der festen Liste.
+	$result1 = db_query_params($sql,array($row["site"]));
 	$skippedtotal=0;
 	for ($k=0;$k<db_num_rows($result1);$k++){
 		$row1=db_fetch_assoc($result1);

@@ -4,14 +4,18 @@ require_once "common.php";
 isnewday(2);
 
 if ($_GET['op']=="block"){
-    $sql = "UPDATE accounts SET bio='`iGesperrt aufgrund unangebrachten Inhalts`i',biotime='9999-12-31 23:59:59' WHERE acctid='{$_GET['userid']}'";
+    // Die URL-ID wird als Zahl gebunden, damit sie den SQL-Befehl nicht veraendern kann.
+    $acctid = (int)db_unquote_legacy_input($_GET['userid']);
+    $sql = "UPDATE accounts SET bio='`iGesperrt aufgrund unangebrachten Inhalts`i',biotime='9999-12-31 23:59:59' WHERE acctid=?";
 	systemmail($_GET['userid'],"Deine Kurzbeschreibung wurde gesperrt","Der Administrator hat beschlossen, dass deine Kurzbeschreibung unangebracht ist und hat sie gesperrt.`n`nWenn du darüber diskutieren willst, benutze bitte den Link zur Hilfeanfrage.");
-	db_query($sql);
+	db_query_params($sql, array($acctid));
 }
 if ($_GET['op']=="unblock"){
-	$sql = "UPDATE accounts SET bio='',biotime='0000-00-00 00:00:00' WHERE acctid='{$_GET['userid']}'";
-	systemmail($_GET['userid'],"Deine Kurzbeschreibung wurde wieder freigegeben","Der Administrator hat beschlossen, deine Kurzbeschreibung wieder freizugeben. Du kannst wieder eine Beschreibung eingeben.");
-	db_query($sql);
+	// Die Kontonummer wird als Zahl an PDO uebergeben und bleibt damit vom SQL-Text getrennt.
+	$acctid = (int)db_unquote_legacy_input($_GET['userid']);
+	$sql = "UPDATE accounts SET bio='',biotime='0000-00-00 00:00:00' WHERE acctid=?";
+	systemmail($acctid,"Deine Kurzbeschreibung wurde wieder freigegeben","Der Administrator hat beschlossen, deine Kurzbeschreibung wieder freizugeben. Du kannst wieder eine Beschreibung eingeben.");
+	db_query_params($sql, array($acctid));
 }
 $sql = "SELECT name,acctid,bio,biotime FROM accounts WHERE biotime<'9999-12-31' AND bio>'' ORDER BY biotime DESC LIMIT 100";
 $result = db_query($sql);

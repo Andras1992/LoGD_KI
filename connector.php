@@ -4,10 +4,16 @@ header("Content-Type: text/xml");
 
 switch($_GET['op']){
 case "newssince":
-	$since=($_GET['since']==""?"1=1 ORDER BY newsid DESC limit 1 ":" newsid > '$_GET[since]'");
-	$sql = "SELECT * FROM news WHERE $since";
-	$result = db_query($sql);
-	$output.="<recentnews>";
+	// Ohne Nummer zeigen wir die neueste Nachricht; eine vorhandene Nummer wird sicher gebunden.
+	$since = max(0, (int)db_unquote_legacy_input($_GET['since']));
+	if ($since > 0) {
+		$sql = "SELECT * FROM news WHERE newsid > ? ORDER BY newsid DESC";
+		$result = db_query_params($sql, array($since));
+	} else {
+		$sql = "SELECT * FROM news ORDER BY newsid DESC LIMIT 1";
+		$result = db_query($sql);
+	}
+	$output = "<recentnews>";
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
 		$output.="<news id=\"$row[newsid]\">".HTMLEntities(preg_replace("'[`].'","",$row['newstext']))."</news>";

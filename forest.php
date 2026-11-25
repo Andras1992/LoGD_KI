@@ -3,6 +3,11 @@
 // 24072004
 
 require_once "common.php";
+// Altere LoGD-Stellen lesen $HTTP_GET_VARS, moderne Stellen lesen $_GET.
+// Beide Namen zeigen auf dieselben URL-Werte; so bleiben auch Aenderungen synchron.
+$HTTP_GET_VARS =& $_GET;
+// Ohne op ist der Wald einfach in seiner normalen Startansicht.
+if (!isset($_GET['op'])) $_GET['op'] = "";
 $balance = getsetting("creaturebalance", 0.33);
 
 // Handle updating any commentary that might be around.
@@ -17,9 +22,13 @@ if ($_GET['op']=="castle"){
 	$_GET['op']="";
 	$session['user']['specialinc']="castle.php";
 }
+// Diese Schalter starten aus; einzelne Aktionen schalten sie bei Bedarf ein.
 $fight = false;
+$battle = false;
+$dontdisplayforestmessage = false;
 page_header("Der Wald");
-if ($session['user']['superuser']>1 && $HTTP_GET_VARS['specialinc']!=""){
+// Ohne spezielle Adresse gibt es fuer den Superuser nichts extra zu laden.
+if ($session['user']['superuser']>1 && !empty($HTTP_GET_VARS['specialinc'])){
   $session['user']['specialinc'] = $HTTP_GET_VARS['specialinc'];
 }
 if ($session['user']['specialinc']!=""){
@@ -214,18 +223,21 @@ if ($battle){
 			$sql="SELECT * FROM items WHERE owner=0 AND (class='Beute.Prot' OR class='Zaub.Prot') ORDER BY rand(".e_rand().") LIMIT 1";
 			$result = db_query($sql) or die(db_error(LINK));
 			$row2 = db_fetch_assoc($result);
-			if ($row2['name']){
-				if ($row2['class']=="Beute.Prot"){
-					$sql="INSERT INTO items(name,class,owner,gold,gems,description) VALUES ('".addslashes($row2['name'])."','Beute',".$session['user']['acctid'].",$row2[gold],$row2[gems],'".addslashes($row2['description'])."')";
-				}else if ($row2['class']=="Zaub.Prot"){
-					$row2['description'].=" (gebraucht)";
-					$row2['value1']=e_rand(1,$row2['value2']);
-					$row2['gold']=$row2['gold']*(($row2['value1']+1)/($row2['value2']+1));
-					$sql="INSERT INTO items(name,class,owner,gold,gems,value1,value2,hvalue,description,buff) VALUES ('".addslashes($row2['name'])."','Zauber',".$session['user']['acctid'].",$row2[gold],0,$row2[value1],$row2[value2],$row2[hvalue],'".addslashes($row2['description'])."','".addslashes($row2['buff'])."')";
+			if ($row2["name"]){
+				if ($row2["class"]=="Beute.Prot"){
+					$sql="INSERT INTO items(name,class,owner,gold,gems,description) VALUES (?,?,?,?,?,?)"; // Die Beute wird mit gebundenen Werten angelegt.
+					$params=array($row2["name"],"Beute",(int)$session["user"]["acctid"],(int)$row2["gold"],(int)$row2["gems"],$row2["description"]);
+				}elseif ($row2["class"]=="Zaub.Prot"){
+					$row2["description"].=" (gebraucht)";
+					$row2["value1"]=e_rand(1,$row2["value2"]);
+					$row2["gold"]=$row2["gold"]*(($row2["value1"]+1)/($row2["value2"]+1));
+					$sql="INSERT INTO items(name,class,owner,gold,gems,value1,value2,hvalue,description,buff) VALUES (?,?,?,?,?,?,?,?,?,?)"; // Der Zauber samt Beschreibung und Wirkung wird sicher gespeichert.
+					$params=array($row2["name"],"Zauber",(int)$session["user"]["acctid"],(int)$row2["gold"],0,(int)$row2["value1"],(int)$row2["value2"],(int)$row2["hvalue"],$row2["description"],$row2["buff"]);
 				}else{
-					$sql = "UPDATE items SET owner=".$session['user']['acctid']." WHERE id=$row2[id]";
+					$sql="UPDATE items SET owner=? WHERE id=?"; // Der Vorratsgegenstand wird nur ueber seine Nummer vergeben.
+					$params=array((int)$session["user"]["acctid"],(int)$row2["id"]);
 				}
-				db_query($sql) or die(sql_error($sql));
+				db_query_params($sql,$params) or die(db_error(LINK)); // Die Abfrage wird mit den zuvor vorbereiteten Werten ausgefuehrt.
 				output("`n`qBeim Durchsuchen von $badguy[creaturename] `qfindest du `&$row2[name]`q! ($row2[description])`n`n`#");
 			}
 		}
@@ -235,8 +247,9 @@ if ($battle){
 			if (db_num_rows($result2)>0){
 				$row2 = db_fetch_assoc($result2);
 				$row2['value']=round($row2['value']/10);
-				$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES ('".addslashes($row2['armorname'])."','Rüstung',".$session['user']['acctid'].",$row2[value],$row2[defense],'Gebrauchte Level $row2[level] Rüstung mit $row2[defense] Verteidigung.')";
-				db_query($sql) or die(sql_error($sql));
+					$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES (?,?,?,?,?,?)"; // Ruestungswerte werden getrennt von der SQL-Abfrage gespeichert.
+					$params=array($row2["armorname"],"R".chr(195).chr(188)."stung",(int)$session["user"]["acctid"],(int)$row2["value"],(int)$row2["defense"],"Gebrauchte Level ".(int)$row2["level"]." Ruestung mit ".(int)$row2["defense"]." Verteidigung.");
+				 db_query_params($sql,$params) or die(db_error(LINK)); // Ruestung wird mit ihren sicheren Parameterwerten gespeichert.
 				output("`n`QBeim Durchsuchen von $badguy[creaturename] `Qfindest du die Rüstung `%$row2[armorname]`Q!`n`n`#");
 			}
 		}
@@ -246,8 +259,9 @@ if ($battle){
 			if (db_num_rows($result2)>0){
 				$row2 = db_fetch_assoc($result2);
 				$row2['value']=round($row2['value']/10);
-				$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES ('".addslashes($row2['weaponname'])."','Waffe',".$session['user']['acctid'].",$row2[value],$row2[damage],'Gebrauchte Level $row2[level] Waffe mit $row2[damage] Angriffswert.')";
-				db_query($sql) or die(sql_error($sql));
+					$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES (?,?,?,?,?,?)"; // Waffenwerte werden getrennt von der SQL-Abfrage gespeichert.
+					$params=array($row2["weaponname"],"Waffe",(int)$session["user"]["acctid"],(int)$row2["value"],(int)$row2["damage"],"Gebrauchte Level ".(int)$row2["level"]." Waffe mit ".(int)$row2["damage"]." Angriffswert.");
+				 db_query_params($sql,$params) or die(db_error(LINK)); // Die Waffe wird mit den gebundenen Werten gespeichert.
 				output("`n`QBeim Durchsuchen von $badguy[creaturename] `Qfindest du die Waffe `%$row2[weaponname]`Q!`n`n`#");
 			}
 		}

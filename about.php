@@ -3,6 +3,11 @@
 // 15082004
 
 require_once "common.php";
+// Fuer Anfaenger: Ohne den Zusatz op soll die normale Infoseite erscheinen.
+// Ein leerer Standardwert verhindert einen PHP-Hinweis, wenn op in der Adresse fehlt.
+if (!isset($_GET['op'])) {
+	$_GET['op'] = '';
+}
 page_header("Über Legend of the Green Dragon");
 $time = (strtotime(date("1981-m-d H:i:s",strtotime(date("r")."-".getsetting("gameoffsetseconds",0)." seconds"))))*getsetting("daysperday",4) % strtotime("1981-01-01 00:00:00"); 
 $time = gametime();

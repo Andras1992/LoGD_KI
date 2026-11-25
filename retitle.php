@@ -38,9 +38,8 @@ if ($_GET['op']=="rebuild"){
             $session['user']['title']=$newtitle;
             $session['user']['name']=$row['name'];
         }else{
-            $sql = "UPDATE accounts SET name='".addslashes($row['name'])."', title='".addslashes($newtitle)."' WHERE acctid='{$row['acctid']}'";
-            //output("`0$sql`n");
-            (db_query($sql));
+            $sql = "UPDATE accounts SET name=?, title=? WHERE acctid=?"; // Name, Titel und Kontonummer werden getrennt und sicher gespeichert.
+            db_query_params($sql,array($row["name"],$newtitle,(int)$row["acctid"]));
         }
     }
 }else{

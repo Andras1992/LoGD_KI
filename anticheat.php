@@ -9,8 +9,9 @@ function ac_check($row) {
 	global $session;
 	if (isset($row['acctid'])) {
 		if (!isset($row['uniqueid'])) {
-			$sql = "SELECT uniqueid FROM accounts WHERE acctid = '".$row['acctid']."'";
-			$result = db_query($sql);
+			// Die Kontonummer wird als Zahl gebunden, damit sie den SQL-Befehl nicht veraendern kann.
+			$sql = "SELECT uniqueid FROM accounts WHERE acctid = ?";
+			$result = db_query_params($sql, array((int)$row['acctid']));
 			if (db_num_rows($result)>0) {
 				$row = db_fetch_assoc($result);
 			} else {

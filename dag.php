@@ -65,17 +65,17 @@ if ($HTTP_GET_VARS['op']=="list"){
 }elseif ($HTTP_GET_VARS['op']=="finalize") {
 	//$name = "%" . rawurldecode($_POST['contractname']) . "%";
 	if ($_GET['subfinal']==1){
-		$sql = "SELECT acctid,name,login,level,locked,age,dragonkills,pk,experience,bounty,pvpflag,lastip,emailaddress,reputation,uniqueid  FROM accounts WHERE name='".addslashes(rawurldecode(stripslashes($_POST['contractname'])))."' AND locked=0";
-		//output($sql);
+$sql = "SELECT acctid,name,login,level,locked,age,dragonkills,pk,experience,bounty,pvpflag,lastip,emailaddress,reputation,uniqueid FROM accounts WHERE name=? AND locked=0"; // Der eingegebene Charaktername wird als Datenwert gebunden.
+$result = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POST['contractname']))));
 	}else{
 		$contractname = stripslashes(rawurldecode($_POST['contractname']));
 		$name="%";
 		for ($x=0;$x<strlen($contractname);$x++){
 			$name.=substr($contractname,$x,1)."%";
 		}
-		$sql = "SELECT acctid,name,login,level,locked,age,dragonkills,pk,experience,bounty,pvpflag,lastip,emailaddress,reputation,uniqueid FROM accounts WHERE name LIKE '".addslashes($name)."' AND locked=0";
+		$sql = "SELECT acctid,name,login,level,locked,age,dragonkills,pk,experience,bounty,pvpflag,lastip,emailaddress,reputation,uniqueid FROM accounts WHERE name LIKE ? AND locked=0"; // Der Namensfilter bleibt ein Wert und kann keine SQL-Befehle einschleusen.
+		$result = db_query_params($sql,array("%".$name."%"));
 	}
-	$result = db_query($sql);
 	if (db_num_rows($result) == 0) {
 		output("Dag Durnick sagt höhnisch lachend: `7\"Es gibt nicht einen den ich mit so einem Namen kenne. Vielleicht kommst' wieder, wenn du 'n echtes Opfer hast.\"");
 	} elseif(db_num_rows($result) > 100) {
@@ -141,8 +141,8 @@ if ($HTTP_GET_VARS['op']=="list"){
 					output("`n`4`bDeine Immunität ist hiermit verfallen!`b`0`n");
 				}
 				//debuglog("spent $cost gold for a $amt bounty on", $row['acctid']);
-				$sql = "UPDATE accounts SET bounty=bounty+$amt WHERE login='{$row['login']}'";
-				db_query($sql);
+				$sql = "UPDATE accounts SET bounty=bounty+? WHERE login=?"; // Kopfgeld und Login bleiben getrennte Datenwerte.
+				db_query_params($sql,array((int)$amt,$row["login"]));
 			}
 		}
 	}

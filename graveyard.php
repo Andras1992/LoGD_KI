@@ -212,9 +212,9 @@ if ($_GET['op']==""){
 	for ($x=0;$x<strlen($_POST['name']);$x++){
 		$string .= substr($_POST['name'],$x,1)."%";
 	}
-	$sql = "SELECT login,name,level FROM accounts WHERE name LIKE '".addslashes($string)."' AND locked=0 ORDER BY level,login";
-	$result = db_query($sql);
-	if (db_num_rows($result)<=0){
+	$sql = "SELECT login,name,level FROM accounts WHERE name LIKE ? AND locked=0 ORDER BY level,login"; // Der Suchtext wird sicher als Musterwert eingesetzt.
+	$result=db_query_params($sql,array("%".$string."%"));
+	if (db_num_rows($result)==0){
 		output("`\$Ramius`)  kann niemanden mit einem solchen Namen finden.");
 	}elseif(db_num_rows($result)>100){
 		output("`\$Ramius`) denkt, du solltest die Zahl derer, die du heimsuchen willst, etwas einschränken.");
@@ -243,8 +243,9 @@ if ($_GET['op']==""){
 	addnav("M?Zurück zum Mausoleum","graveyard.php?op=enter");
 }elseif ($_GET['op']=="haunt3"){
 	output("`)`c`bDas Mausoleum`b`c");
-	$sql = "SELECT name,level,hauntedby,acctid FROM accounts WHERE login='{$_GET['name']}'";
-	$result = db_query($sql);
+	// Der Spielername aus der URL wird getrennt vom Suchbefehl an die Datenbank gegeben.
+	$sql = "SELECT name,level,hauntedby,acctid FROM accounts WHERE login=?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['name'])));
 	if (db_num_rows($result)>0){
 		$row = db_fetch_assoc($result);
 		if ($row['hauntedby']!=""){
@@ -255,8 +256,9 @@ if ($_GET['op']==""){
 			$roll2 = e_rand(0,$session['user']['level']);
 			if ($roll2>$roll1){
 				output("Du hast `7{$row['name']}`) erfolgreich heimgesucht!");
-				$sql = "UPDATE accounts SET hauntedby='{$session['user']['name']}' WHERE login='{$_GET['name']}'";
-				db_query($sql);
+				// Name des Geists und Zielkonto werden als Werte gebunden, damit Namen kein SQL einschleusen.
+				$sql = "UPDATE accounts SET hauntedby=? WHERE login=?";
+				db_query_params($sql, array($session['user']['name'], db_unquote_legacy_input($_GET['name'])));
 				addnews("`7{$session['user']['name']}`) hat `7{$row['name']}`) heimgesucht!");
 				$session['user']['donation']+=1;
 		 		systemmail($row['acctid'],"`)du wurdest heimgesucht","`)Du wurdest von {$session['user']['name']} heimgesucht"); 

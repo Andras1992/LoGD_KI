@@ -12,7 +12,8 @@ if ($session['user']['alive']){ }else{
 $sql="SELECT acctid1,acctid2,turn FROM pvp WHERE acctid1=".$session['user']['acctid']." OR acctid2=".$session['user']['acctid']."";
 $result = db_query($sql) or die(db_error(LINK));
 $row = db_fetch_assoc($result);
-if(($row['acctid1']==$session['user']['acctid'] && $row['turn']==1) || ($row['acctid2']==$session['user']['acctid'] && $row['turn']==2)){
+// Ohne offenen PvP-Kampf gibt es keine Ergebniszeile; deshalb pruefen wir zuerst den Rueckgabewert.
+if (is_array($row) && (($row['acctid1']==$session['user']['acctid'] && $row['turn']==1) || ($row['acctid2']==$session['user']['acctid'] && $row['turn']==2))){
 	redirect("pvparena.php");
 }
 
@@ -122,5 +123,6 @@ output(" Das heutige Wetter: `6".$settings['weather']."`@.");
 
 output("`n`n`%`@In der Nähe reden einige Dorfbewohner:`n");
 viewcommentary("village","Hinzufügen",25);
+// Erklaerung: Diese Funktion beendet die Seite und komprimiert ihre Antwort fuer den Browser.
+// Darum darf danach kein schliessendes PHP-Tag stehen, sonst landen Leerzeichen in der komprimierten Antwort.
 page_footer();
-?>

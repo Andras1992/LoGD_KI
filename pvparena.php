@@ -405,13 +405,15 @@ $cost=$session['user']['level']*20;
 
 if ($HTTP_GET_VARS['op']=="challenge"){
 	if($_GET['name']=="" && $session['user']['playerfights']>0 && ($session['user']['level']>4 || $session['user']['dragonkills']>0)){
+		$searchParams=array(); // Hier sammeln wir die Suchwerte, die spaeter sicher gebunden werden.
 		if (isset($_POST['search']) || $_GET['search']>""){
 			if ($_GET['search']>"") $_POST['search']=$_GET['search'];
 			$search="%";
 			for ($x=0;$x<strlen($_POST['search']);$x++){
 				$search .= substr($_POST['search'],$x,1)."%";
 			}
-			$search="name LIKE '".$search."' AND ";
+			$searchParams[]="%".$search."%"; // Der Spielername bleibt ein Datenwert und wird nicht Teil des SQL-Textes.
+			$search="name LIKE ? AND ";
 		}else{
 			$search="";
 		}
@@ -429,14 +431,8 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 		output("`6Wen willst du zu einem Duell mit allen Fähigkeiten herausfordern? Die Arenagebühr kostet dich `^$cost `6Gold. Dein Gegner wird nicht unvorbereitet zustimmen.`nDu kannst heute noch `4".$session['user']['playerfights']."`6 mal gegen einen anderen Krieger antreten.`n`n");
 		output("<form action='pvparena.php?op=challenge' method='POST'>Nach Name suchen: <input name='search' value='$_POST[search]'><input type='submit' class='button' value='Suchen'></form>",true);
 		addnav("","pvparena.php?op=challenge");
-	  	$sql = "SELECT name,alive,location,sex,level,laston,loggedin,login,pvpflag FROM accounts WHERE 
-		$search
-		(locked=0) AND 
-		(age > $days OR dragonkills > 0 OR pk > 0 OR experience > $exp) AND
-		(level >= ".($session['user']['level']-1)." AND level <= ".($session['user']['level']+2).") AND 
-		(acctid <> ".$session['user']['acctid'].")
-		ORDER BY level DESC LIMIT $limit";
-	  	$result = db_query($sql) or die(db_error(LINK));
+		$sql="SELECT name,alive,location,sex,level,laston,loggedin,login,pvpflag FROM accounts WHERE ".$search." (locked=0) AND (age>? OR dragonkills>0 OR pk>0 OR experience>?) AND (level>=? AND level<=?) AND acctid<>? ORDER BY level DESC LIMIT ?,?"; // Spielerfilter, Erfahrungsgrenzen und Seitenzahl werden sicher gebunden.
+		$result=db_query_params($sql,array_merge($searchParams,array((int)$days,(int)$exp,(int)$session["user"]["level"]-1,(int)$session["user"]["level"]+2,(int)$session["user"]["acctid"],(int)($page*$ppp),(int)($ppp+1)))) or die(db_error(LINK));
 		if ($session['user']['pvpflag']=="5013-10-06 00:42:00"){
 			output("`n`&Du hast PvP-Immunität gekauft. Diese verfällt, wenn du jetzt angreifst!`0`n`n");
 		}
@@ -463,8 +459,8 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 		//addnav("Zurück zum Dorf","village.php");
 	}else{
 		if ($session['user']['gold']>=$cost){
-		  	$sql = "SELECT acctid,name,level,sex,hitpoints,maxhitpoints,lastip,emailaddress,uniqueid FROM accounts WHERE login='".$_GET['name']."'"; 
-		  	$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT acctid,name,level,sex,hitpoints,maxhitpoints,lastip,emailaddress,uniqueid FROM accounts WHERE login=?"; // Der Gegnername wird sicher als Suchwert gebunden.
+$result=db_query_params($sql,array(db_unquote_legacy_input($_GET['name'])));
 			$row = db_fetch_assoc($result);
 //			if ($session[user][lastip]==$row[lastip] || $session[user][emailaddress]==$row[emailaddress]){
 			if (ac_check($row)){
@@ -475,10 +471,9 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 				if (db_num_rows($result)){
 					output("`6Bei dieser Herausforderung ist dir jemand zuvor gekommen!");
 				}else{
-					$sql = "INSERT INTO pvp (acctid1,acctid2,name1,name2,lvl1,lvl2,hp1,maxhp1,att1,def1,weapon1,armor1,darkartuses1,magicuses1,thieveryuses1,bufflist1,turn) 
-					VALUES (".$session['user']['acctid'].",$row[acctid],'".addslashes($session['user']['name'])."','".addslashes($row['name'])."',".$session['user']['level'].",$row[level],".$session['user']['hitpoints'].",".$session['user']['maxhitpoints'].",".$session['user']['attack'].",".$session['user']['defence'].",'".addslashes($session['user']['weapon'])."','".addslashes($session['user']['armor'])."',".$session['user']['darkartuses'].",".$session['user']['magicuses'].",".$session['user']['thieveryuses'].",'".addslashes($session['user']['bufflist'])."',0)";
-					db_query($sql) or die(db_error(LINK));
-					if (db_affected_rows(LINK)<=0) redirect("pvparena.php");
+					$sql="INSERT INTO pvp (acctid1,acctid2,name1,name2,lvl1,lvl2,hp1,maxhp1,att1,def1,weapon1,armor1,darkartuses1,magicuses1,thieveryuses1,bufflist1,turn) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; // Namen, Kampfdaten und Gegenstaende werden als einzelne Werte gespeichert.
+					$params=array((int)$session["user"]["acctid"],(int)$row["acctid"],$session["user"]["name"],$row["name"],(int)$session["user"]["level"],(int)$row["level"],(int)$session["user"]["hitpoints"],(int)$session["user"]["maxhitpoints"],(int)$session["user"]["attack"],(int)$session["user"]["defence"],$session["user"]["weapon"],$session["user"]["armor"],(int)$session["user"]["darkartuses"],(int)$session["user"]["magicuses"],(int)$session["user"]["thieveryuses"],serialize($session["user"]["bufflist"]),0);
+					 db_query_params($sql,$params) or die(db_error(LINK));
 					output("`6Du hast`4 $row[name] `6zu einem Duell herausgefordert und wartest nun auf ".($row['sex']?"ihre":"seine")." Antwort. Du könntest $row[name]`6 den Kampf ");
 					output(" schmackhafter machen, indem du ".($row['sex']?"ihr":"ihm")." die Arenagebühr von  `^".($row['level']*20)."`6 Gold überweist.`n");
 					if ($session['user']['dragonkills']<2) output("`n`n`i(Du kannst jetzt ganz normal weiterspielen. Wenn $row[name]`6 sich meldet, bekommst du eine Nachricht.)`i");
@@ -497,8 +492,8 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 }else if ($HTTP_GET_VARS['op']=="deny"){
 	$sql = "DELETE FROM pvp WHERE acctid2=".$session['user']['acctid'];
 	db_query($sql) or die(db_error(LINK));
-	$sql="SELECT acctid,name FROM accounts WHERE acctid=$_GET[id]";
-  	$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT acctid,name FROM accounts WHERE acctid=?"; // Die Konto-ID wird als Zahl gebunden.
+$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$row = db_fetch_assoc($result);
 	$session['user']['reputation']--;
 	output("`6Beim Anblick deines Gegners $row[name] `6wird dir Angst und Bang. Mit ein paar sehr dürftigen Ausreden wie \"nicht genug Gold\" lehnst du die Herausforderung ab und verlässt schnell die Arena.");
@@ -512,20 +507,17 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 		output("`4Du kannst heute nicht mehr gegen andere Krieger antreten.");
   		addnav("Zurück zum Dorf","village.php");
 	}else{
-	 	$sql = "UPDATE pvp SET name2='".addslashes($session['user']['name'])."',hp2=".$session['user']['hitpoints'].",maxhp2=".$session['user']['maxhitpoints'].",att2=".$session['user']['attack'].",def2=".$session['user']['defence'].",weapon2='".addslashes($session['user']['weapon'])."',armor2='".addslashes($session['user']['armor'])."',darkartuses2=".$session['user']['darkartuses'].",magicuses2=".$session['user']['magicuses'].",thieveryuses2=".$session['user']['thieveryuses'].",bufflist2='".addslashes($session['user']['bufflist'])."',turn=2 WHERE acctid2=".$session['user']['acctid']."";
-		db_query($sql) or die(db_error(LINK));
-		if (db_affected_rows(LINK)<=0) redirect("pvparena.php");
-		$sql="SELECT * FROM pvp WHERE acctid1=".$session['user']['acctid']." OR acctid2=".$session['user']['acctid']."";
-  		$result = db_query($sql) or die(db_error(LINK));
-		$row = db_fetch_assoc($result);
-		$session['user']['gold']-=$cost;
+		$sql="UPDATE pvp SET name2=?,hp2=?,maxhp2=?,att2=?,def2=?,weapon2=?,armor2=?,darkartuses2=?,magicuses2=?,thieveryuses2=?,bufflist2=?,turn=2 WHERE acctid2=?"; // Der zweite Spieler bestaetigt das Duell mit gebundenen Daten.
+		db_query_params($sql,array($session["user"]["name"],(int)$session["user"]["hitpoints"],(int)$session["user"]["maxhitpoints"],(int)$session["user"]["attack"],(int)$session["user"]["defence"],$session["user"]["weapon"],$session["user"]["armor"],(int)$session["user"]["darkartuses"],(int)$session["user"]["magicuses"],(int)$session["user"]["thieveryuses"],serialize($session["user"]["bufflist"]),(int)$session["user"]["acctid"])) or die(db_error(LINK));
+		$sql="SELECT * FROM pvp WHERE acctid1=? OR acctid2=?"; // Die aktuelle Duellrunde wird anhand beider Spieler neu geladen.
+		$result=db_query_params($sql,array((int)$session["user"]["acctid"],(int)$session["user"]["acctid"])) or die(db_error(LINK));
 		$session['user']['reputation']++;
 		arenanav($row);
 		stats($row);
 	}
 }else if ($HTTP_GET_VARS['op']=="back"){
-	$sql="SELECT acctid,name FROM accounts WHERE acctid=$_GET[id]";
-  	$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT acctid,name FROM accounts WHERE acctid=?"; // Die Konto-ID wird als Zahl gebunden.
+$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$row = db_fetch_assoc($result);
 	output("`6Du bist es Leid, auf $row[name]`6 zu warten und ziehst deine Herausforderung zurück. Die Arenagebühr bekommst aber trotz langer Verhandlungen mit der Arena-Leitung nicht zurück.`n");
 	$sql = "DELETE FROM pvp WHERE acctid1=".$session['user']['acctid'];
@@ -551,7 +543,9 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 	$badguy['bufflist']=unserialize($badguy['bufflist']);
 // spells
 	if ($HTTP_GET_VARS['skill']=="zauber"){
-		$resultz=db_query("SELECT * FROM items WHERE id=$_GET[itemid]") or die(db_error(LINK));
+		// Die Gegenstandsnummer wird als Zahl gebunden, damit URL-Inhalte kein SQL veraendern koennen.
+		$itemid = (int)db_unquote_legacy_input($_GET['itemid']);
+		$resultz=db_query_params("SELECT * FROM items WHERE id=?", array($itemid)) or die(db_error(LINK));
 		$zauber = db_fetch_assoc($resultz);
 		$spellbuff=unserialize($zauber['buff']);
 		$goodguy['bufflist'][$spellbuff['name']]=$spellbuff;
@@ -559,9 +553,11 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 		$zauber['gems']=round($zauber['gems']*($zauber['value1']/($zauber['value2']+1)));
 		$zauber['value1']--;
 		if ($zauber['value1']<=0 && $zauber['hvalue']<=0){
-			db_query("DELETE FROM items WHERE id=$_GET[itemid]");
+			// Der verwendete Zauber wird anhand der zuvor geprueften Gegenstandsnummer entfernt.
+db_query_params("DELETE FROM items WHERE id=?", array($itemid));
 		}else{
-			db_query("UPDATE items SET value1=$zauber[value1], gems=$zauber[gems], gold=$zauber[gold] WHERE id=$_GET[itemid]");
+			// Zauberwerte und Gegenstandsnummer werden als Datenwerte gebunden.
+db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((int)$zauber['value1'], (int)$zauber['gems'], (int)$zauber['gold'], $itemid));
 		}
 	}
 // end spells
@@ -863,10 +859,14 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 	$badguy['bufflist']=serialize($badguy['bufflist']);
 	if ($row['acctid1']){ // battle still in DB? Result of round:
 		if ($badguy['hitpoints']>0 and $goodguy['hitpoints']>0){
-			$message=addslashes($message);
-			if ($row['turn']==1) $sql = "UPDATE pvp SET hp1=$goodguy[hitpoints],hp2=$badguy[hitpoints],thieveryuses1=$goodguy[thieveryuses],darkartuses1=$goodguy[darkartuses],magicuses1=$goodguy[magicuses],bufflist1='".addslashes($goodguy['bufflist'])."',lastmsg='$message',turn=2 WHERE acctid1=".$session['user']['acctid']."";
-			if ($row['turn']==2) $sql = "UPDATE pvp SET hp1=$badguy[hitpoints],hp2=$goodguy[hitpoints],thieveryuses2=$goodguy[thieveryuses],darkartuses2=$goodguy[darkartuses],magicuses2=$goodguy[magicuses],bufflist2='".addslashes($goodguy['bufflist'])."',lastmsg='$message',turn=1 WHERE acctid2=".$session['user']['acctid']."";
-			db_query($sql) or die(db_error(LINK));
+			if ($row["turn"]==1) {
+				$sql="UPDATE pvp SET hp1=?,hp2=?,thieveryuses1=?,darkartuses1=?,magicuses1=?,bufflist1=?,lastmsg=?,turn=2 WHERE acctid1=?"; // Kampfdaten, Wirkung und Nachricht werden als getrennte Werte gespeichert.
+				db_query_params($sql,array((int)$goodguy["hitpoints"],(int)$badguy["hitpoints"],(int)$goodguy["thieveryuses"],(int)$goodguy["darkartuses"],(int)$goodguy["magicuses"],$goodguy["bufflist"],$message,(int)$session["user"]["acctid"])) or die(db_error(LINK));
+			}
+			if ($row["turn"]==2) {
+				$sql="UPDATE pvp SET hp1=?,hp2=?,thieveryuses2=?,darkartuses2=?,magicuses2=?,bufflist2=?,lastmsg=?,turn=1 WHERE acctid2=?"; // Der Gegenzug nutzt ebenfalls sichere Datenwerte.
+				db_query_params($sql,array((int)$badguy["hitpoints"],(int)$goodguy["hitpoints"],(int)$goodguy["thieveryuses"],(int)$goodguy["darkartuses"],(int)$goodguy["magicuses"],$goodguy["bufflist"],$message,(int)$session["user"]["acctid"])) or die(db_error(LINK));
+			}
 			if (db_affected_rows(LINK)<=0) redirect("pvparena.php");
 			output("`n`n`2Du erwartest den Zug deines Gegners.");
 			addnav("Aktualisieren","pvparena.php");
@@ -938,8 +938,8 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 	}
   	addnav("Zurück zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="del"){
-	$sql="DELETE FROM pvp WHERE acctid1=$_GET[kid1] AND acctid2=$_GET[kid2]";
-	db_query($sql);
+$sql="DELETE FROM pvp WHERE acctid1=? AND acctid2=?"; // Beide Kampfteilnehmer werden sicher als Zahlen gebunden.
+db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_unquote_legacy_input($_GET['kid2'])));
 	output("Der Arenarichter beendet einen langweiligen Kampf.");
 	systemmail($_GET['kid1'],"`2Dein Arenakampf wurde beendet!","`@Dein Kampf in der Arena wurde vom Kampfrichter beendet."); 
 	systemmail($_GET['kid2'],"`2Dein Arenakampf wurde beendet!","`@Dein Kampf in der Arena wurde vom Kampfrichter beendet.");

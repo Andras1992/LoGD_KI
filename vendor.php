@@ -54,8 +54,8 @@ if ($_GET['op']=="buy"){ // Wig-Wam Bam
 			output("`qDa `tAeki `qheute schon ein gutes Geschäft gemacht hat, will er sich leider nicht von seinen verbliebenen Sachen trennen. Enttäuscht schlenderst du zurück zum Dorfplatz.");
 		}
 	}else{ // Alexander Graham Bell (what? no, he's not the author of this part. It's the name of a song by The Sweet)
-		$sql="SELECT * FROM items WHERE id=$_GET[id]";
-		$result=db_query($sql);
+$sql="SELECT * FROM items WHERE id=?"; // Die angeforderte Artikel-ID wird sicher als Zahl gebunden.
+$result=db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	  	$row = db_fetch_assoc($result);
 		if ($session['user']['gems']<$row['gems'] || $session['user']['gold']<$row['gold']){
 			output("`qHoppla! Das kannst du dir nicht leisten. Der Händler schüttelt nur traurig den Kopf und verstaut $row[name] wieder in seinem Wagen.");
@@ -63,19 +63,23 @@ if ($_GET['op']=="buy"){ // Wig-Wam Bam
 		}else if ($row['class']=="Möbel.Prot" && $session['user']['housekey']<=0 ){
 			output("`q$row[name]`q gefällt dir wirklich gut, aber da du kein eigenes Haus besitzt, kannst du mit Möbeln auch nichts anfangen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
-		}else if (db_num_rows(db_query("SELECT id FROM items WHERE name='$row[name]' AND owner=".$session['user']['acctid']." AND class='Möbel'"))>0){
+}else if (db_num_rows(db_query_params("SELECT id FROM items WHERE name=? AND owner=? AND class=?",array($row['name'],(int)$session['user']['acctid'],"M".chr(195).chr(182)."bel")))>0){ // Name, Besitzer und Moebelklasse werden als Datenwerte gebunden.
 			output("`qDu hast $row[name]`q schon. Du überlegst, ob sich eine Neuanschaffung wirklich lohnt. Allerdings müsstest du dazu auch erst den alten Krempel verkaufen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
 		}else{
 			output("`qDer Händler reibt sich die Hände und übergibt dir $row[name], während du ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." abzählst. ");
 			if ($row['class']=="Möbel.Prot") output(" Er ist dir noch kurz beim Transport behilflich, bevor er sich seinem nächsten Kunden zuwendet.");
 			addnav("Mehr kaufen","vendor.php?op=buy");
-			$sql="UPDATE items SET owner=".$session['user']['acctid']." WHERE id=$_GET[id]";
+$sql="UPDATE items SET owner=? WHERE id=?"; // Besitzer und Artikel-ID werden als Zahlenwerte gebunden.
+$sqlParams=array((int)$session['user']['acctid'],(int)db_unquote_legacy_input($_GET['id']));
 			// insert SQL for special classes here to reset their values
-			if ($row['class']=="Möbel.Prot") $sql="INSERT INTO items(name,class,owner,value1,gold,gems,description) VALUES ('$row[name]','Möbel',".$session['user']['acctid'].",".$session['user']['house'].",1,".(round($row['gems']/2)).",'$row[description]')";
+if ($row['class']=="M".chr(195).chr(182)."bel.Prot") { // Nur das transportable Moebelstueck braucht einen neuen Item-Datensatz.
+$sql="INSERT INTO items(name,class,owner,value1,gold,gems,description) VALUES (?,?,?,?,?,?,?)";
+$sqlParams=array($row['name'],"M".chr(195).chr(182)."bel",(int)$session['user']['acctid'],(int)$session['user']['house'],1,round($row['gems']/2),$row['description']);
+}
 			$session['user']['gold']-=$row['gold'];
 			$session['user']['gems']-=$row['gems'];
-			db_query($sql);
+db_query_params($sql,$sqlParams); // Der Kauf wird mit den vorbereiteten Werten ausgefuehrt.
 		}
 	}
 	addnav("Zurück","vendor.php");
@@ -100,21 +104,22 @@ if ($_GET['op']=="buy"){ // Wig-Wam Bam
 			output("Du hast aber nichts, was `tAeki`q interessieren würde. Enttäuscht schlenderst du zurück zum Dorfplatz.");
 		}
 	}else{ // Hell Raiser
-		$sql="SELECT * FROM items WHERE id=$_GET[id]";
-		$result=db_query($sql);
+$sql="SELECT * FROM items WHERE id=?"; // Die angeforderte Artikel-ID wird sicher als Zahl gebunden.
+$result=db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	  	$row = db_fetch_assoc($result);
 		output("`qMit einem breiten und siegessicheren Grinsen gibt er dir die vereinbarten ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." und schnappt sich $row[name]. ");
 		if ($row['class']=="Beute") output(" Noch bevor du fragen kannst, wofür $row[name] wirklich zu gebrauchen ist, lässt der Händler das Teil in seinem Wagen verschwinden, grinst immer noch und fragt, ob du sonst noch etwas für ihn hast.");
 		addnav("Mehr verkaufen","vendor.php?op=sell");
-		$sql="UPDATE items SET owner=0 WHERE id=$_GET[id]";
+$sql="UPDATE items SET owner=0 WHERE id=?"; // Die Artikel-ID wird fuer den Verkauf als Zahl gebunden.
+$sqlParams=array((int)db_unquote_legacy_input($_GET['id']));
 		// insert SQL für special classes here to reset their values
-		if ($row['class']=="Möbel") $sql="DELETE FROM items WHERE id=$_GET[id]";
-		if ($row['class']=="Beute") $sql="DELETE FROM items WHERE id=$_GET[id]";
-		if ($row['class']=="Waffe" || $row['class']=="Rüstung") $sql="DELETE FROM items WHERE id=$_GET[id]";
-		if ($row['class']=="Schmuck" AND $row['name']=="Elfenkunst") $sql="DELETE FROM items WHERE id=$_GET[id]";
+		if ($row['class']=="Möbel") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
+		if ($row['class']=="Beute") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
+		if ($row['class']=="Waffe" || $row['class']=="Rüstung") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
+		if ($row['class']=="Schmuck" AND $row['name']=="Elfenkunst") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
 		$session['user']['gold']+=$row['gold'];
 		$session['user']['gems']+=$row['gems'];
-		db_query($sql);
+db_query_params($sql,$sqlParams); // Der Verkauf nutzt die vorbereitete Artikel-ID.
 	}
 	addnav("Zurück zum Dorf","village.php");
 }else{ // Teenage Rampage

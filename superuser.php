@@ -5,16 +5,16 @@ addcommentary();
 
 addnav("W?Zurück zum Weltlichen","village.php");
 if ($_GET['op']=="newsdelete"){
-	$sql = "DELETE FROM news WHERE newsid='$_GET[newsid]'";
-	db_query($sql);
+	// Die News-ID aus der URL wird als Zahl an die Datenbank gebunden.
+	db_query_params("DELETE FROM news WHERE newsid=?", array((int)db_unquote_legacy_input($_GET['newsid'])));
 	$return = $_GET['return'];
 	$return = preg_replace("'[?&]c=[[:digit:]-]*'","",$return);
 	$return = substr($return,strrpos($return,"/")+1);
 	redirect($return);
 }
 if ($_GET['op']=="commentdelete"){
-	$sql = "DELETE FROM commentary WHERE commentid='$_GET[commentid]'";
-	db_query($sql);
+	// Die Kommentar-ID aus der URL wird als Zahl an die Datenbank gebunden.
+	db_query_params("DELETE FROM commentary WHERE commentid=?", array((int)db_unquote_legacy_input($_GET['commentid'])));
 	$return = $_GET['return'];
 	$return = preg_replace("'[?&]c=[[:digit:]-]*'","",$return);
 	$return = substr($return,strrpos($return,"/")+1);

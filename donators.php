@@ -17,8 +17,9 @@ if ($_GET['op']=="add2"){
 	}
 	//ok to execute when this is the current user, they'll overwrite the value at the end of their page
 	//hit, and this will allow the display table to update in real time.
-	$sql = "UPDATE accounts SET donation=donation+'{$_GET['amt']}' WHERE acctid='{$_GET['id']}'";
-	db_query($sql);
+	// Betrag und Kontonummer werden als Zahlen gebunden, damit URL-Text kein SQL veraendern kann.
+	$sql = "UPDATE accounts SET donation=donation+? WHERE acctid=?";
+	db_query_params($sql, array((int)db_unquote_legacy_input($_GET['amt']), (int)db_unquote_legacy_input($_GET['id'])));
 	$_GET['op']="";
 }
 
@@ -43,8 +44,9 @@ if ($_GET['op']==""){
 	for ($i=0;$i<strlen($_POST['name']);$i++){
 		$search.=substr($_POST['name'],$i,1)."%";
 	}
-	$sql = "SELECT name,acctid,donation,donationspent FROM accounts WHERE login LIKE '$search'";
-	$result = db_query($sql);
+	// Die Namenssuche wird als Suchwert gebunden und bleibt ausfuehrbarem SQL fern.
+	$sql = "SELECT name,acctid,donation,donationspent FROM accounts WHERE login LIKE ?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($search)));
 	output("Bestätige {$_POST['amt']} Punkte an:`n`n");
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);

@@ -61,8 +61,8 @@ if ($_GET['op']=="newday"){
 	addnav("Zurück ins Dorf","village.php");
 }else if ($_GET['op']=="bio"){
 	if (!$_GET['id']) redirect("houses.php");
-	$sql="SELECT houses.*,accounts.name AS besitzer FROM houses LEFT JOIN accounts ON accounts.acctid=houses.owner WHERE houseid=$_GET[id]";
-	$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT houses.*,accounts.name AS besitzer FROM houses LEFT JOIN accounts ON accounts.acctid=houses.owner WHERE houseid=?"; // Die Hausnummer aus der URL wird als Zahl gebunden.
+$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$row = db_fetch_assoc($result);
 	output("`c`b`@Infos über Haus Nummer $row[houseid]`b`c`n`n`2Du näherst dich Haus Nummer $row[houseid], um es aus der Nähe zu betrachten. ");
 	if($row['description']){
@@ -70,8 +70,8 @@ if ($_GET['op']=="newday"){
 	}else{
 		output("Das Haus trägt den Namen \"`&$row[housename]`2\".`n");
 	}
-	$sql="SELECT * FROM items WHERE class='Möbel' AND value1={$_GET['id']} ORDER BY id ASC";
-	$result = db_query($sql);
+$sql="SELECT * FROM items WHERE class=? AND value1=? ORDER BY id ASC"; // Die Hausmoebel und die Hausnummer werden sicher als Suchwerte gebunden.
+$result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote_legacy_input($_GET['id'])));
 	if ($row['besitzer']=="") $row['besitzer']="niemandem";
 	output("`2Das Haus gehört `^$row[besitzer]`2 und ist ");
 	if ($row['status']==0) output("noch im Bau. ");
@@ -162,14 +162,13 @@ if ($_GET['op']=="newday"){
 				addnews("`2".$session['user']['name']."`3 hat das Haus `2$row[housename]`3 fertiggestellt.");
 				//$sql="";
 				for ($i=1;$i<10;$i++){
-					$sql = "INSERT INTO items (name,owner,class,value1,value2,gold,gems,description) VALUES ('Hausschlüssel',".$session['user']['acctid'].",'Schlüssel',$row[houseid],$i,0,0,'Schlüssel für Haus Nummer $row[houseid]')";
-					db_query($sql);
-					if (db_affected_rows(LINK)<=0) output("`\$Fehler`^: Dein Inventar konnte nicht aktualisiert werden! Bitte benachrichtige den Admin. ");
+					$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description) VALUES (?,?,?,?,?,?,?,?)"; // Hausschluessel werden mit gebundenen Haus- und Besitzerwerten angelegt.
+					 db_query_params($sql,array("Hausschl".chr(195).chr(188)."ssel",(int)$session["user"]["acctid"],"Schl".chr(195).chr(188)."ssel",(int)$row["houseid"],$i,0,0,"Schluessel fuer Haus Nummer ".(int)$row["houseid"]));
 				}
 			}
-			$sql = "UPDATE houses SET gold=$row[gold],gems=$row[gems],housename='".addslashes($housename)."',status=".(int)$row['status']." WHERE houseid=$row[houseid]";
-			db_query($sql);
-		}
+		$sql = "UPDATE houses SET gold=?,gems=?,housename=?,status=? WHERE houseid=?"; // Gold, Edelsteine, Hausname und Hausnummer werden sicher gebunden.
+		db_query_params($sql,array((int)$row["gold"],(int)$row["gems"],$housename,(int)$row["status"],(int)$row["houseid"]));
+		} // Der Bauvorgang ist beendet und die Hauswerte wurden gespeichert.
 	} else {
 		if ($session['user']['housekey']>0) {
 			output("`@Du hast bereits Zugang zu einem fertigen Haus und brauchst kein zweites. Wenn du ein neues oder ein eigenes Haus bauen willst, musst du erst aus deinem jetzigen Zuhause ausziehen.");
@@ -204,17 +203,20 @@ if ($_GET['op']=="newday"){
 	addnav("Zurück zum Wohnviertel","houses.php");
 	addnav("Zurück zum Dorf","village.php");
 }else if ($_GET['op']=="einbruch"){
+	$searchParams=array(); // Haus-Suchwerte werden sicher getrennt vom SQL-Befehl gesammelt.
 	if (!$_GET['id']){
 		if ($_POST['search']>"" || $_GET['search']>""){
 			if ($_GET['search']>"") $_POST['search']=$_GET['search'];
 			if (strcspn($_POST['search'],"0123456789")<=1){
-				$search="houseid=".intval($_POST['search'])." AND ";
+				$search="houseid=? AND "; // Hausnummer bleibt ein Datenwert statt SQL-Text.
+				$searchParams[]=(int)db_unquote_legacy_input($_POST["search"]);
 			}else{
 				$search="%";
 				for ($x=0;$x<strlen($_POST['search']);$x++){
 					$search .= substr($_POST['search'],$x,1)."%";
 				}
-				$search="housename LIKE '".$search."' AND ";
+				$searchParams[]="%".$search."%"; // Hausname wird als Suchmuster gebunden.
+		$search="housename LIKE ? AND ";
 			}
 		}else{
 			$search="";
@@ -235,7 +237,7 @@ if ($_GET['op']=="newday"){
 		addnav("","houses.php?op=einbruch");
 		if ($session['user']['pvpflag']=="5013-10-06 00:42:00") output("`n`&(Du hast PvP-Immunität gekauft. Diese verfällt, wenn du jetzt angreifst!)`0`n`n");
 		output("<table cellspacing=0 cellpadding=2 align='center'><tr><td>`bHausNr.`b</td><td>`bName`b</td><td>`bEigentümer`b</td></tr>",true);
-		$result = db_query($sql) or die(db_error(LINK));
+		$result = db_query_params($sql,$searchParams) or die(db_error(LINK)); // Suchdaten und Hausliste werden getrennt ausgefuehrt.
 		if (db_num_rows($result)>$ppp) addnav("Nächste Strasse","houses.php?op=einbruch&limit=".($page+1)."&search=$_POST[search]");
 		if (db_num_rows($result)==0){
   			output("<tr><td colspan=4 align='center'>`&`iEs gibt momentan keine bewohnten Häuser`i`0</td></tr>",true);
@@ -261,8 +263,8 @@ if ($_GET['op']=="newday"){
 			output("`2Du näherst dich vorsichtig Haus Nummer $_GET[id].");
 			$session['housekey']=$_GET['id'];
 			// Abfrage, ob Schlüssel vorhanden!!
-			$sql = "SELECT id FROM items WHERE owner=".$session['user']['acctid']." AND class='Schlüssel' AND value1=".(int)$_GET['id']." ORDER BY id DESC";
-			$result2 = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT id FROM items WHERE owner=? AND class=? AND value1=? ORDER BY id DESC"; // Die eigene Konto-ID und Hausnummer werden als Zahlen gebunden.
+$result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr(195).chr(188)."ssel",(int)$_GET['id'])); // Besitzer, Schluesselklasse und Hausnummer werden als Werte gebunden.
 			$row2 = db_fetch_assoc($result2);
 			if (db_num_rows($result2)>0) {
 				output(" An der Haustür angekommen suchst du etwas, um die Tür möglichst unauffällig zu öffnen. Am besten dürfte dafür der Hausschlüssel geeignet sein, ");
@@ -444,8 +446,8 @@ if ($_GET['op']=="newday"){
 		}
 		output("</table>",true);
 	} else {
-		$sql = "SELECT * FROM houses WHERE houseid=".(int)$_GET['id']." ORDER BY houseid DESC";
-		$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT * FROM houses WHERE houseid=? ORDER BY houseid DESC"; // Die Hausnummer wird als Zahlenwert an die Abfrage uebergeben.
+$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 		$row = db_fetch_assoc($result);
 		if ($session['user']['acctid']==$row['owner']) {
 			output("`@du hängst doch zu sehr an deinem Haus und beschließt, es noch nicht zu verkaufen.");
@@ -537,10 +539,10 @@ if ($_GET['op']=="newday"){
 				$row['gold']=$halfgold;
 				$row['gems']=$halfgems;
 				$session['user']['housekey']=0;
-				$sql = "UPDATE houses SET gold=$row[gold],gems=$row[gems],status=2 WHERE houseid=$row[houseid]";
-				db_query($sql);
-			}
+				$sql="UPDATE houses SET gold=?,gems=?,status=2 WHERE houseid=?"; // Haus wird mit halbem Schatz und Verkaufsstatus gespeichert.
+				db_query_params($sql,array((int)$row["gold"],(int)$row["gems"],(int)$row["houseid"]));
 		}
+		} // Ende der Preispruefung vor dem naechsten Hausverkaufszweig.
 	}else if ($_GET['act']=="makler"){
 		output("`@Dem Makler entfährt ungewollt ein freudiges Glucksen, als er dir `^$halfcost`@ Gold und die `#$halfcost`@ Edelsteine vorzählt.`n`n");
 		output("Ab sofort steht dein Haus zum Verkauf und du kannst ein neues bauen, woanders mit einziehen, oder ein anderes Haus kaufen.");
@@ -607,9 +609,9 @@ if ($_GET['op']=="newday"){
 			output("</select>`n`n",true);
 			output("<input type='submit' class='button' value='Schlüssel abnehmen'></form>",true);
 			addnav("","houses.php?op=drin&act=takekey");
-		}else{
-			$sql = "SELECT acctid,name,login,gold,gems FROM accounts WHERE name='".addslashes(rawurldecode(stripslashes($_POST['ziel'])))."' AND locked=0";
-			$result2 = db_query($sql);
+$sql = "SELECT acctid,name,login,gold,gems FROM accounts WHERE name=? AND locked=0"; // Der eingegebene Spielername wird getrennt vom SQL-Befehl gesucht.
+$result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POST['ziel']))));
+			}else{
 			$row2  = db_fetch_assoc($result2);
 			output("`2Du verlangst den Schlüssel von `&$row2[name]`2 zurück.`n");
 			$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='Schlüssel' AND owner<>$row[owner] ORDER BY id ASC";
@@ -652,16 +654,17 @@ if ($_GET['op']=="newday"){
 			} 
 		} else {
 			if ($_GET['subfinal']==1){
-				$sql = "SELECT acctid,name,login,lastip,emailaddress,dragonkills,level,sex FROM accounts WHERE name='".addslashes(rawurldecode(stripslashes($_POST['ziel'])))."' AND locked=0";
+$sql = "SELECT acctid,name,login,lastip,emailaddress,dragonkills,level,sex FROM accounts WHERE name=? AND locked=0"; // Der Spielername bleibt ein Datenwert, auch wenn er Sonderzeichen enthaelt.
+$result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POST['ziel']))));
 			}else{
 				$ziel = stripslashes(rawurldecode($_POST['ziel']));
 				$name="%";
 				for ($x=0;$x<strlen($ziel);$x++){
 					$name.=substr($ziel,$x,1)."%";
 				}
-				$sql = "SELECT acctid,name,login,lastip,emailaddress,dragonkills,level,sex FROM accounts WHERE name LIKE '".addslashes($name)."' AND locked=0";
+				$sql = "SELECT acctid,name,login,lastip,emailaddress,dragonkills,level,sex FROM accounts WHERE name LIKE ? AND locked=0"; // Der Name wird als Suchmuster gebunden, damit Apostrophe sicher bleiben.
+				$result2=db_query_params($sql,array("%".$name."%"));
 			}
-			$result2 = db_query($sql);
 			if (db_num_rows($result2) == 0) {
 				output("`2Es gibt niemanden mit einem solchen Namen. Versuchs nochmal.");
 			} elseif(db_num_rows($result2) > 100) {
@@ -730,9 +733,8 @@ if ($_GET['op']=="newday"){
 				$row['gold']-=$amt;
 				$session['user']['gold']+=$amt;
 				$session['user']['transferredtoday']+=1;
-				$sql = "UPDATE houses SET gold=$row[gold] WHERE houseid=$row[houseid]";
-				db_query($sql) or die(db_error(LINK));
-				output("`2Du hast `^$amt`2 Gold genommen. Insgesamt befindet sich jetzt noch `^$row[gold]`2 Gold im Haus.");
+				$sql="UPDATE houses SET gold=? WHERE houseid=?"; // Der neue Goldbetrag des Hauses wird sicher gespeichert.
+				db_query_params($sql,array((int)$row["gold"],(int)$row["houseid"]));
 				$sql = "INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'house-".$row['houseid']."',".$session['user']['acctid'].",'/me `\$nimmt `^$amt`\$ Gold.')";
 				db_query($sql) or die(db_error(LINK));
 			}
@@ -764,10 +766,8 @@ if ($_GET['op']=="newday"){
 				$session['user']['gold']-=$amt;
 				$session['user']['amountouttoday']+= $amt;
 				output("`2Du hast `^$amt`2 Gold deponiert. Insgesamt befinden sich jetzt `^$row[gold]`2 Gold im Haus.");
-				$sql = "UPDATE houses SET gold=$row[gold] WHERE houseid=$row[houseid]";
-				db_query($sql) or die(db_error(LINK));
-				$sql="INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'house-".$row['houseid']."',".$session['user']['acctid'].",'/me `@deponiert `^$amt`@ Gold.')";
-				db_query($sql) or die(db_error(LINK));
+				$sql="UPDATE houses SET gold=? WHERE houseid=?"; // Der neue Goldbetrag des Hauses wird sicher gespeichert.
+				db_query_params($sql,array((int)$row["gold"],(int)$row["houseid"]));
 			}
 		}
 		addnav("Zurück zum Haus","houses.php?op=drin");
@@ -834,7 +834,9 @@ if ($_GET['op']=="newday"){
 				output("`2Das kannst du nicht bezahlen.");
 			}else{
 				output("`2Dein Haus `@$row[housename]`2 heißt jetzt `@".stripslashes($_POST['housename'])."`2.");
-				$sql = "UPDATE houses SET housename='".$_POST['housename']."' WHERE houseid=$row[houseid]";
+				// Hausname und Hausnummer werden separat gebunden, damit Sonderzeichen im Namen keinen SQL-Befehl veraendern.
+				$sql = "UPDATE houses SET housename=? WHERE houseid=?";
+				db_query_params($sql, array(db_unquote_legacy_input($_POST['housename']), (int)$row['houseid']));
 				db_query($sql);
 				$session['user']['gold']-=1000;
 				$session['user']['gems']-=1;
@@ -850,7 +852,9 @@ if ($_GET['op']=="newday"){
 			addnav("","houses.php?op=drin&act=desc");
 		}else{
 			output("`2Die Beschreibung wurde geändert.`n`0".stripslashes($_POST['desc'])."`2.");
-			$sql = "UPDATE houses SET description='".$_POST['desc']."' WHERE houseid=$row[houseid]";
+				// Hausbeschreibung und Hausnummer werden sicher als Datenwerte gebunden.
+				$sql = "UPDATE houses SET description=? WHERE houseid=?";
+				db_query_params($sql, array(db_unquote_legacy_input($_POST['desc']), (int)$row['houseid']));
 			db_query($sql);
 		}
 		addnav("Zurück zum Haus","houses.php?op=drin");
@@ -925,7 +929,7 @@ if ($_GET['op']=="newday"){
 			if ($item['aid']==$row['owner']) output(" (der Eigentümer) ");
 			if ($item['hvalue']>0 && $item['owner']>0) output(" `ischläft hier`i");
 		}
-		if (db_num_rows(db_query("SELECT id FROM items WHERE owner=$row[owner] AND value1<>$row[houseid] AND hvalue>0 AND class='Schlüssel'"))==0 && db_num_rows(db_query("SELECT acctid FROM accounts WHERE acctid=$row[owner] AND location=2"))>0) output("`nDer Eigentümer schläft hier");
+		if (db_num_rows(db_query_params("SELECT id FROM items WHERE owner=? AND value1<>? AND hvalue>0 AND class=?",array((int)$row["owner"],(int)$row["houseid"],"Schl".chr(195).chr(188)."ssel")))==0 && db_num_rows(db_query_params("SELECT acctid FROM accounts WHERE acctid=? AND location=2",array((int)$row["owner"])))>0) output("`nDer Eigent`uuml;mer schl`uuml;ft hier"); // Hausbesitzer und Schluessel werden als Datenwerte gebunden.
 		output("</td><td valign='top'>",true);
 		$sql = "SELECT * FROM items WHERE value1=$row[houseid] AND class='Möbel' ORDER BY class,id ASC";
 		$result = db_query($sql) or die(db_error(LINK));
@@ -1014,16 +1018,19 @@ if ($_GET['op']=="newday"){
 	if (db_num_rows($result2)>0 || $session['user']['housekey']>0) addnav("Haus betreten","houses.php?op=enter");
 	output("Du verlässt den Dorfplatz und schlenderst Richtung Wohnviertel. In diesem schön angelegten Teil des Dorfes siehst du einige Baustellen zwischen bewohnten ");
 	output("und unbewohnten Häusern. Hier wohnen also die Helden...`n`n");
+	$searchParams=array(); // Suchwerte fuer die Uebersicht werden getrennt gesammelt.
 	if ($_POST['search']>""){
 		if ($_GET['search']>"" || $_GET['search']>"") $_POST['search']=$_GET['search'];
 		if (strcspn($_POST['search'],"0123456789")<=1){
-			$search="houseid=".intval($_POST['search'])." AND ";
+				$search="houseid=? AND "; // Hausnummer bleibt ein Datenwert statt SQL-Text.
+				$searchParams[]=(int)db_unquote_legacy_input($_POST["search"]);
 		}else{
 			$search="%";
 			for ($x=0;$x<strlen($_POST['search']);$x++){
 				$search .= substr($_POST['search'],$x,1)."%";
 			}
-			$search="housename LIKE '".$search."' AND ";
+				$searchParams[]="%".$search."%"; // Hausname wird als Suchmuster gebunden.
+		$search="housename LIKE ? AND ";
 		}
 	}else{
 		$search="";
@@ -1045,7 +1052,7 @@ if ($_GET['op']=="newday"){
 	output("<form action='houses.php' method='POST'>Nach Hausname oder Nummer <input name='search' value='$_POST[search]'> <input type='submit' class='button' value='Suchen'></form>",true);
 	addnav("","houses.php");
 	output("<table cellpadding=2 cellspacing=1 bgcolor='#999999' align='center'><tr class='trhead'><td>`bHausNr.`b</td><td>`bName`b</td><td>`bEigentümer`b</td><td>`bStatus`b</td></tr>",true);
-	$result = db_query($sql) or die(db_error(LINK));
+	$result = db_query_params($sql,$searchParams) or die(db_error(LINK)); // Hausname oder Nummer werden sicher gesucht.
 	if (db_num_rows($result)>$ppp) addnav("Nächste Straße","houses.php?limit=".($page+1)."&search=$_POST[search]");
 	if (db_num_rows($result)==0){
   		output("<tr><td colspan=4 align='center'>`&`iEs gibt noch keine Häuser`i`0</td></tr>",true);

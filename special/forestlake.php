@@ -238,8 +238,10 @@ case "ride":
         		$mhp = e_rand(1,round($session['user']['level']/3));
         		output("`n`n`^Der Ring verleiht Dir $mhp zusätzliche Lebenspunkte.");
         		$session['user']['maxhitpoints']+=$mhp;
-		$db_query("INSERT INTO items (name,owner,class,value1,gold,gems,description,hvalue) VALUES ('Ring des Lebens',".$session['user']['acctid'].",'Schmuck',$mhp,100,$mhp,'Dieser schöne Ring aus dem See im Wald gibt dir $mhp Lebenspunkte')");
-		$db_query("INSERT INTO items (name,owner,class,value1,gold,gems,description,hvalue) VALUES ('Ring des Lebens',$loverID,'Schmuck',0,100,0,'Diesen schönen Ring hat dir ".$session['user']['login']."`0 am See im Wald geschenkt.')");
+				$dbSql="INSERT INTO items (name,owner,class,value1,gold,gems,description,hvalue) VALUES (?,?,?,?,?,?,?,?)"; // Lebensring und Besitzer werden mit sicheren Platzhaltern gespeichert.
+				db_query_params($dbSql,array("Ring des Lebens",(int)$session["user"]["acctid"],"Schmuck",(int)$mhp,100,(int)$mhp,"Dieser schoene Ring aus dem Waldsee gibt dir ".(int)$mhp." Lebenspunkte",0));
+				$dbSql="INSERT INTO items (name,owner,class,value1,gold,gems,description,hvalue) VALUES (?,?,?,?,?,?,?,?)"; // Lebensring und Besitzer werden mit sicheren Platzhaltern gespeichert.
+				db_query_params($dbSql,array("Ring des Lebens",(int)$session["user"]["acctid"],"Schmuck",(int)$mhp,100,(int)$mhp,"Dieser schoene Ring aus dem Waldsee gibt dir ".(int)$mhp." Lebenspunkte",0));
       		break;
       		case 4:
         		output("`n`n`^Während Du untertauchst, siehst Du etwas am Boden des Sees schimmern. Du tauchst hinab und greifst danach. Dabei rutscht der Ring auf Deinen Finger, und Du fühlst Dich plötzlich schwächer. Zurück an der Oberfläche merkst Du zudem, daß Du den Ring nicht wieder abbekommst!");
@@ -247,7 +249,8 @@ case "ride":
         		if ($session['user']['maxhitpoints']<10) { $mhp = 0; }
         		if (($mhp>0) && ((($session['user']['maxhitpoints']-$mhp)<10))) { $mhp = $session['user']['maxhitpoints']-10; }
         		output("`n`n`^Der Ring raubt Dir $mhp Lebenspunkte!");
-		$db_query("INSERT INTO items (name,owner,class,value1,gold,gems,description,hvalue) VALUES ('Der Ring',".$session['user']['acctid'].",'Fluch',$mhp,500,$mhp,'Dieser Ring saugt dir $mhp Lebenspunkte ab.')");
+				$dbSql="INSERT INTO items (name,owner,class,value1,gold,gems,description,hvalue) VALUES (?,?,?,?,?,?,?,?)"; // Der Fluchring wird mit getrennt gespeicherten Zahlen und Text angelegt.
+				db_query_params($dbSql,array("Der Ring",(int)$session["user"]["acctid"],"Fluch",(int)$mhp,500,(int)$mhp,"Dieser Ring saugt dir ".(int)$mhp." Lebenspunkte ab.",0));
         		$session['user']['maxhitpoints']-=$mhp;
       		break;
     	}

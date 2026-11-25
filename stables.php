@@ -23,8 +23,9 @@ if ($_GET['op']==""){
 	du bischt sicha Cedrik, der ma widda sein Zwergenweitwurf ufbessern will. Naaahw, wat 
 	kann ich für disch tun?`7\"");
 }elseif($_GET['op']=="examine"){
-	$sql = "SELECT * FROM mounts WHERE mountid='{$_GET['id']}'";
-	$result = db_query($sql);
+	// Die Tiernummer aus der URL wird als Zahl gebunden und kann so die Abfrage nicht veraendern.
+	$sql = "SELECT * FROM mounts WHERE mountid=?";
+	$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	if (db_num_rows($result)<=0){
 		output("`7\"`&Ach, ich heb keen solches Tier da!`7\" ruft der Zwerg!");
 	}else{
@@ -37,8 +38,9 @@ if ($_GET['op']==""){
 		addnav("Dieses Tier kaufen","stables.php?op=buymount&id={$mount['mountid']}");
 	}
 }elseif($_GET['op']=='buymount'){
-	$sql = "SELECT * FROM mounts WHERE mountid='{$_GET['id']}'";
-	$result = db_query($sql);
+	// Die Tiernummer aus der URL wird als Zahl gebunden und kann so die Abfrage nicht veraendern.
+	$sql = "SELECT * FROM mounts WHERE mountid=?";
+	$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	if (db_num_rows($result)<=0){
 		output("`7\"`&Ach, ich heb keen solches Tier da!`7\" ruft der Zwerg!");
 	}else{

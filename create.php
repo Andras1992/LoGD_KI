@@ -7,6 +7,12 @@ $trash = getsetting("expiretrashacct",1);
 $new = getsetting("expirenewacct",10);
 $old = getsetting("expireoldacct",45);
 
+// Leere Standardwerte decken die Felder ab, die ein erster Seitenaufruf noch nicht mitsendet.
+// So kann PHP fehlende Formularfelder sicher lesen, ohne Warnungen vor der komprimierten Seite auszugeben.
+$_GET += array('op' => '', 'id' => '', 'r' => '');
+$_POST += array('pass1' => '', 'pass2' => '', 'charname' => '', 'name' => '', 'email' => '', 'sex' => '');
+$_COOKIE += array('lgi' => '');
+
 checkban();
 
 if ($_GET['op']=="val"){
@@ -52,7 +58,7 @@ db_query_params($sql, array("", db_unquote_legacy_input($_GET["id"]), ""));
 			.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivität gelöscht.":"")
 			."",true);
 			output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und trägst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauenswürdige Sites\" - Sites`i und trägst dort die Adressen ein. Bei anderen Browsern gibt es ähnliche Einstellungen."); 
-			savesetting("newplayer",addslashes($row['name']));
+
 		}
 	}else{
 		output("`#Deine E-Mail Adresse konnte nicht bestätigt werden. Möglicherweise wurde sie schon bestätigt. Versuch mal dich einzuloggen und informiere den Webmaster, wenn es nicht klappt.");
@@ -188,7 +194,7 @@ if (isset($_GET["r"]) && $_GET["r"] !== ""){
 						.($new>0?"Charaktere die nie Level 2 erreichen werden nach $new Tag(en) Inaktivität gelöscht.`n":"")
 						.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivität gelöscht.":"")
 						."",true);
-						savesetting("newplayer",addslashes("$title $shortname"));
+
 						output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und trägst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauenswürdige Sites\" - Sites`i und trägst dort die Adressen ein. Bei anderen Browsern gibt es ähnliche Einstellungen."); 
 					}
 				}

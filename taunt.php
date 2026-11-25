@@ -10,8 +10,9 @@ if ($_GET['op']=="edit"){
 	output("<form action='taunt.php?op=save&tauntid=$_GET[tauntid]' method='POST'>",true);
 	addnav("","taunt.php?op=save&tauntid=$_GET[tauntid]");
 	if ($_GET['tauntid']!=""){
-		$sql = "SELECT * FROM taunts WHERE tauntid=\"$_GET[tauntid]\"";
-		$result = db_query($sql) or die(db_error(LINK));
+		// Die Spott-ID wird als Zahl gebunden, statt sie direkt in SQL einzusetzen.
+		$sql = "SELECT * FROM taunts WHERE tauntid=?";
+		$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['tauntid']))) or die(db_error(LINK));
 		$row = db_fetch_assoc($result);
 		$taunt = $row['taunt'];
 		$taunt = str_replace("%s","ihn",$taunt);
@@ -35,16 +36,20 @@ if ($_GET['op']=="edit"){
 	output("<input type='submit' class='button' value='Speichern'>",true);
 	output("</form>",true);
 }else if($_GET['op']=="del"){
-	$sql = "DELETE FROM taunts WHERE tauntid=\"$_GET[tauntid]\"";
-	db_query($sql) or die(db_error(LINK));
+	// Die Spott-ID wird als Zahl gebunden, damit ein URL-Wert keinen SQL-Befehl einschleusen kann.
+	$sql = "DELETE FROM taunts WHERE tauntid=?";
+	db_query_params($sql, array((int)db_unquote_legacy_input($_GET['tauntid']))) or die(db_error(LINK));
 	redirect("taunt.php?c=x");
 }else if($_GET['op']=="save"){
+	// Spotttext und Bearbeitername werden sicher als Daten uebergeben, nicht als SQL-Code.
 	if ($_GET['tauntid']!=""){
-		$sql = "UPDATE taunts SET taunt=\"$_POST[taunt]\",editor=\"".addslashes($session['user']['login'])."\" WHERE tauntid=\"$_GET[tauntid]\"";
+		$sql = "UPDATE taunts SET taunt=?,editor=? WHERE tauntid=?";
+		$params = array(db_unquote_legacy_input($_POST['taunt']), $session['user']['login'], (int)db_unquote_legacy_input($_GET['tauntid']));
 	}else{
-		$sql = "INSERT INTO taunts (taunt,editor) VALUES (\"$_POST[taunt]\",\"".addslashes($session['user']['login'])."\")";
+		$sql = "INSERT INTO taunts (taunt,editor) VALUES (?,?)";
+		$params = array(db_unquote_legacy_input($_POST['taunt']), $session['user']['login']);
 	}
-	db_query($sql) or die(db_error(LINK));
+	db_query_params($sql, $params) or die(db_error(LINK));
 	redirect("taunt.php?c=x");
 }else{
 	$sql = "SELECT * FROM taunts";

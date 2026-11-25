@@ -4,6 +4,9 @@
 
 require_once "common.php";
 
+// Diese URL-Werte fehlen bei normalen Aufrufen oft; leere Startwerte verhindern PHP-Warnungen.
+$_GET += array('resurrection' => '', 'dk' => '', 'setrace' => '', 'setspecialty' => null);
+
 /***************
  **  SETTINGS **
  ***************/
@@ -74,7 +77,8 @@ if (count($session['user']['dragonpoints'])<$session['user']['dragonkills'] && $
 		}
 		addnav("Weiter","newday.php?continue=1$resline");
 		if ($session['user']['dragonkills']==0 && $session['user']['level']==1){
-			addnews("`#{$session[user][name]} `#hat unsere Welt betreten. Willkommen!");
+            // Der Name kommt aus dem angemeldeten Konto und wird mit PHP-8-gültigen Schlüsseln gelesen.
+            addnews($session['user']['name'] . " hat unsere Welt betreten. Willkommen!");
 		}
 	}else{
 		output("Wo bist du aufgewachsen?`n`n");
@@ -144,7 +148,8 @@ if (count($session['user']['dragonpoints'])<$session['user']['dragonkills'] && $
 		page_header("Es ist ein neuer Tag!");
 		$interestrate = e_rand($mininterest*100,$maxinterest*100)/(float)100;
 		output("`c<font size='+1'>`b`#Es ist ein neuer Tag!`0`b</font>`c",true);
-if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wav\" width=10 height=10 autostart=true loop=false hidden=true volume=100>",true);
+		// Ohne gespeicherte Sound-Auswahl spielen wir den Ton; empty() ist auch bei fehlendem Wert sicher.
+		if (empty($session['user']['prefs']['nosounds'])) output("<embed src=\"media/newday.wav\" width=10 height=10 autostart=true loop=false hidden=true volume=100>",true);
 
 		if ($session['user']['alive']!=true){
 			$session['user']['resurrections']++;
@@ -232,10 +237,12 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 		}
 
 		//clear all standard buffs
-		$tempbuf = unserialize($session['user']['bufflist']);
+		// Gespeicherte Dauer-Effekte muessen eine Liste sein; kaputte Daten ergeben eine leere Liste.
+		$tempbuf = @unserialize($session['user']['bufflist']);
+		if (!is_array($tempbuf)) $tempbuf = array();
 		$session['user']['bufflist']="";
 		$session['bufflist']=array();
-		foreach ($tempbuff as $key => $val) {
+		foreach ($tempbuf as $key => $val) {
 			if ($val['survivenewday']==1){
 				$session['bufflist'][$key]=$val;
 				output("{$val['newdaymessage']}`n");
@@ -390,8 +397,13 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 			$session['user']['turns']++;
 			output("`n`&Weil du ein Mensch bist, bekommst du `^1`& Waldkampf zusätzlich!`n`0");
 		}
-		$config = unserialize($session['user']['donationconfig']);
-		if (!is_array($config['forestfights'])) $config['forestfights']=array();
+		// Zusatzkaeufe kommen aus Kontodaten; unlesbare Originaldaten bleiben im Konto erhalten.
+		$config = @unserialize($session['user']['donationconfig']);
+		$donationConfigIsValid = is_array($config);
+		if (!$donationConfigIsValid) $config = array();
+		if (!isset($config['forestfights']) || !is_array($config['forestfights'])) $config['forestfights'] = array();
+		if (!isset($config['healer'])) $config['healer'] = 0;
+		if (!isset($config['goldmineday'])) $config['goldmineday'] = 0;
 		reset($config['forestfights']);
 		foreach ($config['forestfights'] as $key => $val) {
 			$config['forestfights'][$key]['left']--;
@@ -414,7 +426,8 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 			}
 		}
 		if ($config['goldmineday']>0) $config['goldmineday']=0;
-		$session['user']['donationconfig']=serialize($config);
+		// Nur lesbare Daten speichern; so ueberschreiben wir eine kaputte Originalkonfiguration nicht.
+		if ($donationConfigIsValid) $session['user']['donationconfig']=serialize($config);
 		if ($session['user']['hauntedby']>""){
 			output("`n`n`)Du wurdest von {$session['user']['hauntedby']}`) heimgesucht und verlierst eine Runde!");
 			$session['user']['turns']--;
@@ -458,17 +471,17 @@ if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/newday.wa
 			if ($row['hvalue']>0){
 				$row['hvalue']--;
 				if ($row['hvalue']<=0){
-					db_query("DELETE FROM items WHERE id=$row[id]");
+					 db_query_params("DELETE FROM items WHERE id=?",array((int)$row["id"])); // Die Gegenstandsnummer wird sicher gebunden, bevor der abgelaufene Gegenstand geloescht wird.
 					if ($row['class']=='Fluch') output(" Aber nur noch heute.");
 					if ($row['class']=='Zauber') output("`n`Q$row[name]`Q hat seine Kraft verloren.");
 				}else{
-					$what="hvalue=$row[hvalue]";
-					if ($row['class']=='Zauber') $what.=", value1=$row[value2]";
-					db_query("UPDATE items SET $what WHERE id=$row[id]");
+					$sql="UPDATE items SET hvalue=?,value1=? WHERE id=?"; // Neue Wirkungsdauer und Gegenstandsnummer werden als Datenwerte gebunden.
+					$value1 = ($row["class"]=="Zauber") ? (int)$row["value2"] : (int)$row["value1"];
+					 db_query_params($sql,array((int)$row["hvalue"],$value1,(int)$row["id"]));
 				}
 			}
 		}		
 	}
 }
+// page_footer komprimiert die Seite; nachher darf kein unkomprimierter Text mehr folgen.
 page_footer();
-?>

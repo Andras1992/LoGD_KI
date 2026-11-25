@@ -156,6 +156,6 @@ $result = db_query("SHOW TABLES");
 for ($i=0;$i<db_num_rows($result);$i++){
 	$row = db_fetch_assoc($result);
 	$val = reset($row);
-	db_query("OPTIMIZE TABLE $val");
+	db_query("OPTIMIZE TABLE `".str_replace("`","``",$val)."`"); // Tabellenname stammt aus der Datenbankliste und wird als Identifier eingerahmt.
 }
 ?>

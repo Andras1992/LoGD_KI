@@ -55,8 +55,8 @@ if ($HTTP_GET_VARS['op']==""){
 	output("</table>",true);
 	addnav("Zurück ins Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="buy"){
-  	$sql = "SELECT * FROM weapons WHERE weaponid='$HTTP_GET_VARS[id]'";
-	$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT * FROM weapons WHERE weaponid=?"; // Die Waffen-ID wird als Zahl gebunden.
+	$result = db_query_params($sql,array((int)db_unquote_legacy_input($HTTP_GET_VARS['id']))) or die(db_error(LINK));
 	if (db_num_rows($result)==0){
 	  	output("`!MightyE`7 schaut dich eine Sekunde lang verwirrt an und kommt zu dem Schluss, dass du ein paar Schläge zuviel auf den Kopf bekommen hast. Schließlich nickt er und grinst.");
 		addnav("Nochmal versuchen?","weapons.php");

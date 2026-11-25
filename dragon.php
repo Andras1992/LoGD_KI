@@ -264,7 +264,7 @@ if ($HTTP_GET_VARS['op']==""){
 	$session['user']['charm']+=5;
 	output("`^Du bekommst FÜNF Charmepunkte für deinen Sieg über den Drachen!`n");
 	$dkname = $session['user']['name'];
-	savesetting("newdragonkill",addslashes($dkname));
+
 	debuglog("slew the dragon and starts with {$session['user']['gold']} gold and {$session['user']['gems']} gems");
 	// dragonkill ends arenafight
 	$sql = "DELETE FROM pvp WHERE acctid1=".$session['user']['acctid']." OR acctid2=".$session['user']['acctid'];

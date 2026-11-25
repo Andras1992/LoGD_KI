@@ -131,8 +131,9 @@ if ($_GET['op'] == "wkkauf"){
 		$row = db_fetch_assoc(db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id']), (int)$session['user']['acctid'], "Fluch")));
 		$goldcost=$row['gold']*$session['user']['level'];
 		$klappt=e_rand(1,10);
-		$sql="SELECT * FROM items WHERE owner=$_GET[pid] AND name='$row[name]' AND class='Fluch'";
-		$result2=db_query($sql);
+// Zielkonto, Fluchname und Gegenstandsklasse werden einzeln gebunden, damit Namen kein SQL veraendern.
+$sql="SELECT * FROM items WHERE owner=? AND name=? AND class=?";
+$result2=db_query_params($sql,array((int)db_unquote_legacy_input($_GET['pid']),$row['name'],"Fluch"));
 		if (db_num_rows($result2)>0){
 			output("`!Die Hexe sucht aus einem Regal voller Puppen eine heraus, die wie dein Opfer aussieht. Sie stutzt kurz, dann dreht sie sich zu dir um: \"`%");
 			output("Jaja, es ist alles in Ordnung. Dein Opfer leidet bereits unter $row[name]`%. Behalte dein Geld. Einen schönen Tag noch. Und jetzt ... lass mich alleine.`!\"");
@@ -140,35 +141,44 @@ if ($_GET['op'] == "wkkauf"){
 			output("`!Als du deine Reichtümer vor der Hexe ausbreitest, musst du leider feststellen, dass du nicht genug hast, um die Hexe zu bezahlen. Du rechnest mit ");
 			output("einem Donnerwetter aus Beschimpfungen, doch stattdessen geleitet dich die Hexe erstaunlich ruhig und freundlich zum Ausgang. Du bist verwirrt und ");
 			output("lässt es geschehen.`nDoch schon bald sollst du herausfinden, wie die Hexe zu ihrem Geld kommen will: Sie hat den Fluch auf dich gesprochen!");
-			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES ('".$row['name']."',".$session['user']['acctid'].",'Fluch',$row[value1],$row[value2],$row[gold],$row[gems],'".$row['description']."',$row[hvalue],'".$row['buff']."')";
+// Alle Werte des kopierten Fluchs werden sicher gebunden; nur die Anzahl der Edelsteine wird halbiert.
+$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES (?,?,?,?,?,?,?,?,?,?)";
+$insertParams=array($row['name'],(int)$session['user']['acctid'],"Fluch",$row['value1'],$row['value2'],$row['gold'],round($row['gems']/2),$row['description'],$row['hvalue'],$row['buff']);
 			$session['user']['reputation']--;
 		}else if ($klappt>=9){
 			output("`!HOPPLA! Das ging gewaltig schief. Statt dein Opfer zu treffen, ist der Fluch auf dich gesprungen. Du weißt nicht, ob das Absicht der Hexe war, oder ein Versehen, ");
 			output("aber sie verlangt ihren Lohn nicht, während sie dich scheinbar leicht verwirrt aus dem Haus schiebt.");
-			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES ('".$row['name']."',".$session['user']['acctid'].",'Fluch',$row[value1],$row[value2],".round($row['gold']/2).",".round($row['gems']/2).",'".$row['description']."',$row[hvalue],'".$row['buff']."')";
+// Alle Werte des kopierten Fluchs werden sicher gebunden; nur die Anzahl der Edelsteine wird halbiert.
+$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES (?,?,?,?,?,?,?,?,?,?)";
+$insertParams=array($row['name'],(int)$session['user']['acctid'],"Fluch",$row['value1'],$row['value2'],round($row['gold']/2),round($row['gems']/2),$row['description'],$row['hvalue'],$row['buff']);
 		}else{
 			output("`!Die Hexe sucht aus einem Regal voller Puppen eine heraus, die wie dein Opfer aussieht. Sie legt die Puppe auf den Tisch zwischen euch. Mit einer Hand fährt sie kurz über die Puppe, während sie ");
 			output("mit der anderen Hand deine $goldcost Gold und $row[gems] einstreicht. Dann nickt sie dir kurz zufrieden zu und weist dir den Weg zur Tür.`nDein Opfer wird an $row[name]`! eine Weile seine Freude haben.");
 			$session['user']['gold']-=$goldcost;
 			$session['user']['gems']-=$row['gems'];
 			$session['user']['reputation']-=3;
-			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES ('".$row['name']."',".$_GET['pid'].",'Fluch',$row[value1],$row[value2],$row[gold],".round($row['gems']/2).",'".$row['description']."',$row[hvalue],'".$row['buff']."')";
+// Alle Werte des kopierten Fluchs werden sicher gebunden; nur die Anzahl der Edelsteine wird halbiert.
+$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES (?,?,?,?,?,?,?,?,?,?)";
+$insertParams=array($row['name'],(int)db_unquote_legacy_input($_GET['pid']),"Fluch",$row['value1'],$row['value2'],$row['gold'],round($row['gems']/2),$row['description'],$row['hvalue'],$row['buff']);
 			systemmail($_GET['pid'],"`\$Verflucht!`0","`9{$session['user']['name']}`9 hat dir den Fluch `T'$row[name]'`9 angehext!`n$row[description]");
 		}
-		db_query($sql);
+db_query_params($sql,$insertParams);
 		$session['user']['witch']++;
 		forest(true);
 	}else if ($_GET['id']>""){
 		$id=$_GET['id'];
+		$searchParams=array(); // Platzhalterwerte fuer die Spielersuche werden hier gesammelt.
+		$searchTerm=trim(db_unquote_legacy_input($_POST["search"] ?? $_GET["search"] ?? "")); // Suchtext wird von der alten Schutzschicht befreit.
 		if (isset($_POST['search']) || $_GET['search']>""){
 			if ($_GET['search']>"") $_POST['search']=$_GET['search'];
 			$search="%";
-			for ($x=0;$x<strlen($_POST['search']);$x++){
-				$search .= substr($_POST['search'],$x,1)."%";
+			for ($x=0;$x<strlen($searchTerm);$x++){
+				$search .= substr($searchTerm,$x,1)."%";
 			}
-			$search="name LIKE '".$search."' AND ";
-			if ($_POST['search']=="weiblich") $search="sex=1 AND ";
-			if ($_POST['search']=="männlich") $search="sex=0 AND ";
+			$searchParams[]="%".$search."%"; // Suchtext bleibt ein Datenwert statt Teil des SQL-Befehls.
+			$search="name LIKE ? AND ";
+			if ($_POST["search"]=="weiblich") { $search="sex=1 AND "; $searchParams=array(); } // Geschlecht wird als feste Auswahl gefiltert.
+			if ($_POST["search"]==("m".chr(195).chr(164)."nnlich")) { $search="sex=0 AND "; $searchParams=array(); } // Auch diese feste Geschlechtsauswahl braucht keinen Suchtext.
 		}else{
 			$search="";
 		}
@@ -181,7 +191,7 @@ if ($_GET['op'] == "wkkauf"){
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sql = "SELECT login,name,level,sex,acctid FROM accounts WHERE $search locked=0 AND alive=1 AND acctid<>".$session['user']['acctid']." AND lastip<>'".$session['user']['lastip']."' AND dragonkills > 0 ORDER BY login,level LIMIT $limit";
-		$result = db_query($sql);
+		$result = db_query_params($sql,$searchParams); // Suchwort wird sicher an die Spielersuche gebunden.
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","hexe.php?op=cursep&id=$id&limit=".($page+1)."&search=$_POST[search]");
 		output("`%Und wer darf das Opfer sein?`n`!");
 		output("<form action='hexe.php?op=cursep&id=$id' method='POST'>Nach Name suchen: <input name='search' value='$_POST[search]'><input type='submit' class='button' value='Suchen'></form>",true);
@@ -215,7 +225,7 @@ if ($_GET['op'] == "wkkauf"){
 		addnav("Lieber nicht","hexe.php");
 	}
 } else if ($_GET['op'] == "fluch1"){
-	$sql="SELECT * FROM items WHERE class='Fluch' AND owner=".$session['user']['acctid']." ORDER BY id ASC";
+	$result=db_query_params("SELECT * FROM items WHERE class=? AND owner=? ORDER BY id",array("Fluch",(int)$session["user"]["acctid"])); // Nur eigene Flueche werden gesucht; beide Suchwerte bleiben getrennte Daten.
 	$result = db_query($sql);
 	output("`!Die alte Hexe murmelt ein paar unverständliche Worte, bevor sie dir mit leicht arroganter Miene wie ein Arzt nach erfolgreicher Diagnose erzählt, was du wieder alles falsch gemacht hast.");
 	output("\"`%Also, dich von deinen Übeln zu befreien wird dich eine Kleinigkeit kosten. ");
@@ -267,7 +277,7 @@ if ($_GET['op'] == "wkkauf"){
 		if ($session['user']['lottery'] && $session['user']['gems']) addnav("Nochmal Lotto (1 Edelstein)","hexe.php?op=lotto");
 		if ($session['user']['gotfreeale'] && $session['user']['gold']>350) addnav("Cedrik verwirren (350 Gold)","hexe.php?op=freeale");
 		output("`!\"");
-		$result=db_query("SELECT * FROM items WHERE class='Fluch' AND owner=".$session['user']['acctid']." ORDER BY id");
+	$result=db_query_params("SELECT * FROM items WHERE class=? AND owner=? ORDER BY id",array("Fluch",(int)$session["user"]["acctid"])); // Nur eigene Flueche werden gesucht; beide Suchwerte bleiben getrennte Daten.
 		if (db_num_rows($result)>0){
 			output(" Sie macht eine kurze Pause, als ob sie etwas an deiner Erscheinung stören würde, und fährt dann fort: \"`%Ich spüre, es liegt ein `\$Fluch`% auf dir. Soll ich dir dabei behilflich sein, diesen Fluch los zu werden?`!\"");
 			addnav("Fluch beseitigen","hexe.php?op=fluch1");

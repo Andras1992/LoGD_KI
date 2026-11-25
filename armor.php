@@ -21,12 +21,14 @@ if ($HTTP_GET_VARS['op']==""){
 	addnav("Inventar anzeigen","prefs.php?op=inventory&back=armor.php");
 	addnav("Zurück zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="browse"){
-	$sql = "SELECT max(level) AS level FROM armor WHERE level<=".$session['user']['dragonkills'];
-	$result = db_query($sql) or die(db_error(LINK));
+	// Die hoechste Ruestungsstufe wird als Zahlenwert getrennt an die Datenbank gegeben.
+	$sql = "SELECT max(level) AS level FROM armor WHERE level<=?";
+	$result = db_query_params($sql, array((int)$session['user']['dragonkills'])) or die(db_error(LINK));
 	$row = db_fetch_assoc($result);
 
-  	$sql = "SELECT * FROM armor WHERE level=$row[level] ORDER BY value";
-	$result = db_query($sql) or die(db_error(LINK));
+	// Die freigeschaltete Stufe wird als Wert gebunden und nicht in den SQL-Text eingesetzt.
+	$sql = "SELECT * FROM armor WHERE level=? ORDER BY value";
+	$result = db_query_params($sql, array((int)$row['level'])) or die(db_error(LINK));
 	output("`5Du blickst über die verschiedenen Kleidungsstücke und fragst dich, ob `#Pegasus`5 einige davon für dich ");
 	output("anprobieren würde. Aber dann bemerkst du, dass sie damit beschäftigt ist, `!MightyE`5 verträumt durch das Fenster seines Ladens dabei zu beobachten, ");
 	output("wie er gerade mit nacktem Oberkörper einem Kunden den Gebrauch einer seiner Waren demonstriert. Als sie kurz wahrnimmt, dass du ");
@@ -51,8 +53,10 @@ if ($HTTP_GET_VARS['op']==""){
 	output("</table>",true);
 	addnav("Zurück zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="buy"){
-  	$sql = "SELECT * FROM armor WHERE armorid='$HTTP_GET_VARS[id]'";
-	$result = db_query($sql) or die(db_error(LINK));
+	// Die Ruestungs-ID aus der URL wird als Zahl gebunden und kann keinen SQL-Befehl veraendern.
+	$armorId = isset($HTTP_GET_VARS['id']) ? (int)db_unquote_legacy_input($HTTP_GET_VARS['id']) : 0;
+	$sql = "SELECT * FROM armor WHERE armorid=?";
+	$result = db_query_params($sql, array($armorId)) or die(db_error(LINK));
 	if (db_num_rows($result)==0){
 	  	output("`#Pegasus`5 schaut dich ein paar Sekunden verwirrt an, entschließt sich dann aber zu glauben, dass du wohl ein paar Schläge zu viel auf den Kopf bekommen hast und nickt lächelnd.");
 		addnav("Nochmal?","armor.php");

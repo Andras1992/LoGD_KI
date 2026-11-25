@@ -25,8 +25,9 @@
 */
 //output(output_array($session['user']['prefs']));
 
-$language = $session['user']['prefs']['language'];
-if ($language=="") $language=$_COOKIE['language'];
+// Neue Spieler haben noch keine gespeicherte Sprache; dann gilt die Cookie- oder Standardsprache.
+$language = isset($session['user']['prefs']['language']) ? $session['user']['prefs']['language'] : '';
+if ($language==="") $language=isset($_COOKIE['language']) ? $_COOKIE['language'] : '';
 if ($language=="") $language=getsetting("defaultlanguage","en");
 
 if (file_exists("translator_".$language.".php")){

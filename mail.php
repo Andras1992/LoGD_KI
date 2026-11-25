@@ -38,7 +38,7 @@ $result = db_query_params($sql, array((int)$row1["acctid"]));
 				$_POST['body']=str_replace("`n","\n",$_POST['body']);
 				$_POST['body']=str_replace("\r\n","\n",$_POST['body']);
 				$_POST['body']=str_replace("\r","\n",$_POST['body']);
-				$_POST['body']=addslashes(substr(stripslashes($_POST['body']),0,(int)getsetting("mailsizelimit",1024))); 
+				$_POST["body"]=substr(db_unquote_legacy_input($_POST["body"]),(int)0,(int)getsetting("mailsizelimit",1024)); // Mailtext wird vom alten Schutz-Backslash befreit und auf die erlaubte Laenge gekuerzt.
 				$_POST['body'] = closetags($_POST['body'],'`c`i`b');
 				systemmail($row1['acctid'],$_POST['subject'],$_POST['body'],$session['user']['acctid']);
 			output("Deine Nachricht wurde gesendet!`n");

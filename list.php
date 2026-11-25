@@ -24,13 +24,14 @@ $result = db_query($sql);
 $row = db_fetch_assoc($result);
 $totalplayers = $row['c'];
 
+$searchParams=array(); // Suchwerte bleiben getrennt vom SQL-Befehl.
 if ($_GET['op']=="search"){
 	$search="%";
 	for ($x=0;$x<strlen($_POST['name']);$x++){
 		$search .= substr($_POST['name'],$x,1)."%";
 	}
-	$search=" AND name LIKE '".addslashes($search)."' ";
-	//addnav("List Warriors","list.php");
+	$search=" AND name LIKE ? "; // Der Name wird als sicherer Suchwert eingesetzt.
+	$searchParams[]= "%".rawurldecode(db_unquote_legacy_input($_POST["name"] ?? ""))."%";
 }else{
 	$pageoffset = (int)$_GET['page'];
 	if ($pageoffset>0) $pageoffset--;
@@ -60,7 +61,7 @@ if ($session['user']['loggedin']){
 	addnav("","list.php?op=search");
 }
 
-$result = db_query($sql) or die(sql_error($sql));
+	$result = ($_GET["op"]=="search") ? db_query_params($sql,$searchParams) : db_query($sql); // Nur die Suche braucht einen gebundenen Textwert.
 $max = db_num_rows($result);
 if ($max>100) {
 	output("`\$Es treffen zu viele Namen auf diese Suche zu. Nur die ersten 100 werden angezeigt.`0`n");

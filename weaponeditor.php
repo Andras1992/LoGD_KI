@@ -20,8 +20,9 @@ $weaponarray=array(
 	"Waffen,title");
 if($_GET['op']=="edit" || $_GET['op']=="add"){
 	if ($_GET['op']=="edit"){
-		$sql = "SELECT * FROM weapons WHERE weaponid='$_GET[id]'";
-		$result = db_query($sql);
+		// Die Waffennummer aus der URL wird als Zahl gebunden.
+		$sql = "SELECT * FROM weapons WHERE weaponid=?";
+		$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 		$row = db_fetch_assoc($result);
 	}else{
 		$sql = "SELECT max(damage+1) AS damage FROM weapons WHERE level=$weaponlevel";
@@ -33,17 +34,25 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 	showform($weaponarray,$row);
 	output("</form>",true);
 }else if($_GET['op']=="del"){
-	$sql = "DELETE FROM weapons WHERE weaponid='$_GET[id]'";
-	db_query($sql);
+	// Die Waffennummer wird sicher gebunden, bevor der Eintrag entfernt wird.
+	$sql = "DELETE FROM weapons WHERE weaponid=?";
+	db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	//output($sql);
 	redirect("weaponeditor.php?level=$weaponlevel");
 }else if($_GET['op']=="save"){
-	if ((int)$_POST['weaponid']>0){
-		$sql = "UPDATE weapons SET weaponname=\"$_POST[weaponname]\",damage=\"$_POST[damage]\",value=".$values[$_POST['damage']]." WHERE weaponid='$_POST[weaponid]'";
-	}else{
-		$sql = "INSERT INTO weapons (level,damage,weaponname,value) VALUES ($weaponlevel,\"$_POST[damage]\",\"$_POST[weaponname]\",".$values[$_POST['damage']].")";
+	// Formularwerte werden als Daten gebunden und die Auswahl auf bekannte Schadensstufen begrenzt.
+	$recordId = (int)db_unquote_legacy_input($_POST['weaponid']);
+	$damage = (int)db_unquote_legacy_input($_POST['damage']);
+	if (!isset($values[$damage])) $damage = 1;
+	$value = $values[$damage];
+	$weaponName = db_unquote_legacy_input($_POST['weaponname']);
+	if ($recordId > 0) {
+		$sql = "UPDATE weapons SET weaponname=?,damage=?,value=? WHERE weaponid=?";
+		db_query_params($sql, array($weaponName, $damage, $value, $recordId));
+	} else {
+		$sql = "INSERT INTO weapons (level,damage,weaponname,value) VALUES (?,?,?,?)";
+		db_query_params($sql, array($weaponlevel, $damage, $weaponName, $value));
 	}
-	db_query($sql);
 	//output($sql);
 	redirect("weaponeditor.php?level=$weaponlevel");
 }else if ($_GET['op']==""){
@@ -55,8 +64,8 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 		addnav("Waffen für $i DK's","weaponeditor.php?level=$i");
 	}
 	output("<table>",true);
-	$sql = "SELECT * FROM weapons WHERE level=".(int)$_GET['level']." ORDER BY damage";
-	$result= db_query($sql) or die(db_error(LINK));
+	$sql = "SELECT * FROM weapons WHERE level=? ORDER BY damage"; // Die Waffenstufe wird als Zahl gebunden.
+	$result= db_query_params($sql,array((int)db_unquote_legacy_input($_GET['level']))) or die(db_error(LINK));
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
 		if ($i==0){

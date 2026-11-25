@@ -62,10 +62,10 @@ function pollitem($id,$subject,$body){
 	output("<hr>",true);
 }
 if ($_GET['op']=="vote"){
-	$sql = "DELETE FROM pollresults WHERE motditem='{$_POST['motditem']}' AND account='{$session['user']['acctid']}'";
-	db_query($sql);
-	$sql = "INSERT INTO pollresults (choice,account,motditem) VALUES ('{$_POST['choice']}','{$session['user']['acctid']}','{$_POST['motditem']}')";
-	db_query($sql);
+$sql = "DELETE FROM pollresults WHERE motditem=? AND account=?"; // IDs werden gebunden, damit nur die eigene Stimme dieser Umfrage geloescht wird.
+db_query_params($sql,array((int)$_POST['motditem'],(int)$session['user']['acctid']));
+$sql = "INSERT INTO pollresults (choice,account,motditem) VALUES (?,?,?)"; // Abstimmungswerte bleiben getrennte Daten statt SQL-Text.
+db_query_params($sql,array((int)$_POST['choice'],(int)$session['user']['acctid'],(int)$_POST['motditem']));
 	header("Location: motd.php");
 	exit();
 }
@@ -85,8 +85,8 @@ if ($_GET['op']=="addpoll"){
 			output("<input type='submit' class='button' value='Hinzufügen'></form>",true);
 		}else{
 			$body = array("body"=>$_POST['body'],"opt"=>$_POST['opt']);
-			$sql = "INSERT INTO motd (motdtitle,motdbody,motddate,motdtype) VALUES (\"$_POST[subject]\",\"".addslashes(serialize($body))."\",now(),1)";
-			db_query($sql);
+$sql = "INSERT INTO motd (motdtitle,motdbody,motddate,motdtype) VALUES (?,?,NOW(),1)"; // Betreff und Nachricht werden sicher als Werte gespeichert.
+db_query_params($sql,array(db_unquote_legacy_input($_POST['subject']),serialize($body)));
 			header("Location: motd.php");
 			exit();
 		}
@@ -110,8 +110,8 @@ if ($_GET['op']=="add"){
 			output("<textarea class='input' name='body' cols='37' rows='5'>".HTMLEntities(stripslashes($_POST['body']))."</textarea>`n",true);
 			output("<input type='submit' class='button' value='Hinzufügen'></form>",true);
 		}else{
-			$sql = "INSERT INTO motd (motdtitle,motdbody,motddate) VALUES (\"$_POST[subject]\",\"$_POST[body]\",now())";
-			db_query($sql);
+$sql = "INSERT INTO motd (motdtitle,motdbody,motddate) VALUES (?,?,NOW())"; // Betreff und Nachricht werden getrennt vom SQL-Befehl gebunden.
+db_query_params($sql,array(db_unquote_legacy_input($_POST['subject']),db_unquote_legacy_input($_POST['body'])));
 			header("Location: motd.php");
 			exit();
 		}
@@ -128,8 +128,8 @@ if ($_GET['op']=="add"){
 }
 if ($_GET['op']=="del"){
 	if ($session['user']['superuser']>=3){
-			$sql = "DELETE FROM motd WHERE motditem=\"$_GET[id]\"";
-			db_query($sql);
+$sql = "DELETE FROM motd WHERE motditem=?"; // Die News-ID wird als Zahl gebunden, bevor der Eintrag geloescht wird.
+db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 			header("Location: motd.php");
 			exit();
 	}else{

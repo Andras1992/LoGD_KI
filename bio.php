@@ -37,8 +37,9 @@ output("`^Rasse: `@{$races[$row['race']]}`n");
 output("`^Geschlecht: `@".($row['sex']?"Weiblich":"Männlich")."`n");
 output("`^Spezialgebiet: `@".$specialty[$row['specialty']]."`n");
 
-$sql = "SELECT mountname FROM mounts WHERE mountid='{$row['hashorse']}'";
-$result = db_query($sql);
+$sql = "SELECT mountname FROM mounts WHERE mountid=?";
+// Die Tier-ID stammt aus dem gefundenen Profil und wird als Zahl sicher gebunden.
+$result = db_query_params($sql, array((int)$row['hashorse']));
 $mount = db_fetch_assoc($result);
 if ($mount['mountname']=="")
        $mount['mountname'] = "`iKeines`i";

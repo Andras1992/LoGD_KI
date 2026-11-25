@@ -51,8 +51,8 @@ foreach ($words as $key => $val) {
 if ($_GET['op']=="add" || $_GET['op']=="remove"){
     $sql = "DELETE FROM nastywords";
     db_query($sql);
-    $sql = "INSERT INTO nastywords VALUES ('" . addslashes(join(" ",$words)) . "')";
-    db_query($sql);
+	$sql = "INSERT INTO nastywords VALUES (?)"; // Die zusammengesetzte Wortliste wird als sicherer Datenwert gespeichert.
+	db_query_params($sql,array(join(" ",$words)));
 }
 page_footer();
 ?>

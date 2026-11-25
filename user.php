@@ -5,26 +5,25 @@
 require_once "common.php";
 isnewday(3);
 
+	// Ohne Suchauftrag bleibt der Filter leer; so ist auch die normale Benutzerliste definiert.
+	$where = "";
+	$whereParams = array();
 if ($_GET['op']=="search"){
-	$sql = "SELECT acctid FROM accounts WHERE ";
-	$where="
-	login LIKE '%{$_POST['q']}%' OR 
-	acctid LIKE '%{$_POST['q']}%' OR 
-	name LIKE '%{$_POST['q']}%' OR 
-	emailaddress LIKE '%{$_POST['q']}%' OR 
-	lastip LIKE '%{$_POST['q']}%' OR 
-	uniqueid LIKE '%{$_POST['q']}%' OR 
-	gentimecount LIKE '%{$_POST['q']}%' OR 
-	level LIKE '%{$_POST['q']}%'";
-	$result = db_query($sql.$where);
+	// Ein Platzhalter pro Suchfeld schuetzt die Datenbank, das Prozentzeichen sucht weiterhin Teiltexte.
+	$searchTerm = "%" . db_unquote_legacy_input(isset($_POST['q']) ? $_POST['q'] : "") . "%";
+	$where = "login LIKE ? OR acctid LIKE ? OR name LIKE ? OR emailaddress LIKE ? OR lastip LIKE ? OR uniqueid LIKE ? OR gentimecount LIKE ? OR level LIKE ?";
+	$whereParams = array_fill(0, 8, $searchTerm);
+	$result = db_query_params("SELECT acctid FROM accounts WHERE ($where)", $whereParams);
 	if (db_num_rows($result)<=0){
 		output("`\$Keine Ergebnisse gefunden`0");
 		$_GET['op']="";
 		$where="";
+		$whereParams = array();
 	}elseif (db_num_rows($result)>100){
 		output("`\$Zu viele Ergebnisse gefunden. Bitte Suche einengen.`0");
 		$_GET['op']="";
 		$where="";
+		$whereParams = array();
 	}elseif (db_num_rows($result)==1){
 		//$row = db_fetch_assoc($result);
 		//redirect("user.php?op=edit&userid=$row[acctid]");
@@ -164,13 +163,14 @@ $userinfo = array(
 
 if ($_GET['op']=="lasthit"){
 	$output="";
-	$sql = "SELECT output FROM accounts WHERE acctid='{$_GET['userid']}'";
-	$result = db_query($sql);
+	// Auch diese Anzeige bindet die Spieler-ID, damit die URL kein SQL veraendern kann.
+	$result = db_query_params("SELECT output FROM accounts WHERE acctid=?", array((int)db_unquote_legacy_input($_GET['userid'])));
 	$row = db_fetch_assoc($result);
 	echo str_replace("<iframe src=","<iframe Xsrc=",$row['output']);
 	exit();
 }elseif ($_GET['op']=="edit"){
-	$result = db_query("SELECT * FROM accounts WHERE acctid='$_GET[userid]'") or die(db_error(LINK));
+	// Die Spieler-ID bleibt ein Datenwert und wird getrennt vom SQL-Befehl uebergeben.
+	$result = db_query_params("SELECT * FROM accounts WHERE acctid=?", array((int)db_unquote_legacy_input($_GET['userid']))) or die(db_error(LINK));
 	$row = db_fetch_assoc($result) or die(db_error(LINK));
 	output("<form action='user.php?op=special&userid=$_GET[userid]".($_GET['returnpetition']!=""?"&returnpetition={$_GET['returnpetition']}":"")."' method='POST'>",true);
 	addnav("","user.php?op=special&userid=$_GET[userid]".($_GET['returnpetition']!=""?"&returnpetition={$_GET['returnpetition']}":"")."");
@@ -195,14 +195,16 @@ if ($_GET['op']=="lasthit"){
 	output("<iframe src='user.php?op=lasthit&userid={$_GET['userid']}' width='100%' height='400'>Dein Browser muss iframes unterstützen, um die letzte Seite des Users anzeigen zu können. Benutze den Link im Menü stattdessen.</iframe>",true);
 	addnav("","user.php?op=lasthit&userid={$_GET['userid']}");
 }elseif ($_GET['op']=="special"){
+		// Alle Aktionen verwenden dieselbe gebundene Spieler-ID, damit die URL kein SQL einschleusen kann.
+	$accountId = (int)db_unquote_legacy_input($_GET['userid']);
 	if ($_POST['newday']!=""){
-		$sql = "UPDATE accounts SET lasthit='".date("Y-m-d H:i:s",strtotime(date("r")."-".(86500/getsetting("daysperday",4))." seconds"))."' WHERE acctid='$_GET[userid]'";
+		$lastHit = date("Y-m-d H:i:s",strtotime(date("r")."-".(86500/getsetting("daysperday",4))." seconds"));
+		db_query_params("UPDATE accounts SET lasthit=? WHERE acctid=?", array($lastHit, $accountId));
 	}elseif($_POST['fixnavs']!=""){
-		$sql = "UPDATE accounts SET allowednavs='',output='' WHERE acctid=$_GET[userid]";
+		db_query_params("UPDATE accounts SET allowednavs='',output='' WHERE acctid=?", array($accountId));
 	}elseif($_POST['clearvalidation']!=""){
-		$sql = "UPDATE accounts SET emailvalidation='' WHERE acctid='$_GET[userid]'";
+		db_query_params("UPDATE accounts SET emailvalidation='' WHERE acctid=?", array($accountId));
 	}
-	db_query($sql);
 	if ($_GET['returnpetition']==""){
 		// redirect("user.php?".db_affected_rows());
 		redirect("user.php");
@@ -262,17 +264,25 @@ if ($_GET['op']=="lasthit"){
 	}
 
 	reset($_POST);
+	// Nur Spalten aus der festen $userinfo-Liste werden gespeichert; alle Werte gehen als Parameter an PDO.
+	$updates = array();
+	$updateParams = array();
 	foreach ($_POST as $key => $val) {
-		if (isset($userinfo[$key])){
+		if (isset($userinfo[$key]) && is_scalar($val)){
 			if ($key=="newpassword" ){
-				if ($val>"") $sql.="password = MD5(\"$val\"),";
+				if ($val>"") {
+					$updates[] = "password = MD5(?)";
+					$updateParams[] = db_unquote_legacy_input($val);
+				}
 			}else{
-				$sql.="$key = \"$val\",";
+				$updates[] = "$key = ?";
+				$updateParams[] = db_unquote_legacy_input($val);
 			}
 		}
 	}
-	$sql=substr($sql,0,strlen($sql)-1);
-	$sql.=" WHERE acctid=\"$_GET[userid]\"";
+	// Die Spieler-ID ist ebenfalls ein gebundener Wert und kommt am Ende der Parameterliste.
+	$updateParams[] = (int)db_unquote_legacy_input($_GET['userid']);
+	$sql = "UPDATE accounts SET " . implode(", ", $updates) . " WHERE acctid=?";
 	//output("<pre>$sql</pre>");
 	//echo "<pre>$sql</pre>";
 	//redirect("user.php");
@@ -282,7 +292,7 @@ if ($_GET['op']=="lasthit"){
 	addnav("","viewpetition.php?op=view&id={$_GET['returnpetition']}");
 	addnav("","user.php");
 	saveuser();
-	db_query($sql) or die(db_error(LINK));
+	db_query_params($sql, $updateParams) or die(db_error(LINK));
 	if ($_GET['returnpetition']!=""){
 		header("Location: viewpetition.php?op=view&id={$_GET['returnpetition']}");
 	}else{
@@ -291,29 +301,24 @@ if ($_GET['op']=="lasthit"){
 
 	exit();
 }elseif ($_GET['op']=="del"){
-	$sql = "SELECT name from accounts WHERE acctid='$_GET[userid]'";
-	$res = db_query($sql);
+	// Die Konto-ID wird hier und in der folgenden Bereinigung als Zahl gebunden.
+	$accountId = (int)db_unquote_legacy_input($_GET['userid']);
+	$res = db_query_params("SELECT name FROM accounts WHERE acctid=?", array($accountId));
 	// inventar und haus löschen und partner und ei freigeben
 	if ($_GET['userid']==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
-    	$sql = "UPDATE items SET owner=0 WHERE owner=$_GET[userid]";
-	db_query($sql);
-	$sql = "UPDATE houses SET owner=0,status=3 WHERE owner=$_GET[userid] AND status=1";
-	db_query($sql);
-	$sql = "UPDATE houses SET owner=0,status=4 WHERE owner=$_GET[userid] AND status=0";
-	db_query($sql);
-	$sql = "UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=$_GET[userid]";
-	db_query($sql);
-	$sql = "DELETE FROM pvp WHERE acctid2=$_GET[userid] OR acctid1=$_GET[userid]";
-	db_query($sql) or die(db_error(LINK));
-	$sql = "DELETE FROM accounts WHERE acctid='$_GET[userid]'";
-	db_query($sql);
+	db_query_params("UPDATE items SET owner=0 WHERE owner=?", array($accountId));
+	db_query_params("UPDATE houses SET owner=0,status=3 WHERE owner=? AND status=1", array($accountId));
+	db_query_params("UPDATE houses SET owner=0,status=4 WHERE owner=? AND status=0", array($accountId));
+	db_query_params("UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=?", array($accountId));
+	db_query_params("DELETE FROM pvp WHERE acctid2=? OR acctid1=?", array($accountId, $accountId)) or die(db_error(LINK));
+	db_query_params("DELETE FROM accounts WHERE acctid=?", array($accountId));
 	output( db_affected_rows()." Benutzer gelöscht.");
 	while ($row = db_fetch_assoc($res)) {
 		addnews("`#{$row['name']} wurde von den Göttern aufgelöst.");
 	}
 }elseif($_GET['op']=="setupban"){
-	$sql = "SELECT name,lastip,uniqueid FROM accounts WHERE acctid=\"$_GET[userid]\"";
-	$result = db_query($sql) or die(db_error(LINK));
+	// Die Konto-ID ist ein Datenwert, kein Teil des SQL-Befehls.
+	$result = db_query_params("SELECT name,lastip,uniqueid FROM accounts WHERE acctid=?", array((int)db_unquote_legacy_input($_GET['userid']))) or die(db_error(LINK));
 	$row = db_fetch_assoc($result);
 	if ($row['name']!="") output("Setting up ban information based on `\$$row[name]`0");
 	output("<form action='user.php?op=saveban' method='POST'>",true);
@@ -326,20 +331,12 @@ if ($_GET['op']=="lasthit"){
 	output("Bei einem IP-Bann gib entweder eine komplette IP ein, oder gebe nur den Anfang der IP ein, wenn du einen IP-Bereich sperren willst.");
 	addnav("","user.php?op=saveban");
 }elseif($_GET['op']=="saveban"){
-	$sql = "INSERT INTO bans (";
-	if ($_POST['type']=="ip"){
-		$sql.="ipfilter";
-	}else{
-		$sql.="uniqueid";
-	}
-	$sql.=",banexpire,banreason) VALUES (";
-	if ($_POST['type']=="ip"){
-		$sql.="\"$_POST[ip]\"";
-	}else{
-		$sql.="\"$_POST[id]\"";
-	}
-	$sql.=",\"".((int)$_POST['duration']==0?"0000-00-00":date("Y-m-d",strtotime(date("r")."+$_POST[duration] days")))."\",";
-	$sql.="\"$_POST[reason]\")";
+	// Die Spalte stammt aus zwei festen Optionen; Eingaben werden als Werte an PDO gebunden.
+	$banColumn = ($_POST['type']=="ip") ? "ipfilter" : "uniqueid";
+	$banValue = ($_POST['type']=="ip") ? $_POST['ip'] : $_POST['id'];
+	$duration = (int)db_unquote_legacy_input($_POST['duration']);
+	$banExpire = ($duration==0) ? "0000-00-00" : date("Y-m-d",strtotime(date("r")."+".$duration." days"));
+	$sql = "INSERT INTO bans ($banColumn,banexpire,banreason) VALUES (?,?,?)";
 	if ($_POST['type']=="ip"){
 		if (substr($_SERVER['REMOTE_ADDR'],0,strlen($_POST['ip'])) == $_POST['ip']){
 			$sql = "";
@@ -352,17 +349,19 @@ if ($_GET['op']=="lasthit"){
 		}
 	}
 	if ($sql!=""){
-		db_query($sql) or die(db_error(LINK));
+		// Die Bannart ist festgelegt; IP, ID und Begruendung werden getrennt vom SQL-Text uebergeben.
+		db_query_params($sql, array(db_unquote_legacy_input($banValue), $banExpire, db_unquote_legacy_input($_POST['reason']))) or die(db_error(LINK));
 		output(db_affected_rows()." Bann eingetragen.`n`n");
 		output(db_error(LINK));
 	}
 }elseif($_GET['op']=="delban"){
-	$sql = "DELETE FROM bans WHERE ipfilter = '$_GET[ipfilter]' AND uniqueid = '$_GET[uniqueid]'";
-	db_query($sql);
+	// IP-Filter und eindeutige ID bleiben als Datenwerte ausserhalb der SQL-Zeichenfolge.
+	db_query_params("DELETE FROM bans WHERE ipfilter=? AND uniqueid=?", array(db_unquote_legacy_input($_GET['ipfilter']), db_unquote_legacy_input($_GET['uniqueid'])));
 	//output($sql);
 	redirect("user.php?op=removeban");
 }elseif($_GET['op']=="removeban"){	
-	db_query("DELETE FROM bans WHERE banexpire < \"".date("Y-m-d")."\" AND banexpire>'0000-00-00'");
+	// Das heutige Datum wird gebunden, damit auch dieser automatische Aufraeum-Schritt sicher bleibt.
+	db_query_params("DELETE FROM bans WHERE banexpire < ? AND banexpire>'0000-00-00'", array(date("Y-m-d")));
 	
 	$sql = "SELECT * FROM bans ORDER BY banexpire";
 	$result = db_query($sql) or die(db_error(LINK));
@@ -384,8 +383,9 @@ if ($_GET['op']=="lasthit"){
 		output("</td><td>",true);
 		output($row['banreason']);
 		output("</td><td>",true);
-		$sql = "SELECT DISTINCT accounts.name FROM bans, accounts WHERE (ipfilter='".addslashes($row['ipfilter'])."' AND bans.uniqueid='".addslashes($row['uniqueid'])."') AND ((substring(accounts.lastip,1,length(ipfilter))=ipfilter AND ipfilter<>'') OR (bans.uniqueid=accounts.uniqueid AND bans.uniqueid<>''))";
-		$r = db_query($sql);
+		// Ban-IP und ID werden getrennt gebunden, damit Sonderzeichen keine Abfrage veraendern.
+		$sql = "SELECT DISTINCT accounts.name FROM bans, accounts WHERE (ipfilter=? AND bans.uniqueid=?) AND ((substring(accounts.lastip,1,length(ipfilter))=ipfilter AND ipfilter<>'') OR (bans.uniqueid=accounts.uniqueid AND bans.uniqueid<>''))";
+		$r = db_query_params($sql, array($row['ipfilter'], $row['uniqueid']));
 		for ($x=0;$x<db_num_rows($r);$x++){
 			$ro = db_fetch_assoc($r);
 			output("`0{$ro['name']}`n");
@@ -394,10 +394,11 @@ if ($_GET['op']=="lasthit"){
 	}
 	output("</table>",true);
 }elseif ($_GET['op']=="debuglog"){
-	$id = $_GET['userid'];
-	$sql = "SELECT debuglog.*,a1.name as actorname,a2.name as targetname FROM debuglog LEFT JOIN accounts as a1 ON a1.acctid=debuglog.actor LEFT JOIN accounts as a2 ON a2.acctid=debuglog.target WHERE debuglog.actor=$id OR debuglog.target=$id ORDER by debuglog.date DESC,debuglog.id ASC LIMIT 500";
+	// Dieselbe Zahlen-ID wird fuer beide Seiten der Debuglog-Suche sicher gebunden.
+	$id = (int)db_unquote_legacy_input($_GET['userid']);
+	$sql = "SELECT debuglog.*,a1.name as actorname,a2.name as targetname FROM debuglog LEFT JOIN accounts as a1 ON a1.acctid=debuglog.actor LEFT JOIN accounts as a2 ON a2.acctid=debuglog.target WHERE debuglog.actor=? OR debuglog.target=? ORDER by debuglog.date DESC,debuglog.id ASC LIMIT 500";
 	addnav("User Info bearbeiten","user.php?op=edit&userid=$id");
-	$result = db_query($sql);
+	$result = db_query_params($sql, array($id, $id));
 	$odate = "";
 	for ($i=0; $i<db_num_rows($result); $i++) {
 		$row = db_fetch_assoc($result);
@@ -414,10 +415,14 @@ if ($_GET['op']=="lasthit"){
 }elseif ($_GET['op']==""){
 	if (isset($_GET['page'])){
 		$order = "acctid";
-		if ($_GET['sort']!="") $order = "$_GET[sort]";
+		// Sortierspalten sind keine normalen Datenwerte; nur diese bekannte Liste darf in SQL eingesetzt werden.
+		$sortColumns = array("acctid","login","name","level","laston","gentimecount","lastip","uniqueid","emailaddress");
+		$requestedOrder = isset($_GET['sort']) ? db_unquote_legacy_input($_GET['sort']) : "";
+		if (in_array($requestedOrder, $sortColumns, true)) $order = $requestedOrder;
 		$offset=(int)$_GET['page']*100;
-		$sql = "SELECT acctid,login,name,level,laston,gentimecount,lastip,uniqueid,emailaddress FROM accounts ".($where>""?"WHERE $where ":"")."ORDER BY \"$order\" LIMIT $offset,100";
-		$result = db_query($sql) or die(db_error(LINK));
+		$whereSql = ($where!=="") ? "WHERE ($where) " : "";
+		$sql = "SELECT acctid,login,name,level,laston,gentimecount,lastip,uniqueid,emailaddress FROM accounts ".$whereSql."ORDER BY ".$order." LIMIT ".$offset.",100";
+		$result = db_query_params($sql, $whereParams) or die(db_error(LINK));
 		output("<table>",true);
 		output("<tr>
 		<td>Ops</td>

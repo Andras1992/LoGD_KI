@@ -2,9 +2,9 @@
 require_once "common.php";
 
 if ($_GET['op']==""){
-
-	$sql = "SELECT lastupdate,serverid FROM logdnet WHERE address='$_GET[addy]'";
-	$result = db_query($sql);
+	// Die Serveradresse aus der Anfrage wird als Datenwert gebunden.
+	$sql = "SELECT lastupdate,serverid FROM logdnet WHERE address=?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['addy'])));
 	$row = db_fetch_assoc($result);
 	
 	if (db_num_rows($result)>0){
@@ -13,16 +13,17 @@ if ($_GET['op']==""){
 			$sql = "UPDATE logdnet SET priority=priority*0.99";
 			db_query($sql);
 			//use PHP server time for lastupdate in case mysql server and PHP server have different times.
-			$sql = "UPDATE logdnet SET priority=priority+1,description='".soap($_GET['desc'])."',lastupdate='".date("Y-m-d H:i:s")."' WHERE serverid=$row[serverid]";
-			//echo $sql;
-			db_query($sql);
+			// Beschreibung, Zeitpunkt und Datensatz-ID bleiben getrennte Datenwerte.
+			$sql = "UPDATE logdnet SET priority=priority+1,description=?,lastupdate=? WHERE serverid=?";
+			db_query_params($sql, array(soap(db_unquote_legacy_input($_GET['desc'])), date("Y-m-d H:i:s"), (int)$row['serverid']));
 			echo "Ok - upgedated";
 		}else{
 			echo "Ok - noch zu früh für ein Update";
 		}
 	}else{
-		$sql = "INSERT INTO logdnet (address,description,lastupdate) VALUES ('$_GET[addy]','".soap($_GET['desc'])."',now())";
-		$result = db_query($sql);
+		// Serveradresse und Beschreibung werden gebunden, damit sie keine SQL-Syntax werden koennen.
+		$sql = "INSERT INTO logdnet (address,description,lastupdate) VALUES (?,?,NOW())";
+		$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['addy']), soap(db_unquote_legacy_input($_GET['desc']))));
 		echo "Ok - hinzugefügt";
 	}
 }elseif ($_GET['op']=="net"){

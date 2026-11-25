@@ -43,8 +43,9 @@ if ($HTTP_GET_VARS['op']==""){
 	for ($x=0;$x<strlen($_POST['to']);$x++){
 		$string .= substr($_POST['to'],$x,1)."%";
 	}
-	$sql = "SELECT name,login FROM accounts WHERE name LIKE '".addslashes($string)."'";
-	$result = db_query($sql);
+	// Der Suchname wird als Wert gebunden, damit ein Apostroph die Datenbankabfrage nicht veraendern kann.
+	$sql = "SELECT name,login FROM accounts WHERE name LIKE ?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($string)));
 	$amt = abs((int)$_POST['amount']);
 	if (db_num_rows($result)==1){
 		$row = db_fetch_assoc($result);
@@ -78,8 +79,9 @@ if ($HTTP_GET_VARS['op']==""){
 	if ($session['user']['gold']+$session['user']['goldinbank']<$amt){
 		output("`6Wie willst du `^$amt`6 Gold ¸berweisen, wenn du nur ".($session['user']['gold']+$session['user']['goldinbank'])."`6 Gold hast?");
 	}else{
-		$sql = "SELECT name,acctid,level,transferredtoday,lastip,emailaddress,uniqueid FROM accounts WHERE login='{$_POST['to']}'";
-		$result = db_query($sql);
+		// Der Loginname aus dem Formular wird als Wert gebunden und bleibt vom SQL-Befehl getrennt.
+		$sql = "SELECT name,acctid,level,transferredtoday,lastip,emailaddress,uniqueid FROM accounts WHERE login=?";
+		$result = db_query_params($sql, array(db_unquote_legacy_input($_POST['to'])));
 		if (db_num_rows($result)==1){
 			$row = db_fetch_assoc($result);
 			$maxout = $session['user']['level']*getsetting("maxtransferout",25);
@@ -106,8 +108,9 @@ if ($HTTP_GET_VARS['op']==""){
 					$session['user']['gold']=0;
 				}
 				$session['user']['amountouttoday']+= $amt;
-				$sql = "UPDATE accounts SET goldinbank=goldinbank+$amt,transferredtoday=transferredtoday+1 WHERE acctid='{$row['acctid']}'";
-				db_query($sql);
+				// Betrag und Empfaenger-ID werden getrennt gebunden, statt SQL-Text aus ihnen zu bauen.
+				$sql = "UPDATE accounts SET goldinbank=goldinbank+?,transferredtoday=transferredtoday+1 WHERE acctid=?";
+				db_query_params($sql, array($amt, (int)$row['acctid']));
 				output("`6Transfer vollst‰ndig!");
 				//$session['user']['donation']+=1;
 				systemmail($row['acctid'],"`^Du hast eine ‹berweisung erhalten!`0","`&{$session['user']['name']}`6 hat dir `^$amt`6 Gold auf dein Konto ¸berwiesen!");
@@ -137,8 +140,9 @@ if ($HTTP_GET_VARS['op']==""){
 	for ($x=0;$x<strlen($_POST['to']);$x++){
 		$string .= substr($_POST['to'],$x,1)."%";
 	}
-	$sql = "SELECT name,login FROM accounts WHERE name LIKE '".addslashes($string)."'";
-	$result = db_query($sql);
+	// Der Suchname wird als Wert gebunden, damit ein Apostroph die Datenbankabfrage nicht veraendern kann.
+	$sql = "SELECT name,login FROM accounts WHERE name LIKE ?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($string)));
 	if (db_num_rows($result)==1){
 		$row = db_fetch_assoc($result);
 		output("<form action='bank.php?op=gemtrans3' method='POST'>",true);
@@ -164,8 +168,9 @@ if ($HTTP_GET_VARS['op']==""){
 	}
 }else if($_GET['op']=="gemtrans3"){
 	output("`6`bVersand abschlieﬂen`b`n");
-	$sql = "SELECT name,acctid,level,lastip,emailaddress,transferredtoday,uniqueid FROM accounts WHERE login='{$_POST['to']}'";
-	$result = db_query($sql);
+	// Der Loginname aus dem Formular wird als Wert gebunden und bleibt vom SQL-Befehl getrennt.
+	$sql = "SELECT name,acctid,level,lastip,emailaddress,transferredtoday,uniqueid FROM accounts WHERE login=?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($_POST['to'])));
 	if (db_num_rows($result)==1){
 		$row = db_fetch_assoc($result);
 		 if($row['level']<3){
@@ -185,8 +190,9 @@ if ($HTTP_GET_VARS['op']==""){
 				$session['user']['goldinbank']+=$session['user']['gold'];
 				$session['user']['gold']=0;
 			}
-			$sql = "UPDATE accounts SET gems=gems+1,transferredtoday=transferredtoday+1  WHERE acctid='{$row['acctid']}'";
-			db_query($sql);
+			// Empfaenger-ID und Edelstein-Update bleiben von SQL-Steuerzeichen getrennt.
+			$sql = "UPDATE accounts SET gems=gems+1,transferredtoday=transferredtoday+1 WHERE acctid=?";
+			db_query_params($sql, array((int)$row['acctid']));
 			output("`6Versand erfolgreich!");
 			systemmail($row['acctid'],"`#Du hast einen Edelstein geschenkt bekommen!`0","`&{$session['user']['name']}`6 war so freundlich und hat dir `#1 Edelstein`6 geschenkt!");
 		}

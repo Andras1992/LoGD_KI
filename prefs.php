@@ -13,20 +13,22 @@ if ($HTTP_GET_VARS['op']=="suicide" && getsetting("selfdelete",0)!=0) {
 	if($session['user']['acctid']==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
 
 	// inventar und haus löschen und partner freigeben
-	if ((int)$HTTP_GET['userid']==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
-    	$sql = "UPDATE items SET owner=0 WHERE owner=$HTTP_GET_VARS[userid]";
-	db_query($sql);
-	$sql = "UPDATE houses SET owner=0,status=3 WHERE owner=$HTTP_GET_VARS[userid] AND status=1";
-	db_query($sql);
-	$sql = "UPDATE houses SET owner=0,status=4 WHERE owner=$HTTP_GET_VARS[userid] AND status=0";
-	db_query($sql);
-	$sql = "UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=$HTTP_GET_VARS[userid]";
-	db_query($sql);
-	$sql = "DELETE FROM pvp WHERE acctid2=$HTTP_GET_VARS[userid] OR acctid1=$HTTP_GET_VARS[userid]";
-	db_query($sql) or die(db_error(LINK));
+// Selbstloeschung betrifft ausschliesslich das angemeldete Konto und ignoriert eine fremde URL-ID.
+$accountId=(int)$session['user']['acctid'];
+	if ($accountId==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
+$sql = "UPDATE items SET owner=0 WHERE owner=?"; // Die eigene Konto-ID wird als Zahl gebunden.
+	db_query_params($sql,array($accountId));
+$sql = "UPDATE houses SET owner=0,status=3 WHERE owner=? AND status=1"; // Hausbesitzer-ID wird sicher gebunden.
+	db_query_params($sql,array($accountId));
+$sql = "UPDATE houses SET owner=0,status=4 WHERE owner=? AND status=0"; // Hausbesitzer-ID wird sicher gebunden.
+	db_query_params($sql,array($accountId));
+$sql = "UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=?"; // Ehepartner-ID wird sicher gebunden.
+	db_query_params($sql,array($accountId));
+$sql = "DELETE FROM pvp WHERE acctid2=? OR acctid1=?"; // PvP-Verweise auf das eigene Konto werden als Zahlen gebunden.
+	db_query_params($sql,array($accountId,$accountId)) or die(db_error(LINK));
 	// user löschen
-	$sql = "DELETE FROM accounts WHERE acctid='$HTTP_GET_VARS[userid]'";
-	db_query($sql);
+$sql = "DELETE FROM accounts WHERE acctid=?"; // Geloescht wird ausschliesslich das angemeldete Konto.
+	db_query_params($sql,array($accountId));
 	output("Dein Charakter, sein Inventar und alle seine Kommentare wurden gelöscht!");
 	addnews("`#{$session['user']['name']} beging Selbstmord.");
 	addnav("Login Seite", "index.php");
@@ -48,13 +50,13 @@ if ($HTTP_GET_VARS['op']=="suicide" && getsetting("selfdelete",0)!=0) {
 	if (!$_GET['limit']){
 		$page=0;
 	}else{
-		$page=(int)$_GET['limit'];
+$page=max(0,(int)db_unquote_legacy_input($_GET['limit'])); // Die Seitennummer ist eine nicht-negative Zahl.
 		addnav("Vorherige Seite","prefs.php?op=inventory&limit=".($page-1)."&back=$back"."&sorti=$_GET[sorti]");
 	}
 	$limit="".($page*$ppp).",".($ppp+1);
 
-	$sql = "SELECT * FROM items WHERE owner=".$session['user']['acctid']." ORDER BY $_GET[sorti] ASC LIMIT $limit";
-	$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT * FROM items WHERE owner=? ORDER BY $sortSql LIMIT $limit"; // Kontonummer wird gebunden, Sortierung und Seitenbereich stammen aus sicheren festen Werten.
+$result = db_query_params($sql,array((int)$session['user']['acctid'])) or die(db_error(LINK));
 	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","prefs.php?op=inventory&limit=".($page+1)."&sorti=$_GET[sorti]"."&back=$back");
 	if (db_num_rows($result)==0){
   		output("<tr><td colspan=5 align='center'>`&`iDu hast nichts im Inventar`i`0</td></tr>",true);

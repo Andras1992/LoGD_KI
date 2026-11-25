@@ -29,8 +29,8 @@ if ($_GET['op']=="drin"){
 	addnav("Haus zerstören","suhouses.php?op=destroy&id=$_GET[id]"); // bad idea
 	addnav("Kommentare","suhouses.php?op=comment&id=$_GET[id]");
 	addnav("Hausmeister","suhouses.php");
-	$sql="SELECT * FROM houses WHERE houseid=$_GET[id]";
-	$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT * FROM houses WHERE houseid=?"; // Hausnummer wird als Zahl gebunden.
+	$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id']))) or die(db_error(LINK));
 	$row = db_fetch_assoc($result);
 	output("`n`@Hausnummer: `^`b$row[houseid]`b");
 	output("`n`@Name: `^`b$row[housename]`b");
@@ -43,14 +43,14 @@ if ($_GET['op']=="drin"){
 	if ($row['status']==2) output("`^zum Verkauf`0");
 	if ($row['status']==3) output("`4Verlassen`0");
 	if ($row['status']==4) output("`\$Bauruine`0");
-	$sql = "SELECT name FROM accounts WHERE acctid=$row[owner]";
-	$result2 = db_query($sql);
+	$sql = "SELECT name FROM accounts WHERE acctid=?"; // Besitzer-ID wird sicher gebunden.
+	$result2 = db_query_params($sql,array((int)$row["owner"]));
 	$row2  = db_fetch_assoc($result2);
 	output("`^)`n`@Besitzer: `^`b$row[owner]`b ($row2[name]`^)");
 	output("`n`n`@Schlüssel: `^`n");
 	output("<table border='0' cellpadding='3' cellspacing='0'><tr><td>Nr.</td><td>Owner ID (Name)</td><td>Hausnr</td><td>Nr. (DB)</td><td>gebraucht?</td><td>Ops</td></tr>",true);
-$sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE items.value1=$row[houseid] AND items.class='Schlüssel' ORDER BY items.value2 ASC,items.id ASC";
-	$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE items.value1=? AND items.class=? ORDER BY items.value2 ASC,items.id ASC"; // Hausnummer und Schluesselart werden sicher gebunden.
+	$result = db_query_params($sql,array((int)$row["houseid"],"Schl".chr(195).chr(188)."ssel")) or die(db_error(LINK));
 	for ($i=1;$i<=db_num_rows($result);$i++){
 		$item = db_fetch_assoc($result);
 		output("<tr><td>`b$i`b</td><td>".($item['acctid']?"$item[acctid] ($item[name])":"0 (`4Verloren`0)")."</td><td>$item[value1]</td><td>$item[value2]</td><td>$item[hvalue]</td><td>",true);
@@ -66,8 +66,8 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 	output("</table>`n",true);
 }else if ($_GET['op']=="comment"){
 	if ($_GET['subop']=="delete"){
-		$sql = "DELETE FROM commentary WHERE commentid='$_GET[commentid]'";
-		db_query($sql);
+$sql = "DELETE FROM commentary WHERE commentid=?"; // Kommentar-ID aus der URL wird als Zahl gebunden.
+		db_query_params($sql,array((int)db_unquote_legacy_input($_GET['commentid'])));
 	}
 	viewcommentary("house-$_GET[id]","X",100);
 	addnav("Zurück zu Haus $_GET[id]","suhouses.php?op=drin&id=$_GET[id]");
@@ -87,12 +87,12 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 	addnav("Hausmeister","suhouses.php");
 }else if ($_GET['op']=="destroy"){ // bad idea! write this code on your own risk! .. ok, i wrote it
 	if ($_GET['subop']=="confirmed"){
-		$sql="DELETE FROM houses WHERE houseid=$_GET[id]";
-		db_query($sql);
-		$sql="DELETE FROM items WHERE class='Schlüssel' AND value1=$_GET[id]";
-		db_query($sql);
-		$sql="UPDATE accounts SET house=0,housekey=0 WHERE house=$_GET[id]";
-		db_query($sql);
+$sql="DELETE FROM houses WHERE houseid=?"; // Nur das Haus mit der gebundenen Nummer wird geloescht.
+		db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
+		$sql="DELETE FROM items WHERE class=? AND value1=?"; // Nur Schluessel dieses Hauses werden geloescht.
+		db_query_params($sql,array("Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"])));
+$sql="UPDATE accounts SET house=0,housekey=0 WHERE house=?"; // Hausnummer wird als Zahl gebunden, bevor Bewohner freigegeben werden.
+		db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 		output("`@Haus gelöscht");
 	}else{
 		output("`b`\$Haus Nummer $_GET[id] und alle Schlüssel wirklich löschen?`b");
@@ -103,8 +103,8 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 	addnav("Hausmeister","suhouses.php");
 	if ($_GET['subop']=="save"){ // save new house
 		if ($_POST['auto']=="true"){ // check given data
-			$sql = "SELECT house,housekey FROM accounts WHERE acctid=$_POST[owner]";
-			$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT house,housekey FROM accounts WHERE acctid=?"; // Besitzer-ID wird sicher als Zahl gesucht.
+			$result = db_query_params($sql,array((int)$_POST['owner'])) or die(db_error(LINK));
 			$row = db_fetch_assoc($result);
 			if ($row['house']>0 && $_POST['owner']){
 				output("`\$Fehler: Zielperson besitzt bereits ein anderes Haus oder existiert nicht.");
@@ -118,28 +118,26 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 					$_POST['owner']="0";
 				}
 				output("`@Neues Haus erstellt.`n");
-				$sql = "INSERT INTO houses (owner,status,gold,gems,housename,description) VALUES ($_POST[owner],$_POST[status],$_POST[gold],$_POST[gems],'$_POST[housename]','$_POST[description]')";
-				db_query($sql);
-				$sql = "SELECT houseid FROM houses WHERE owner=$_POST[owner] ORDER BY houseid DESC LIMIT 1";
-				$result2 = db_query($sql) or die(db_error(LINK));
-				$row2 = db_fetch_assoc($result2);
+$sql = "INSERT INTO houses (owner,status,gold,gems,housename,description) VALUES (?,?,?,?,?,?)"; // Alle Hausdaten werden getrennt vom SQL-Befehl gespeichert.
+				db_query_params($sql,array((int)$_POST['owner'],(int)$_POST['status'],(int)$_POST['gold'],(int)$_POST['gems'],db_unquote_legacy_input($_POST['housename']),db_unquote_legacy_input($_POST['description'])));
+				$row2 = array("houseid" => db_insert_id(LINK)); // Die Nummer des gerade eingefuegten Hauses wird direkt aus der Datenbank gelesen.
 				if ($_POST['status']=="1" || $_POST['status']=="2" || $_POST['status']=="3"){
 					for ($i=1;$i<10;$i++){
-						$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES ('Hausschlüssel',".($_POST['status']=="1"?"$_POST[owner]":"0").",'Schlüssel',$row2[houseid],$i,'Schlüssel für Haus Nummer $row2[houseid]')";
-						db_query($sql);
+$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES (?,?,?,?,?,?)"; // Artikeldaten, Hausnummer und Besitzer werden als Werte gebunden.
+db_query_params($sql,array("Hausschl".chr(195).chr(188)."ssel",($_POST['status']=="1"?(int)$_POST['owner']:0),"Schl".chr(195).chr(188)."ssel",(int)$row2['houseid'],$i,"Schl".chr(195).chr(188)."ssel f".chr(195).chr(188)."r Haus Nummer ".$row2['houseid']));
 					}
 					output("`@Schlüssel in Datenbank eingetragen`n");
 				}
 				if ($_POST['status']=="0" || $_POST['status']=="1"){
-					$sql="UPDATE accounts SET house=$row2[houseid],housekey=".($_POST['status']=="1"?"$row2[houseid]":"0")." WHERE acctid=$_POST[owner]";
+					$sql="UPDATE accounts SET house=?,housekey=? WHERE acctid=?"; // Hausnummer, Schluessel und Besitzer werden sicher gebunden.
 					output("`@Userdatenbank angepasst`n");
-					db_query($sql);
+					db_query_params($sql,array((int)$row2["houseid"],(int)$row2["houseid"],(int)$_POST["owner"]));
 				}
 			}
 		}else{
 			output("`@Neues Haus erstellt.");
-			$sql = "INSERT INTO houses (owner,status,gold,gems,housename,description) VALUES ($_POST[owner],$_POST[status],$_POST[gold],$_POST[gems],'$_POST[housename]','$_POST[description]')";
-			db_query($sql);
+$sql = "INSERT INTO houses (owner,status,gold,gems,housename,description) VALUES (?,?,?,?,?,?)"; // Alle Hausdaten werden getrennt vom SQL-Befehl gespeichert.
+			db_query_params($sql,array((int)$_POST['owner'],(int)$_POST['status'],(int)$_POST['gold'],(int)$_POST['gems'],db_unquote_legacy_input($_POST['housename']),db_unquote_legacy_input($_POST['description'])));
 		}
 	}else{
 		output("`@Neues Haus anlegen:`n`n");
@@ -160,12 +158,12 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 	addnav("Hausmeister","suhouses.php");
 	addnav("Zurück zu Haus $_GET[hid]","suhouses.php?op=drin&id=$_GET[hid]");
 	if ($_GET['subop']=="change"){ // reset key owner
-		$sql="UPDATE items SET owner=$_GET[owner] WHERE value1=$_GET[hid] AND class='Schlüssel' AND value2=$_GET[id2]";
-		db_query($sql);
+$sql="UPDATE items SET owner=? WHERE value1=? AND class=? AND value2=?"; // Besitzer, Haus und Schluesselnummer werden sicher gebunden.
+		db_query_params($sql,array((int)db_unquote_legacy_input($_GET['owner']),(int)db_unquote_legacy_input($_GET['hid']),"Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET['id2'])));
 		output("`@Schlüssel `^$_GET[id2]`@ für Haus Nummer `^$_GET[hid]`@ zurückgesetzt.");
 	}else if ($_GET['subop']=="edit"){ // enter new values for key
-		$sql = "SELECT * FROM items WHERE id=$_GET[id]";
-		$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT * FROM items WHERE id=?"; // Item-ID wird als Zahl gebunden.
+		$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id']))) or die(db_error(LINK));
 		$item = db_fetch_assoc($result);
 		output("`@Schlüssel Nr. $item[value2] (item-ID $_GET[id]) für Haus $_GET[hid] bearbeiten:`n`n");
 		output("`0<form action=\"suhouses.php?op=keys&subop=edit2&id=$_GET[id]&hid=$_GET[hid]\" method='POST'>",true);
@@ -179,13 +177,13 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 		output("`0`n`nSchlüssel-ID darf nicht doppelt vergeben werden.`nSchlüssel ohne Besitzer werden als verloren behandelt.");
 		addnav("","suhouses.php?op=keys&subop=edit2&id=$_GET[id]&hid=$_GET[hid]");
 	}else if ($_GET['subop']=="edit2"){ // save new values into DB
-		$sql = "SELECT * FROM items WHERE id=$_GET[id]";
-		$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT * FROM items WHERE id=?"; // Item-ID wird als Zahl gebunden.
+		$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id']))) or die(db_error(LINK));
 		$item = db_fetch_assoc($result);
 		$action=false;
 		if ((int)$_POST['value2']!=(int)$item['value2']){
-			$sql = "SELECT id FROM items WHERE class='Schlüssel' AND value1=$_GET[hid] AND value2=$_POST[value2]";
-			$result = db_query($sql) or die(db_error(LINK));
+			$sql = "SELECT id FROM items WHERE class=? AND value1=? AND value2=?"; // Haus- und Schluesselnummern werden sicher gebunden.
+			$result = db_query_params($sql,array("Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["hid"]),(int)$_POST["value2"])) or die(db_error(LINK));
 			$row = db_fetch_assoc($result);
 			if ($row['id']){
 				output("`\$Fehler: Diese ID ist bereits vergeben.");
@@ -195,8 +193,8 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 		}
 		if ((int)$item['owner']!=(int)$_POST['owner']){
 			$action=false;
-			$sql = "SELECT acctid FROM accounts WHERE acctid=$_POST[owner]";
-			$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT acctid FROM accounts WHERE acctid=?"; // Besitzer-ID wird als Zahl an die Datenbank uebergeben.
+			$result = db_query_params($sql,array((int)$_POST['owner'])) or die(db_error(LINK));
 			$row = db_fetch_assoc($result);
 			if (!$row['acctid']){
 				output("`\$Fehler: Der User existiert nicht.");
@@ -205,17 +203,17 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 			}
 		}
 		if ($action){
-			$sql = "UPDATE items SET owner=$_POST[owner],value2=$_POST[value2],hvalue=$_POST[hvalue] WHERE id=$_GET[id]";
-			db_query($sql);
+$sql = "UPDATE items SET owner=?,value2=?,hvalue=? WHERE id=?"; // Formularwerte und Item-ID werden als Zahlen gebunden.
+			db_query_params($sql,array((int)$_POST['owner'],(int)$_POST['value2'],(int)$_POST['hvalue'],(int)db_unquote_legacy_input($_GET['id'])));
 			output("`@Änderungen übernommen.");
 		}
 	}else if ($_GET['subop']=="savenew"){ // save new key
 		if ($_POST['value2']){
-			$sql = "SELECT value1,value2 FROM items WHERE class='Schlüssel' AND value2=$_POST[value2] AND value1=$_GET[hid]";
-			$result = db_query($sql) or die(db_error(LINK));
+			$sql = "SELECT value1,value2 FROM items WHERE class=? AND value2=? AND value1=?"; // Haus- und Schluesselnummern werden sicher gebunden.
+			$result = db_query_params($sql,array("Schl".chr(195).chr(188)."ssel",(int)$_POST["value2"],(int)db_unquote_legacy_input($_GET["hid"]))) or die(db_error(LINK));
 			$item = db_fetch_assoc($result);
-			$sql="SELECT acctid FROM accounts WHERE acctid=$_POST[owner]";
-			$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT acctid FROM accounts WHERE acctid=?"; // Besitzer-ID wird als Zahl an die Datenbank uebergeben.
+			$result = db_query_params($sql,array((int)$_POST['owner'])) or die(db_error(LINK));
 			$row = db_fetch_assoc($result);
 		}
 		if (!$_POST['value2']){
@@ -225,14 +223,14 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 		}else if (!$row['acctid']){
 			output("`\$Fehler: Der User existiert nicht.");
 		}else{
-			$sql = "INSERT INTO items (name,owner,class,value1,value2,hvalue,description) VALUES ('Hausschlüssel',$_POST[owner],'Schlüssel',$_GET[hid],$_POST[value2],$_POST[hvalue],'Schlüssel für Haus Nummer $_GET[hid]')";
-			db_query($sql);
+			$sql = "INSERT INTO items (name,owner,class,value1,value2,hvalue,description) VALUES (?,?,?,?,?,?,?)"; // Alle Schluesseldaten werden einzeln an die Datenbank uebergeben.
+			db_query_params($sql,array("Hausschl".chr(195).chr(188)."ssel",(int)$_POST["owner"],"Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["hid"]),(int)$_POST["value2"],(int)$_POST["hvalue"],"Schl".chr(195).chr(188)."ssel f".chr(195).chr(188)."r Haus Nummer ".(int)db_unquote_legacy_input($_GET["hid"])));
 			output("`@Schlüssel eingetragen.");
 		}
 	}else if ($_GET['subop']=="delete"){ // delete key
 		output("`@Schlüssel gelöscht.");
-		$sql = "DELETE FROM items WHERE id=$_GET[id]";
-		db_query($sql);
+$sql = "DELETE FROM items WHERE id=?"; // Die Item-ID wird beim Loeschen als Zahl gebunden.
+		db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	}else{ // enter new key
 		output("`@Neuen Schlüssel für Haus $_GET[hid] anlegen:`n`n");
 		output("`0<form action=\"suhouses.php?op=keys&subop=savenew&hid=$_GET[hid]\" method='POST'>",true);
@@ -251,11 +249,11 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 	if ($_GET['subop']=="save"){ // save values
 		$action=false;
 		if ($_POST['auto']=="true"){ // check given data
-			$sql = "SELECT * FROM houses WHERE houseid=$_GET[id]";
-			$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT * FROM houses WHERE houseid=?"; // Hausnummer wird als Zahl gebunden.
+			$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id']))) or die(db_error(LINK));
 			$row = db_fetch_assoc($result);
-			$sql = "SELECT house,housekey FROM accounts WHERE acctid=$_POST[owner]";
-			$result2 = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT house,housekey FROM accounts WHERE acctid=?"; // Besitzer-ID wird sicher als Zahl gesucht.
+			$result2 = db_query_params($sql,array((int)$_POST['owner'])) or die(db_error(LINK));
 			$row2 = db_fetch_assoc($result2);
 			if ($row2['house']!=$_GET['id'] && $row2['house']>0){
 				output("`\$Fehler: Zielperson besitzt bereits ein anderes Haus oder existiert nicht. Datenbank nicht aktualisiert.");
@@ -276,8 +274,8 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 				$action=true;
 				if ((int)$_POST['status']!=(int)$row['status']){
 					if ($_POST['status']=="0" || $_POST['status']=="4"){
-						$sql="DELETE FROM items WHERE class='Schlüssel' AND value1=$_GET[id]";
-						db_query($sql);
+		$sql="DELETE FROM items WHERE class=? AND value1=?"; // Nur Schluessel dieses Hauses werden geloescht.
+		db_query_params($sql,array("Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"])));
 						$house=0;
 						if ($_POST['status']=="0") $house=$_GET['id'];
 						$housekey=0;
@@ -286,60 +284,64 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 					if ($_POST['status']=="3" && $row['status']!=4 && $row['status']!=0){
 						$house=0;
 						$housekey=0;
-						$sql="UPDATE items SET owner=0 WHERE class='Schlüssel' AND owner=$row[owner] AND value1=$_GET[id]";
-						db_query($sql);
+					$sql="UPDATE items SET owner=0 WHERE class=? AND value1=?"; // Alle Schluessel dieses Hauses werden freigegeben.
+					 db_query_params($sql,array("Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"])));
 						output("`@Nicht vergebene Schlüssel zurückgesetzt`n");
 					}else if ($_POST['status']=="3"){
 						$house=0;
 						$housekey=0;
 						for ($i=1;$i<10;$i++){
-							$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES ('Hausschlüssel',0,'Schlüssel',$_GET[id],$i,'Schlüssel für Haus Nummer $_GET[id]')";
-							db_query($sql);
+						$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES (?,?,?,?,?,?)"; // Schluessel werden mit den Hausdaten sicher gespeichert.
+						 db_query_params($sql,array("Hausschl".chr(195).chr(188)."ssel",0,"Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"]),$i,"Schl".chr(195).chr(188)."ssel f".chr(195).chr(188)."r Haus Nummer ".(int)db_unquote_legacy_input($_GET["id"])));
 						}
 						output("`@Schlüssel in Datenbank eingetragen`n");
 					}
 					if ($_POST['status']=="1" && ($row['status']==0 || $row['status']==4)){
 						for ($i=1;$i<10;$i++){
-							$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES ('Hausschlüssel',$_POST[owner],'Schlüssel',$_GET[id],$i,'Schlüssel für Haus Nummer $_GET[id]')";
-							db_query($sql);
+						$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES (?,?,?,?,?,?)"; // Schluessel werden mit den Hausdaten sicher gespeichert.
+						 db_query_params($sql,array("Hausschl".chr(195).chr(188)."ssel",(int)$_POST["owner"],"Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"]),$i,"Schl".chr(195).chr(188)."ssel f".chr(195).chr(188)."r Haus Nummer ".(int)db_unquote_legacy_input($_GET["id"])));
 						}
 						$house=$_GET['id'];
 						$housekey=$_GET['id'];
 						output("`@Schlüssel in Datenbank eingetragen`n");
 					}elseif ($_POST['status']=="1"){
-						$sql="UPDATE items SET owner=$_POST[owner] WHERE class='Schlüssel' AND owner=0 AND value1=$_GET[id]";
-						db_query($sql);
+$sql="UPDATE items SET owner=? WHERE class=? AND owner=0 AND value1=?"; // Besitzer-ID und Hausnummer bleiben getrennte gebundene Werte.
+						db_query_params($sql,array((int)$_POST['owner'],"Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET['id'])));
 						$house=$_GET['id'];
 						$housekey=$_GET['id'];
 					}
 					if ($_POST['status']=="2" && ($row['status']==0 || $row['status']==4)){
 						for ($i=1;$i<10;$i++){
-							$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES ('Hausschlüssel',0,'Schlüssel',$_GET[id],$i,'Schlüssel für Haus Nummer $_GET[id]')";
-							db_query($sql);
+						$sql = "INSERT INTO items (name,owner,class,value1,value2,description) VALUES (?,?,?,?,?,?)"; // Schluessel werden mit den Hausdaten sicher gespeichert.
+						 db_query_params($sql,array("Hausschl".chr(195).chr(188)."ssel",0,"Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"]),$i,"Schl".chr(195).chr(188)."ssel f".chr(195).chr(188)."r Haus Nummer ".(int)db_unquote_legacy_input($_GET["id"])));
 						}
 						$house=$_GET['id'];
 						$housekey=$_GET['id'];
 						output("`@Schlüssel in Datenbank eingetragen`n");
 					}elseif ($_POST['status']=="2"){
-						$sql="UPDATE items SET owner=0 WHERE class='Schlüssel' AND value1=$_GET[id]";
-						db_query($sql);
+					$sql="UPDATE items SET owner=0 WHERE class=? AND value1=?"; // Alle Schluessel dieses Hauses werden freigegeben.
+					 db_query_params($sql,array("Schl".chr(195).chr(188)."ssel",(int)db_unquote_legacy_input($_GET["id"])));
 						$house=$_GET['id'];
 						$housekey=0;
 					}
-					$sql="UPDATE accounts SET house=$house,housekey=$housekey WHERE acctid=$row[owner]";
-					db_query($sql);
+					$sql="UPDATE accounts SET house=0,housekey=0 WHERE acctid=?"; // Ein bisheriger Bewohner wird zuerst vom Haus getrennt.
+					 db_query_params($sql,array((int)$row["owner"]));
+					if ((int)$_POST["status"]==1 && (int)$_POST["owner"]>0) {
+						$sql="UPDATE accounts SET house=?,housekey=? WHERE acctid=?"; // Beim Status bewohnt wird das Haus dem neuen Bewohner zugeordnet.
+						 db_query_params($sql,array((int)db_unquote_legacy_input($_GET["id"]),(int)db_unquote_legacy_input($_GET["id"]),(int)$_POST["owner"]));
+					}
 				}else{
-					$sql="UPDATE accounts SET house=0,housekey=0 WHERE acctid=$row[owner]";
-					db_query($sql);
+					$sql="UPDATE accounts SET house=0,housekey=0 WHERE acctid=?"; // Der bisherige Besitzer wird sicher gesucht.
+					 db_query_params($sql,array((int)$row["owner"]));
 					if ($_POST['status']=="1"){
 						$housekey=$_GET['id'];
 					}else{
 						$housekey=0;
 					}
-					$sql="UPDATE accounts SET house=$_GET[id],housekey=$housekey WHERE acctid=$_POST[owner]";
-					db_query($sql);
-					$sql="UPDATE items SET owner=$_POST[owner] WHERE class='Schlüssel' AND owner=$row[owner] AND value1=$_GET[id]";
-					db_query($sql);
+					$sql="UPDATE accounts SET house=?,housekey=? WHERE acctid=?"; // Hausnummer, Schluessel und neuer Besitzer werden sicher gebunden.
+					 db_query_params($sql,array((int)db_unquote_legacy_input($_GET["id"]),(int)$housekey,(int)$_POST["owner"]));
+					$sql="UPDATE items SET owner=? WHERE class=? AND owner=? AND value1=?"; // Alter und neuer Besitzer sowie Hausnummer bleiben getrennte Werte.
+					 db_query_params($sql,array((int)$_POST["owner"],"Schl".chr(195).chr(188)."ssel",(int)$row["owner"],(int)db_unquote_legacy_input($_GET["id"])));
 
 				}
 			}
@@ -348,12 +350,12 @@ $sql = "SELECT items.*,accounts.acctid, accounts.name FROM items LEFT JOIN accou
 		}
 		if ($action){
 			output("`@Daten gespeichert.");
-			$sql="UPDATE houses SET owner=$_POST[owner],housename='".addslashes(rawurldecode($_POST['housename']))."',gold=$_POST[gold],gems=$_POST[gems],status=$_POST[status],description='".addslashes(rawurldecode($_POST['description']))."' WHERE houseid=$_GET[id]";
-			db_query($sql);
+$sql="UPDATE houses SET owner=?,housename=?,gold=?,gems=?,status=?,description=? WHERE houseid=?"; // Alle Formularwerte und die Haus-ID werden sicher als Daten gebunden.
+			db_query_params($sql,array((int)$_POST['owner'],rawurldecode(db_unquote_legacy_input($_POST['housename'])),(int)$_POST['gold'],(int)$_POST['gems'],(int)$_POST['status'],rawurldecode(db_unquote_legacy_input($_POST['description'])),(int)db_unquote_legacy_input($_GET['id'])));
 		}
 	}else{
-		$sql = "SELECT * FROM houses WHERE houseid=$_GET[id]";
-		$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT * FROM houses WHERE houseid=?"; // Hausnummer wird als Zahl gebunden.
+		$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id']))) or die(db_error(LINK));
 		$row = db_fetch_assoc($result);
 		output("`@Daten für Haus `b$_GET[id]`b ändern:`n`n");
 		output("`0<form action=\"suhouses.php?op=data&subop=save&id=$_GET[id]\" method='POST'>",true);

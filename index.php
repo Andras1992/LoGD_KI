@@ -4,6 +4,9 @@
 
 require_once "common.php";
 
+// Beim ersten Seitenaufruf gibt es noch keine Aktion im URL-Parameter op.
+if (!isset($_GET['op'])) $_GET['op']='';
+
 if ($session['loggedin']){
 	redirect("badnav.php");
 }

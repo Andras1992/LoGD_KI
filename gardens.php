@@ -22,15 +22,18 @@ if ($_GET['op']=="flirt1"){
 		$partner=$row['name'];
 		if ($partner=="") $partner = $session['user']['sex']?"`^Seth`0":"`5Violet`0";
 		output("Du versuchst, dich in Gedanken auf einen heißen Flirt vorzubereiten, aber irgendwie bekommst du`3 $partner`0 nicht aus dem Kopf. Vielleicht solltest du bis morgen warten.");
- 		addnav("Zurück zum Garten","gardens.php");
+		addnav("Zurück zum Garten","gardens.php");
 	} else {
+		$searchParams=array(); // Suchwerte werden getrennt von der SQL-Abfrage gehalten.
+		$searchTerm=trim(db_unquote_legacy_input($_POST["search"] ?? $_GET["search"] ?? "")); // Fehlendes Suchwort wird zu leerem Text.
 		if (isset($_POST['search']) || $_GET['search']>""){
 			if ($_GET['search']>"") $_POST['search']=$_GET['search'];
 			$search="%";
-			for ($x=0;$x<strlen($_POST['search']);$x++){
-				$search .= substr($_POST['search'],$x,1)."%";
+			for ($x=0;$x<strlen($searchTerm);$x++){
+				$search .= substr($searchTerm,$x,1)."%";
 			}
-			$search="name LIKE '".$search."' AND ";
+			$searchParams[]="%".$search."%"; // Suchtext bleibt ein Datenwert statt Teil des SQL-Befehls.
+			$search="name LIKE ? AND ";
 		}else{
 			$search="";
 		}
@@ -55,7 +58,7 @@ if ($_GET['op']=="flirt1"){
 		(acctid <> ".$session['user']['acctid'].") AND
 		(laston > '".date("Y-m-d H:i:s",strtotime(date("r")."-346000 sec"))."' OR (charisma=4294967295 AND acctid=".$session['user']['marriedto'].") )
 		ORDER BY (acctid=".$session['user']['marriedto'].") DESC, charm DESC LIMIT $limit";
-  		$result = db_query($sql) or die(db_error(LINK));
+		$result = db_query_params($sql,$searchParams) or die(db_error(LINK)); // Suchwort wird sicher an die Spielersuche gebunden.
 		output("<table border='0' cellpadding='3' cellspacing='0'><tr><td>",true);
 		output(($session['user']['sex']?"<img src=\"images/male.gif\">":"<img src=\"images/female.gif\">")."</td><td><b>Name</b></td><td><b>Level</b></td><td><b>Rasse</b></td><td><b>Status</b><td><b>Ops</b></td></tr>",true);
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","gardens.php?op=flirt1&limit=".($page+1)."&search=$_POST[search]");
@@ -92,9 +95,10 @@ if ($_GET['op']=="flirt1"){
 		addnav("Zurück zum Garten","gardens.php");
 	}
 } else if ($_GET['act']=="flirt"){
- 	if ($session['user']['goldinbank']>0) $getgold=round($session['user']['goldinbank']/2);
- 	$sql = "SELECT acctid,name,experience,charm,charisma,lastip,emailaddress,race,marriedto,uniqueid FROM accounts WHERE login=\"$_GET[name]\"";
-	$result = db_query($sql) or die(db_error(LINK));
+	if ($session['user']['goldinbank']>0) $getgold=round($session['user']['goldinbank']/2);
+		// Der Zielname wird als Datenwert gebunden, damit Sonderzeichen die SQL-Suche nicht veraendern.
+	$sql = "SELECT acctid,name,experience,charm,charisma,lastip,emailaddress,race,marriedto,uniqueid FROM accounts WHERE login=?";
+		$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['name'])));
 	if (db_num_rows($result)>0){
 		$row = db_fetch_assoc($result);
 		if ($session['user']['charisma']<=$row['charisma']) $flirtnum=$session['user']['charisma'];
@@ -102,7 +106,7 @@ if ($_GET['op']=="flirt1"){
 		if (ac_check($row)){
 		//if ($session[user][lastip]==$row[lastip] || ($session[user][emailaddress]==$row[emailaddress] && $row[emailaddress])){
 			output("`\$`bDas geht doch nicht!!`b Du kannst doch nicht mit deinen eigenen Charakteren oder deiner eigenen Familie flirten!");
- 			addnav("Zurück zum Garten","gardens.php");
+			addnav("Zurück zum Garten","gardens.php");
 		} else if (($session['user']['race']==2 && $row['race']==4) || ($session['user']['race']==4 && $row['race']==2)){
 			output("Du wartest im Garten auf `6$row[name]`0 und beobachtest ".($session['user']['sex']?"ihn":"sie")." eine Weile. Bei näherer Betrachtung stellst du aber fest, dass Elfen und Zwerge vielleicht doch niemals zusammen passen werden.");
 			output(" So verlässt du den Garten.");

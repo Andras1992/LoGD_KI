@@ -21,8 +21,8 @@ if ($session['user']['slainby']!=""){
 		output("<input type='submit' class='button' value='Eintragen'>`n`n",true);
 		addnav("","news.php");
 		if ($_POST['meldung']){
-			$sql = "INSERT INTO news(newstext,newsdate,accountid) VALUES ('".addslashes($_POST['meldung'])."',NOW(),0)";
-			db_query($sql) or die(db_error($link));
+$sql = "INSERT INTO news(newstext,newsdate,accountid) VALUES (?,NOW(),0)"; // Der News-Text wird als Datenwert gebunden, auch wenn er Anfuehrungszeichen enthaelt.
+db_query_params($sql,array(db_unquote_legacy_input($_POST['meldung'])));
 			$_POST['meldung']="";
 		}
 		addnav("","news.php");

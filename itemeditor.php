@@ -21,8 +21,8 @@ addnav("G?Zurück zur Grotte","superuser.php");
 addnav("W?Zurück zum Weltlichen","village.php");
 
 if ($_GET['op']=="del"){
-	$sql = "DELETE FROM items WHERE id=$_GET[id]";
-	db_query($sql);
+$sql = "DELETE FROM items WHERE id=?"; // Die Item-ID wird als Zahl gebunden, bevor der Gegenstand geloescht wird.
+db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$_GET['op']="";
 	$_GET['show']=$_GET['show']; // huh? weshalb hab ich das geschrieben?
 }
@@ -35,8 +35,8 @@ if ($_GET['op']=="add"){
 }elseif ($_GET['op']=="edit"){
 	addnav("Item Editor","itemeditor.php");
 	if ($_GET['show']) addnav("$_GET[show]","itemeditor.php?show=".urlencode($_GET['show'])."");
-	$sql = "SELECT * FROM items WHERE id='{$_GET['id']}'";
-	$result = db_query($sql);
+$sql = "SELECT * FROM items WHERE id=?"; // Die Item-ID wird als Zahl an die Datenbank uebergeben.
+$result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	if (db_num_rows($result)<=0){
 		output("`iItem nicht vorhanden.`i");
 	}else{
@@ -47,36 +47,45 @@ if ($_GET['op']=="add"){
 	}
 }elseif ($_GET['op']=="save"){
 	$buff = array();
-	reset($_POST['item']['buff']);
-	if (isset($_POST['item']['buff']['activate'])) $_POST['item']['buff']['activate']=join(",",$_POST['item']['buff']['activate']);
-	foreach ($_POST['item']['buff'] as $key => $val) {
-		if ($val>""){
-			$buff[$key]=stripslashes($val);
+	// Die Zauber-Eigenschaften werden wie bisher in einem Feld gespeichert.
+	if (isset($_POST['item']['buff']) && is_array($_POST['item']['buff'])) {
+		if (isset($_POST['item']['buff']['activate']) && is_array($_POST['item']['buff']['activate'])) $_POST['item']['buff']['activate']=join(",",$_POST['item']['buff']['activate']);
+		foreach ($_POST['item']['buff'] as $key => $val) {
+			if ($val > "") $buff[$key]=db_unquote_legacy_input($val);
 		}
 	}
-	$_POST['item']['buff']=$buff;
-	reset($_POST['item']);
-	$keys='';
-	$vals='';
-	$sql='';
-	$i=0;
+	if (count($buff)>0) $_POST['item']['buff']=$buff;
+
+	// Nur Spalten, die MariaDB wirklich in items kennt, duerfen als Feldnamen verwendet werden.
+	$columnResult=db_query("SHOW COLUMNS FROM items");
+	$allowedColumns=array();
+	while ($columnRow=db_fetch_assoc($columnResult)) $allowedColumns[$columnRow['Field']]=true;
+	$columnNames=array();
+	$values=array();
 	foreach ($_POST['item'] as $key => $val) {
-		if (is_array($val)) $val = addslashes(serialize($val));
-		if ($_GET['id']>""){
-			$sql.=($i>0?",":"")."$key='$val'";
-		}else{
-			$keys.=($i>0?",":"")."$key";
-			$vals.=($i>0?",":"")."'$val'";
-		}
-		$i++;
+		// Unbekannte Formularfelder werden ignoriert, damit keine SQL-Spalten eingeschleust werden koennen.
+		if (!isset($allowedColumns[$key])) continue;
+		if (is_array($val)) $val=serialize($val);
+		else $val=db_unquote_legacy_input($val);
+		$columnNames[]=$key;
+		$values[]=$val;
 	}
+
 	if ($_GET['id']>""){
-		$sql="UPDATE items SET $sql WHERE id='{$_GET['id']}'";
+		// Spaltennamen stammen aus der Datenbank, Werte werden gebunden, und die Item-ID bleibt eine Zahl.
+		$setParts=array();
+		foreach ($columnNames as $columnName) $setParts[]="`".$columnName."`=?";
+		$sql="UPDATE items SET ".implode(",",$setParts)." WHERE id=?";
+		$values[]=(int)db_unquote_legacy_input($_GET['id']);
 	}else{
-		$sql="INSERT INTO items ($keys) VALUES ($vals)";
+		// Die Datenbank-Spaltennamen sind geprueft; fuer jeden Wert wird ein PDO-Platzhalter genutzt.
+		$quotedColumns=array();
+		foreach ($columnNames as $columnName) $quotedColumns[]="`".$columnName."`";
+		$placeholders=implode(",",array_fill(0,count($values),"?"));
+		$sql="INSERT INTO items (".implode(",",$quotedColumns).") VALUES (".$placeholders.")";
 	}
-	db_query($sql);
-	if (db_affected_rows()>0){
+	// So bleiben Texte mit Apostrophen unveraendert und koennen den SQL-Befehl nicht aufbrechen.
+	db_query_params($sql,$values);	if (db_affected_rows()>0){
 		output("Item gespeichert!");
 	}else{
 		output("Item nicht gespeichert: $sql");
@@ -93,11 +102,11 @@ if ($_GET['op']=="add"){
 			addnav("Vorherige Seite","itemeditor.php?show=".urlencode($_GET['show'])."&limit=".($page-1)."");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
-		$sql = "SELECT items.*,accounts.name AS ownername FROM items
-		LEFT JOIN accounts ON accounts.acctid=items.owner WHERE class='$_GET[show]' ORDER BY id LIMIT $limit";
-		output("<table>",true);
+// Die folgende vorbereitete Abfrage liefert die gefilterte Itemliste.
+$sql = "SELECT items.*,accounts.name AS ownername FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE class=? ORDER BY id LIMIT $limit"; // Die Item-Klasse wird als Wert gebunden; die Seitenzahlen wurden vorher aus Zahlen berechnet.
+$result = db_query_params($sql,array(db_unquote_legacy_input($_GET['show'])));
 		output("<tr><td>Ops</td><td>Name</td><td>Besitzer</td><td>Beschreibung</td></tr>",true);
-		$result = db_query($sql);
+// Die vorbereitete Abfrage wurde bereits ausgefuehrt.
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","itemeditor.php?show=".urlencode($_GET['show'])."&limit=".($page+1)."");
 		$cat = "";
 		for ($i=0;$i<db_num_rows($result);$i++){

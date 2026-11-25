@@ -20,8 +20,9 @@ $armorarray=array(
 	"Rüstungen,title");
 if($_GET['op']=="edit" || $_GET['op']=="add"){
 	if ($_GET['op']=="edit"){
-		$sql = "SELECT * FROM armor WHERE armorid='$_GET[id]'";
-		$result = db_query($sql);
+		// Die Ruestungsnummer aus der URL wird als Zahl gebunden.
+		$sql = "SELECT * FROM armor WHERE armorid=?";
+		$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 		$row = db_fetch_assoc($result);
 	}else{
 		$sql = "SELECT max(defense+1) AS defense FROM armor WHERE level=$armorlevel";
@@ -33,17 +34,25 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 	showform($armorarray,$row);
 	output("</form>",true);
 }else if($_GET['op']=="del"){
-	$sql = "DELETE FROM armor WHERE armorid='$_GET[id]'";
-	db_query($sql);
+	// Die Ruestungsnummer wird sicher gebunden, bevor der Eintrag entfernt wird.
+	$sql = "DELETE FROM armor WHERE armorid=?";
+	db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	//output($sql);
 	redirect("armoreditor.php?level=$armorlevel");
 }else if($_GET['op']=="save"){
-	if ((int)$_POST['armorid']>0){
-		$sql = "UPDATE armor SET armorname=\"$_POST[armorname]\",defense=\"$_POST[defense]\",value=".$values[$_POST['defense']]." WHERE armorid='$_POST[armorid]'";
-	}else{
-		$sql = "INSERT INTO armor (level,defense,armorname,value) VALUES ($armorlevel,\"$_POST[defense]\",\"$_POST[armorname]\",".$values[$_POST['defense']].")";
+	// Formularwerte werden als Daten gebunden und die Auswahl auf bekannte Verteidigungsstufen begrenzt.
+	$recordId = (int)db_unquote_legacy_input($_POST['armorid']);
+	$defense = (int)db_unquote_legacy_input($_POST['defense']);
+	if (!isset($values[$defense])) $defense = 1;
+	$value = $values[$defense];
+	$armorName = db_unquote_legacy_input($_POST['armorname']);
+	if ($recordId > 0) {
+		$sql = "UPDATE armor SET armorname=?,defense=?,value=? WHERE armorid=?";
+		db_query_params($sql, array($armorName, $defense, $value, $recordId));
+	} else {
+		$sql = "INSERT INTO armor (level,defense,armorname,value) VALUES (?,?,?,?)";
+		db_query_params($sql, array($armorlevel, $defense, $armorName, $value));
 	}
-	db_query($sql);
 	//output($sql);
 	redirect("armoreditor.php?level=$armorlevel");
 }else if ($_GET['op']==""){
@@ -55,8 +64,8 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 		addnav("Rüstungen für $i DKs","armoreditor.php?level=$i");
 	}
 	output("<table>",true);
-	$sql = "SELECT * FROM armor WHERE level=".(int)$_GET['level']." ORDER BY defense";
-	$result= db_query($sql) or die(db_error(LINK));
+	$sql = "SELECT * FROM armor WHERE level=? ORDER BY defense"; // Die Ruestungsstufe wird als Zahl gebunden.
+	$result= db_query_params($sql,array((int)db_unquote_legacy_input($_GET['level']))) or die(db_error(LINK));
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
 		if ($i==0){

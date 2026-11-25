@@ -148,7 +148,7 @@ case "bartender":
 				output("(Shift und die Taste links neben Backspace), gefolgt von 1, 2, 3, 4, 5, 6, 7, 8, 9, !, @, #, $, %, ^, Q oder &. Jedesch diescher Tscheichen entspricht ");
 				output("einer Farbe, die folgendermaschenen ausschschieht: `n`1&#0096;1 `2&#0096;2 `3&#0096;3 `4&#0096;4 `5&#0096;5 `6&#0096;6 `7&#0096;7 `8&#0096;8 `9&#0096;9 ",true);
 				output("`n`!&#0096;! `@&#0096;@ `#&#0096;# `\$&#0096;\$ `%&#0096;% `^&#0096;^ `q&#0096;q `Q&#0096;Q `&&#0096;& `n",true);
-				output("`T&#0096;T `t&#0096;t `R&#0096;R `r&#0096;r `V&#0096;V `v&#0096;v `g&#0096;g`n",true);
+				output("`T&#0096;T 	&#0096;t `R&#0096;R `r&#0096;r `V&#0096;V `v&#0096;v `g&#0096;g`n",true);
 				output("`% kapiert?`0\" Hier kannst du testen:");
 				output("<form action=\"$REQUEST_URI\" method='POST'>",true);
 				output("Deine Eingabe: ".str_replace("`","&#0096;",HTMLEntities($HTTP_POST_VARS['testtext']))."`n",true);
@@ -168,9 +168,8 @@ case "bartender":
 				for ($i=0;$i<strlen($_POST['name']);$i++){
 					$search.=substr($_POST['name'],$i,1)."%";
 				}
-				$sql = "SELECT name,alive,location,sex,level,laston,loggedin,login FROM accounts WHERE (locked=0 AND name LIKE '$search') ORDER BY level DESC";
-				//output($sql);
-				$result = db_query($sql) or die(db_error(LINK));
+				$sql = "SELECT name,alive,location,sex,level,laston,loggedin,login FROM accounts WHERE locked=0 AND name LIKE ? ORDER BY level DESC"; // Name wird als Suchwert gebunden und kann die Abfrage nicht veraendern.
+				$result = db_query_params($sql,array($search)) or die(db_error(LINK));
 				$max = db_num_rows($result);
 				if ($max > 100) {
 					output("`n`n\"`7Hey, wasch glaubscht du tuscht du hier? Dasch schind tschu viele Namen. Ich werd dir nur über ein paar davon wasch ertschählen.`0`n");
@@ -186,8 +185,8 @@ case "bartender":
 			}
 		}else{
 			if ($session['user']['gold']>=100){
-				$sql = "SELECT acctid,name,alive,location,maxhitpoints,gold,sex,level,weapon,armor,attack,defence,race,charm FROM accounts WHERE login=\"$HTTP_GET_VARS[who]\"";
-				$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT acctid,name,alive,location,maxhitpoints,gold,sex,level,weapon,armor,attack,defence,race,charm FROM accounts WHERE login=?"; // Der Spielername aus der URL wird sicher als Suchwert gebunden.
+				$result = db_query_params($sql,array(db_unquote_legacy_input($HTTP_GET_VARS['who']))) or die(db_error(LINK));
 				if (db_num_rows($result)>0){
 					$row = db_fetch_assoc($result);
 					$row['name']=str_replace("s","sch",$row['name']);
@@ -253,8 +252,8 @@ case "bartender":
 			}
 		}
 	}else if($HTTP_GET_VARS['what']=="where"){
-		$sql="SELECT acctid,name,location,loggedin,laston,alive,housekey FROM accounts WHERE acctid=".$HTTP_GET_VARS['who'];
-		$result = db_query($sql) or die(db_error(LINK));
+$sql="SELECT acctid,name,location,loggedin,laston,alive,housekey FROM accounts WHERE acctid=?"; // Zielkonto-ID wird als Zahl gebunden.
+		$result = db_query_params($sql,array((int)db_unquote_legacy_input($HTTP_GET_VARS['who']))) or die(db_error(LINK));
 		$row = db_fetch_assoc($result);
 		$loggedin=(date("U") - strtotime($row['laston']) < getsetting("LOGINTIMEOUT",900) && $row['loggedin']);
 		if ($row['location']==0) $loc=($loggedin?"Online":"in den Feldern");

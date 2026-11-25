@@ -42,7 +42,7 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 	// op1='enter' und op2=0 dann eintreten
 	if ($HTTP_GET_VARS['op1'] == "enter" && $HTTP_GET_VARS['op2'] == "0")
 	{
-		output("`$`b`c Das Innere der Akademie`c`b`n`n");
+		output("$`b`c Das Innere der Akademie`c`b`n`n");
 		output("`^Im Inneren ist es recht kühl und ihr schreitet einen dicken schwarz/roten Teppich");
 		output("mit seltsamen magischen Symbolen entlang.`n");
 		output("\"Du kannst hier versuchen, Deine`7");
@@ -59,29 +59,29 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 		if ($session['user']['specialty'] == 1)
 		{
 			output("`3Selbststudium der Dunklen Künste: ");
-			output("`$".$cost_low ."`^ Gold`n");
+			output("$".$cost_low ."`^ Gold`n");
 			output("`3Praktischer Unterricht im Tiere quälen: ");
-			output("`$".$cost_medium ."`^ Gold und `$1 Edelstein`^`n");
-			output("`3Eine Lehrstunde beim Meister der dunklen Künste, `$ Warchild `3selbst, nehmen: ");
-			output("`$".$cost_high ."`^ Gold und `$2 Edelsteine`^`n");
+			output("$".$cost_medium ."`^ Gold und $1 Edelstein`^`n");
+			output("`3Eine Lehrstunde beim Meister der dunklen Künste, $ Warchild `3selbst, nehmen: ");
+			output("$".$cost_high ."`^ Gold und $2 Edelsteine`^`n");
 		}
 		else if ($session['user']['specialty'] == 2)
 		{
 			output("`3Selbststudium in der Bibliothek: ");
-			output("`$".$cost_low ."`^ Gold`n");
+			output("$".$cost_low ."`^ Gold`n");
 			output("`3Praktische Übung in der Magiekammer: ");
-			output("`$".$cost_medium ."`^ Gold und `$1 Edelstein`^`n");
-			output("`$ Warchilds `3Mystikstunde: ");
-			output("`$".$cost_high ."`^ Gold und `$2 Edelsteine`^`n");
+			output("$".$cost_medium ."`^ Gold und $1 Edelstein`^`n");
+			output("$ Warchilds `3Mystikstunde: ");
+			output("$".$cost_high ."`^ Gold und $2 Edelsteine`^`n");
 		}
 		else
 		{
 			output("`3Selbststudium mit Büchern über das stille Handwerk: ");
-			output("`$".$cost_low ."`^ Gold`n");
+			output("$".$cost_low ."`^ Gold`n");
 			output("`3Praktische Übung im Diebeslabyrinth: ");
-			output("`$".$cost_medium ."`^ Gold und `$1 Edelstein`^`n");
-			output("`$ Warchilds `3Lehrstunde für Nachwuchsdiebe: ");
-			output("`$".$cost_high ."`^ Gold und `$2 Edelsteine`^`n");
+			output("$".$cost_medium ."`^ Gold und $1 Edelstein`^`n");
+			output("$ Warchilds `3Lehrstunde für Nachwuchsdiebe: ");
+			output("$".$cost_high ."`^ Gold und $2 Edelsteine`^`n");
 		}
 		output("</ul>`nDirekt unter den Preisen steht sehr klein geschrieben, ein wenig verwischt und kaum lesbar:`n",true);
 		output("`3Da Magie `bunberechenbar`b ist, handelt jeder Schüler auf eigene Gefahr und die Akademie erstattet keine Kosten im Falle von Lernversagen oder anderen Unglücken!");
@@ -114,8 +114,8 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 	$HTTP_GET_VARS['op2'] == "study" &&
 	$session['user']['gold'] < $cost_low)
 	{
-		output("`$`b`c Das Innere der Akademie`c`b`n`n");
-		output("`n`$ Leider kannst Du den geforderten Preis nicht bezahlen.`^");
+		output("$`b`c Das Innere der Akademie`c`b`n`n");
+		output("`n$ Leider kannst Du den geforderten Preis nicht bezahlen.`^");
 		addnav("Nochmal nachschauen","academy.php?op1=enter&op2=0");
 	}
 	else if ($HTTP_GET_VARS['op1'] == "enter" &&
@@ -133,15 +133,15 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 
 		if ($session['user']['drunkenness'] > 0) // too drunk to learn
 		{
-			output("`$`b`c Bibliothek der Akademie`c`b`n`n");
-			output("`^Ver*hic*dammt! Du hättest Dich mit dem...`$ ale`^... zurückhalten sollen! Du kannst Dich einfach");
+			output("$`b`c Bibliothek der Akademie`c`b`n`n");
+			output("`^Ver*hic*dammt! Du hättest Dich mit dem...$ ale`^... zurückhalten sollen! Du kannst Dich einfach");
 			output("nicht genug konzentrieren um irgendetwas zu lernen.`n");
 			output("Frustriert verlässt Du die Akademie nach einiger Zeit und stapfst ins Dorf zurück.");
 			addnav("Zurück ins Dorf","village.php");
 		}
 		else // hier geht das Train los
 		{
-			output("`$`b`c Bibliothek der Akademie`c`b`n`n");
+			output("$`b`c Bibliothek der Akademie`c`b`n`n");
 			$rand = e_rand(1,3);
 			switch ($rand)
 			{
@@ -184,8 +184,8 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 	$session['user']['gems'] < 1
 	))
 	{
-		output("`$`b`c Das Innere der Akademie`c`b`n`n");
-		output("`n`$ Leider kannst Du den geforderten Preis nicht bezahlen.`^");
+		output("$`b`c Das Innere der Akademie`c`b`n`n");
+		output("`n$ Leider kannst Du den geforderten Preis nicht bezahlen.`^");
 		addnav("Nochmal nachschauen","academy.php?op1=enter&op2=0");
 	}
 	else if ($HTTP_GET_VARS['op1'] == "enter" &&
@@ -205,13 +205,13 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 
 		if ($session['user']['drunkenness'] > 0) // too drunk to learn
 		{
-			output("`$`b`c Das Innere der Akademie`c`b`n`n");
+			output("$`b`c Das Innere der Akademie`c`b`n`n");
 			if ($session['user']['specialty'] == 1)
 			{
 				output("`^Du betrittst den `7Tierkäfig`^!`n");
 				output("Ein niedlich aussehendes, weisses Kaninchen sitzt in der Mitte des Käfigs und glotzt");
 				output("Dich an. Du holst zum Schlag aus, doch auf einmal springt es auf Dich zu und");
-				output("`$ gräbt seine Zähne in Deine Hand!`^ Glücklicherweise bist Du noch zu betrunken um den Schmerz zu fühlen...`n");
+				output("$ gräbt seine Zähne in Deine Hand!`^ Glücklicherweise bist Du noch zu betrunken um den Schmerz zu fühlen...`n");
 				output("aber dafür wird Deine Hand morgen höllisch weh tun!`n");
 				output("Mit einer bandagierten Hand verlässt Du den Ort.`n`n");
 				output("`5Du verlierst ein paar Lebenspunkte!");
@@ -241,7 +241,7 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 		}
 		else // hier geht das Train los
 		{
-			output("`$`b`c Bibliothek der Akademie`c`b`n`n");
+			output("$`b`c Bibliothek der Akademie`c`b`n`n");
 			$rand = e_rand(1,3);
 			switch ($rand)
 			{
@@ -268,8 +268,8 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 	($session['user']['gold'] < $cost_high ||
 	$session['user']['gems'] < 2))
 	{
-		output("`$`b`c Das Innere der Akademie`c`b`n`n");
-		output("`n`$ Leider kannst Du den geforderten Preis nicht bezahlen.`^");
+		output("$`b`c Das Innere der Akademie`c`b`n`n");
+		output("`n$ Leider kannst Du den geforderten Preis nicht bezahlen.`^");
 		addnav("Nochmal nachschauen","academy.php?op1=enter&op2=0");
 	}
 	else if ($HTTP_GET_VARS['op1'] == "enter" &&
@@ -287,7 +287,7 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 		$session['user']['turns']--;
 		
 		//debuglog("paid $goldpaid and 2 gems to the academy");		
-		output("`$`b`c Das Innere der Akademie`c`b`n`n");
+		output("$`b`c Das Innere der Akademie`c`b`n`n");
 		if ($session['user']['drunkenness'] > 0) // too drunk to learn
 		{
 			output("`^Als Warchild Deine Fahne riecht schaut er Dich angewidert an.`n");
@@ -311,15 +311,18 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 	output("`b`c`VInstant-Zauber aller Art`c`b`0`n");
 	if ($_GET['action']=="sell"){
 		if (isset($_GET['id'])){
-			$sql="SELECT * FROM items WHERE id=$_GET[id]";
-			$result=db_query($sql);
+			// Die Gegenstandsnummer aus der URL wird als Zahl gebunden.
+			$itemid = (int)db_unquote_legacy_input($_GET['id']);
+			$sql="SELECT * FROM items WHERE id=?";
+			$result=db_query_params($sql, array($itemid));
 	  		$row = db_fetch_assoc($result);
 			output("`vDer alter Zauberer begutachtet $row[name]`v. Dann überreicht er dir sorgfältig abgezählt ".($row['gold']?"`^$row[gold] `vGold":"")." ".($row['gems']?"`#$row[gems]`v Edelsteine":"")." und lässt den Zauber verschwinden. Wörtlich. ");
 			addnav("Mehr verkaufen","academy.php?op1=bringmetolife&action=sell");
-			$sql="DELETE FROM items WHERE id=$_GET[id]";
+			// Der verkaufte Gegenstand wird mit derselben geprueften Nummer entfernt.
+			$sql="DELETE FROM items WHERE id=?";
 			$session['user']['gold']+=$row['gold'];
 			$session['user']['gems']+=$row['gems'];
-			db_query($sql);
+			db_query_params($sql, array($itemid));
 		}else{
 			$sql="SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND (gold>0 OR gems>0) AND class='Zauber' ORDER BY name ASC";
 			$result=db_query($sql);
@@ -341,22 +344,25 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 		addnav("Zum Laden","academy.php?op1=bringmetolife");
 	}else if ($_GET['action']=="buy"){ // ok, water's getting cold ^^
 		if (isset($_GET['id'])){
-			$sql="SELECT * FROM items WHERE id=$_GET[id]";
-			$result=db_query($sql);
+			// Die Gegenstandsnummer aus der URL wird als Zahl gebunden.
+			$itemid = (int)db_unquote_legacy_input($_GET['id']);
+			$sql="SELECT * FROM items WHERE id=?";
+			$result=db_query_params($sql, array($itemid));
 		  	$row = db_fetch_assoc($result);
+			$takenSql = "SELECT id FROM items WHERE name=? AND owner=? AND class=?"; // Der Zaubername wird gebunden, damit Sonderzeichen keine Abfrage veraendern.
 			if ($session['user']['gems']<$row['gems'] || $session['user']['gold']<$row['gold']){
 				output("`vDas kannst du dir nicht leisten. Aber wie konntest du die magische Liste austricksen?");
 				addnav("Etwas anderes kaufen","academy.php?op1=bringmetolife&action=buy");
-			}else if (db_num_rows(db_query("SELECT id FROM items WHERE name='$row[name]' AND owner=".$session['user']['acctid']." AND class='Zauber'"))>0){
+			}else if (db_num_rows(db_query_params($takenSql,array($row["name"],(int)$session["user"]["acctid"],"Zauber")))>0){
 				output("`vDiesen Zauber hast du schon. Du musst ihn entweder aufbrauchen, oder verkaufen, bevor du ihn neu kaufen kannst.");
 				addnav("Etwas anderes kaufen","academy.php?op1=bringmetolife&action=buy");
 			}else{
 				output("`vDu deutest auf den Namen in der Liste. Bis auf den Namen des Zaubers \"`V$row[name]`v\" verschwinden alle anderen Worte von der Liste und der Zauberer gibt dir, was du verlangst. Gerade, als du bezahlen willst, schweben ".($row['gold']?"`^$row[gold] `vGold":"")." ".($row['gems']?"`#$row[gems]`v Edelsteine":"")." aus deinen Vorräten in die Hand des Zauberers. ");
 				addnav("Mehr kaufen","academy.php?op1=bringmetolife&action=buy");
-				$sql="INSERT INTO items(name,class,owner,value1,value2,hvalue,gold,gems,description,buff) VALUES ('$row[name]','Zauber',".$session['user']['acctid'].",$row[value1],$row[value2],$row[hvalue],$row[gold],$row[gems],'".addslashes($row['description'])."','".addslashes($row['buff'])."')";
-				$session['user']['gold']-=$row['gold'];
-				$session['user']['gems']-=$row['gems'];
-				db_query($sql);
+				$sql="INSERT INTO items(name,class,owner,value1,value2,hvalue,gold,gems,description,buff) VALUES (?,?,?,?,?,?,?,?,?,?)"; // Der gekaufte Zauber wird mit getrennt gebundenen Werten angelegt.
+				$session["user"]["gold"]-=$row["gold"];
+				$session["user"]["gems"]-=$row["gems"];
+				db_query_params($sql,array($row["name"],"Zauber",(int)$session["user"]["acctid"],$row["value1"],$row["value2"],$row["hvalue"],$row["gold"],$row["gems"],$row["description"],$row["buff"]));
 			}
 		}else{
 			output("`v\"`RDu willst Magie nutzen, ohne sie mühsam studieren zu müssen? Dann bist du hier genau richtig.`v\" Mit diesen Worten überreicht dir der Alte eine Liste aller Zauber, die er dir anbieten kann. \"`RBitte sehr. Wähle dir etwas aus.`v\"`n`n");
@@ -368,8 +374,8 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 				addnav("Vorherige Zauber","academy.php?op1=bringmetolife&action=buy&limit=".($page-1));
 			}
 			$limit="".($page*$ppp).",".($ppp+1);
-			$sql="SELECT * FROM items WHERE (owner=0 AND class='Zauber') OR class='Zaub.Prot' AND gold<=".$session['user']['gold']." AND gems<=".$session['user']['gems']." ORDER BY class,name ASC LIMIT $limit";
-			$result=db_query($sql);
+			$sql="SELECT * FROM items WHERE ((owner=0 AND class=?) OR (class=? AND gold<=? AND gems<=?)) ORDER BY class,name ASC LIMIT ?,?"; // Preise, Kategorien und Seitenlimit werden als Werte gebunden.
+			$result=db_query_params($sql,array("Zauber","Zaub.Prot",(int)$session["user"]["gold"],(int)$session["user"]["gems"],(int)($page*$ppp),(int)($ppp+1)));
 			if (db_num_rows($result)>$ppp) addnav("Mehr Zauber","academy.php?op1=bringmetolife&actino=buy&limit=".($page+1));
 			if (db_num_rows($result)){
 				output("<table border='0' cellpadding='2' cellspacing='2'>",true);
@@ -398,7 +404,7 @@ if (($HTTP_GET_VARS['op1'] <> "" && $HTTP_GET_VARS['op2'] <> "") && $session['us
 // auf jeden Fall Begrüßung und Einleitung wenn keine Params gesetzt
 else
 {
-	output("`$`b`c Warchilds Akademie der geheimen Künste`c`b`n`n");
+	output("$`b`c Warchilds Akademie der geheimen Künste`c`b`n`n");
 	output("`^Vorsichtig näherst Du Dich dem riesigen Tor der Akademie und verharrst einen Augenblick,");
 	output("um die Inschrift über dem Torbogen zu betrachten.`n");
 	output(" \"`8`iAuch diese Worte werden vergehen`i`^\" steht dort für die Ewigkeit in geschwungenen goldenen Lettern.`n");

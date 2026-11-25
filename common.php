@@ -47,49 +47,13 @@ function output($indata,$priv=false){
 	return 0;
 }
 
-function compress_out ($input) {
-	//Based on old YaBBSE code (c)
-	//Open-Source Project by Zef Hemel (zef@zefnet.com <mailto:zef@zefnet.com>)
-	//Copyright (c) 2001-2002 The YaBB Development Team
-	if((function_exists("gzcompress")) && (function_exists("crc32"))){
-	   if(strpos(" " . $_SERVER['HTTP_ACCEPT_ENCODING'], "x-gzip")){
-	      $encode = "x-gzip";
-	   }
-	   elseif(strpos(" " . $_SERVER['HTTP_ACCEPT_ENCODING'], "gzip")){
-	      $encode = "gzip";
-	   }
-	if (isset($encode)){
-		header("Content-Encoding: $encode");
-		$encode_size = strlen($input);
-		$encode_crc = crc32($input);
-		$out = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
-		$out .= substr(gzcompress($input, 1), 0, -4);
-		$out .= pack("V", $encode_crc);
-		$out .= pack("V", $encode_size);
-	}
-	else{
-		$out = $input;
-	}
-}
-else{
-	$out = $input;
-}
-return ($out);
-} 
-
-
-// Petitionstexte und E-Mails werden als Daten gebunden, damit Sonderzeichen sicher bleiben.
-function petitionmail($subject,$body,$petition,$from,$seen=0,$to=0,$messageid=0) {
-	// chr(96) steht für das Zeichen, mit dem LoGD Spiel-Formatierungen markiert.
-	// Der Betreff bleibt einzeilig, wie im bisherigen Spiel vorgesehen.
-	$subject=str_replace("\n","",$subject);
-	$subject=str_replace(chr(96).'n',"",$subject);
-	// Platzhalter halten IDs und Texte aus dem SQL-Befehl heraus.
-	$sql="INSERT INTO petitionmail (petitionid,messageid,msgfrom,msgto,subject,body,sent,seen) VALUES (?,?,?,?,?,?,NOW(),?)";
-	db_query_params($sql,array((int)$petition,(int)$messageid,(int)$from,(int)$to,$subject,$body,(int)$seen));
-	// Die letzte Aktivität wird mit der Petitions-ID als sicher gebundenem Wert aktualisiert.
-	$sql='UPDATE petitions SET lastact=NOW() WHERE petitionid=?';
-	db_query_params($sql,array((int)$petition));
+function compress_out($input) {
+	// Fuer Anfaenger: Der Browser muss die komplette Antwort gleich behandeln.
+	// PHP kann vor dieser Funktion bereits eine Warnung ausgegeben haben.
+	// Wuerden wir nur den spaeteren Teil komprimieren, waere die Antwort vorne
+	// normal und hinten komprimiert. Der Browser kann diese Mischung nicht lesen.
+	// Deshalb senden wir die Spielseite hier komplett normal und zuverlaessig.
+	return $input;
 }
 
 function systemmail($to,$subject,$body,$from=0,$noemail=false){
@@ -177,7 +141,14 @@ function isnewday($level){
 
 function forest($noshowmessage=false) {
 	global $session,$playermount;
-  $conf = unserialize($session['user']['donationconfig']);
+  // Zusatzoptionen koennen in alten Konten fehlen oder unlesbar gespeichert sein.
+  $conf = @unserialize($session['user']['donationconfig']);
+  if (!is_array($conf)) $conf = array();
+  // Fehlende Extras erhalten harmlose Startwerte, damit der Wald trotzdem angezeigt wird.
+  $conf += array('healer'=>0, 'castle'=>0, 'goldmine'=>0);
+  if (!is_array($playermount)) $playermount = array();
+  if (!isset($playermount['tavern'])) $playermount['tavern'] = 0;
+  if (!isset($playermount['mountname'])) $playermount['mountname'] = "dein Tier";
   if ($conf['healer'] || $session['user']['acctid']==getsetting("hasegg",0)) {
   	addnav("H?Golindas Hütte","healer.php");
   } else {
@@ -266,9 +237,54 @@ function is_email($email){
 	return preg_match("/[[:alnum:]_.-]+[@][[:alnum:]_.-]{2,}.[[:alnum:]_.-]{2,}/",$email);
 }
 
+/**
+ * Entfernt ein Spielerkonto aus der Mehrfachkonto-Verwaltung.
+ * Alle Daten aus URL und Formular werden als Werte gebunden, nicht in SQL hineinkopiert.
+ */
+function deleteuser($accountId, $standardReasonId=0, $customReason="", $saveReason=false){
+	$accountId=(int)$accountId;
+	global $session;
+	// Die eigene Sitzung und das Systemkonto duerfen nicht versehentlich aus der Mehrfachkonto-Liste geloescht werden.
+	if ($accountId<=0 || (isset($session['user']['acctid']) && (int)$session['user']['acctid']==$accountId)) return false;
+	$standardReasonId=(int)$standardReasonId;
+	$customReason=trim(db_unquote_legacy_input($customReason));
+
+	// Erst den Namen sichern; nach dem Loeschen gibt es den Kontodatensatz nicht mehr.
+	$result=db_query_params("SELECT name FROM accounts WHERE acctid=?",array($accountId));
+	$account=db_fetch_assoc($result);
+	if (!$account) return false;
+
+	// Eine gespeicherte Begruendung wird nur verwendet, wenn kein eigener Text eingegeben wurde.
+	if ($customReason=="" && $standardReasonId>0){
+		$result=db_query_params("SELECT reason FROM deluser_reasons WHERE reasonid=?",array($standardReasonId));
+		$reasonRow=db_fetch_assoc($result);
+		if ($reasonRow) $customReason=$reasonRow['reason'];
+	}
+
+	// Nur ein neu eingegebener Text kann als weitere Vorlage gespeichert werden.
+	if ($saveReason && $customReason!=""){
+		db_query_params("INSERT INTO deluser_reasons (reason) VALUES (?)",array($customReason));
+	}
+
+	// Verknuepfte Dinge werden vor dem Konto freigegeben, damit nichts auf den geloeschten Spieler zeigt.
+	if ($accountId==getsetting("hasegg",0)) savesetting("hasegg","0");
+	db_query_params("UPDATE items SET owner=0 WHERE owner=?",array($accountId));
+	db_query_params("UPDATE houses SET owner=0,status=3 WHERE owner=? AND status=1",array($accountId));
+	db_query_params("UPDATE houses SET owner=0,status=4 WHERE owner=? AND status=0",array($accountId));
+	db_query_params("UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=?",array($accountId));
+	db_query_params("DELETE FROM pvp WHERE acctid2=? OR acctid1=?",array($accountId,$accountId));
+	db_query_params("DELETE FROM accounts WHERE acctid=?",array($accountId));
+
+	// Die Nachricht nennt den geloeschten Charakter; einen leeren Grund lassen wir weg.
+	$news=chr(96)."#{$account['name']} wurde von den Goettern aufgeloest.";
+	if ($customReason!="") $news.=" Grund: ".HTMLEntities($customReason);
+	addnews($news);
+	return true;
+}
 function checkban($login=false){
 	global $session;
-	if ($session['banoverride']) return false;
+	// Ein fehlender Eintrag bedeutet: Der Besucher darf nicht als Ausnahme gelten.
+	if (!empty($session['banoverride'])) return false;
 	if ($login===false){
 		$ip=$_SERVER['REMOTE_ADDR'];
         $id=db_unquote_legacy_input($_COOKIE["lgi"]);
@@ -399,6 +415,9 @@ function fightnav($allowspecial=true, $allowflee=true){
 
 function appoencode($data,$priv=false){
 	global $nestedtags,$session;
+	// Der Ausgabepuffer startet leer, damit PHP beim ersten Text keine Warnung zeigt.
+	// Ein Format-Tag gilt nur dann als aktiv, wenn es zuvor geoeffnet wurde.
+	$output="";
 	while( !(($x=strpos($data,"`")) === false) ){
 		$tag=substr($data,$x+1,1);
 		$append=substr($data,0,$x);
@@ -407,132 +426,132 @@ function appoencode($data,$priv=false){
 		$data=substr($data,$x+2);
 		switch($tag){
 			case "0":
-			if ($nestedtags['font']) $output.="</span>";
+			if (!empty($nestedtags['font'])) $output.="</span>";
 			unset($nestedtags['font']);
 		break;
 			case "1":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkBlue'>";
 		break;
 			case "2":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkGreen'>";
 		break;
 			case "3":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkCyan'>";
 		break;
 			case "4":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkRed'>";
 		break;
 			case "5":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkMagenta'>";
 		break;
 			case "6":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkYellow'>";
 		break;
 			case "7":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colDkWhite'>";
 		break;
 			case "8":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLime'>";
 		break;
 			case "9":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colBlue'>";
 		break;
 			case "!":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtBlue'>";
 		break;
 			case "@":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtGreen'>";
 		break;
 			case "#":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtCyan'>";
 		break;
 			case "$":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtRed'>";
 		break;
 			case "%":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtMagenta'>";
 		break;
 			case "^":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtYellow'>";
 		break;
 			case "&":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtWhite'>";
 		break;
 			case ")":
-			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 			$output.="<span class='colLtBlack'>";
 		break;
 			case "~":
 			if (($session['user']['dragonkills']>=5)||($session['user']['superuser']>=2)){ 
-				if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 				$output.="<span class='colBlack'>";
 			}
 		break;
 			case "Q":
-            			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 	    		$output.="<span class='colDkOrange'>";
 		break;
 			case "q":
-            			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 	    		$output.="<span class='colOrange'>";     
        		break;
 			case "r":
 			case "R":
-    			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 	    		$output.="<span class='colRose'>";
         		break;
 			case "V":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
     			$output.="<span class='colBlueViolet'>";
 		break;
 			case "v":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
     			$output.="<span class='coliceviolet'>";
 		break;
 			case "g":
 			case "G":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 	    		$output.="<span class='colXLtGreen'>";
 		break;
             			case "T":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
     			$output.="<span class='colDkBrown'>";
 		break;
 			case "t":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
     			$output.="<span class='colLtBrown'>";
 		break;
             			case "?":
-    			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
 	    		$output.="<span class='colWhiteBlack'>";
 		break;
             			case "*":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
     			$output.="<span class='colBack'>";
 		break;
 		    	case "A":
 		    	case "a":
-   			if ($nestedtags['font']) $output.="</span>"; else $nestedtags['font']=true;
+			if (!empty($nestedtags['font'])) $output.="</span>"; else $nestedtags['font']=true;
     			$output.="<span class='colAttention'>";
 		break;
 			case "c":
-			if ($nestedtags['div']) {
+			if (!empty($nestedtags['div'])) {
 				$output.="</div>";
 				unset($nestedtags['div']);
 			}else{
@@ -541,7 +560,7 @@ function appoencode($data,$priv=false){
 			}
 		break;
 			case "H":
-			if ($nestedtags['div']) {
+			if (!empty($nestedtags['div'])) {
 				$output.="</span>";
 				unset($nestedtags['div']);
 			}else{
@@ -550,7 +569,7 @@ function appoencode($data,$priv=false){
 			}
 		break;
 			case "b":
-			if ($nestedtags['b']){
+			if (!empty($nestedtags['b'])){
 				$output.="</b>";
 				unset($nestedtags['b']);
 			}else{
@@ -559,7 +578,7 @@ function appoencode($data,$priv=false){
 			}
 		break;
 		  case "i":
-		  if ($nestedtags['i']) {
+		  if (!empty($nestedtags['i'])) {
 		  	$output.="</i>";
 		  	unset($nestedtags['i']);
 		  }else{
@@ -602,9 +621,12 @@ function closetags($string, $tags) {
 
 function templatereplace($itemname,$vals=false){
 	global $template;
+	// Ohne Platzhalterwerte gibt es nichts zu ersetzen; ein leeres Feld ist hier normal.
+	if (!is_array($vals)) $vals=array();
 	@reset($vals);
 	if (!isset($template[$itemname])) output("`bWarnung:`b Das `i$itemname`i Template wurde nicht gefunden!`n");
-	$out = $template[$itemname];
+	// Fehlt ein Vorlagenteil, wird leerer Text eingesetzt statt auf einen fehlenden Arraywert zuzugreifen.
+	$out = isset($template[$itemname]) ? $template[$itemname] : "";
 	//output($template[$itemname]."`n");
 	foreach ($vals as $key => $val) {
 		if (strpos($out,"{".$key."}")===false) output("`bWarnung:`b Das `i$key`i Teil wurde im `i$itemname`i Template nicht gefunden! (".$out.")`n");
@@ -625,6 +647,8 @@ function charstats(){
 		reset($session['bufflist']);
 		$atk=$u['attack'];
 		$def=$u['defence'];
+		// Diese Textliste zeigt die aktiven Effekte an und beginnt immer leer.
+		$buffs="";
 		foreach ($session['bufflist'] as $key => $val) {
 			$buffs.=appoencode("`#$val[name] `7($val[rounds] Runden übrig)`n",true);
 			if (isset($val['atkmod'])) $atk *= $val['atkmod'];
@@ -691,6 +715,9 @@ function charstats(){
 		$sql="SELECT name,alive,location,sex,level,laston,loggedin,lastip,uniqueid FROM accounts WHERE locked=0 AND loggedin=1 AND laston>? ORDER BY level DESC";
 		$result=db_query_params($sql,array($lastActiveAfter)) or die(sql_error($sql));
 		$count = db_num_rows($result);
+		// Diese Zaehler starten bei null, auch wenn gerade niemand online ist.
+		$ret="";
+		$onlinecount=0;
 		$ret.=appoencode("`b$count Spieler Online:`b`n");
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
@@ -707,8 +734,16 @@ function charstats(){
 $accesskeys=array();
 $quickkeys=array();
 function addnav($text,$link=false,$priv=false,$pop=false,$newwin=false){
+	// Startwerte verhindern Warnungen bei Links ohne Beschriftung oder Schnellzugriffstaste.
+	$ignoreuntil="";
+	$key="";
+	$keyrep="";
+	$i=0;
+	$extra="";
 	global $nav,$session,$accesskeys,$REQUEST_URI,$quickkeys;
 	$text = translate($text);
+	// Auch ein Link ohne Beschriftung muss sicher in der Spielnavigation gespeichert werden.
+	if (!isset($session['allowednavs']) || !is_array($session['allowednavs'])) $session['allowednavs']=array();
 	/*
 	if (date("m-d")=="04-01"){
 		$text = borkalize($text);
@@ -735,7 +770,7 @@ function addnav($text,$link=false,$priv=false,$pop=false,$newwin=false){
 			$key="";
 			if (substr($text,1,1)=="?") {
 				// check to see if a key was specified up front.
-				if ($accesskeys[strtolower(substr($text, 0, 1))]==1){
+				if (isset($accesskeys[strtolower(substr($text, 0, 1))]) && $accesskeys[strtolower(substr($text, 0, 1))]==1){
 					// output ("key ".substr($text,0,1)." already taken`n");
 					$text = substr($text,2);
 				}else{
@@ -777,7 +812,7 @@ function addnav($text,$link=false,$priv=false,$pop=false,$newwin=false){
 					if ($ignoreuntil == $char) {
 						$ignoreuntil="";
 					}else{
-						if (($accesskeys[strtolower($char)]==1) || (strpos("abcdefghijklmnopqrstuvwxyz0123456789", strtolower($char)) === false) || $ignoreuntil<>"") {
+						if ((isset($accesskeys[strtolower($char)]) && $accesskeys[strtolower($char)]==1) || (strpos("abcdefghijklmnopqrstuvwxyz0123456789", strtolower($char)) === false) || $ignoreuntil<>"") {
 							if ($char=="<") $ignoreuntil=">";
 							if ($char=="&") $ignoreuntil=";";
 							if ($char=="`") $ignoreuntil=substr($text,$i+1,1);
@@ -994,6 +1029,8 @@ function motdlink(){
 
 function page_header($title="LoGD 0.9.7 +jt ext (GER) 3"){
 	global $header,$SCRIPT_NAME,$session,$template;
+	$nopopups=array();
+	// Diese Seiten sollen kein automatisch geoeffnetes Nachrichtenfenster bekommen.
 	$nopopups["login.php"]=1;
 	$nopopups["motd.php"]=1;
 	$nopopups["index.php"]=1;
@@ -1007,7 +1044,10 @@ function page_header($title="LoGD 0.9.7 +jt ext (GER) 3"){
 	$result = db_query($sql);
 	$row = db_fetch_assoc($result);
 	db_free_result($result);
-	if (($row['motddate']>$session['user']['lastmotd']) && $nopopups[$SCRIPT_NAME]!=1 && $session['user']['loggedin']){
+	// Eine leere Nachrichten-Tabelle oder eine unbekannte Seite ist beim Start normal.
+	$latestMotdDate=isset($row['motddate']) ? $row['motddate'] : 0;
+	$isPopupDisabled=isset($nopopups[$SCRIPT_NAME]) ? $nopopups[$SCRIPT_NAME] : false;
+	if (($latestMotdDate>$session['user']['lastmotd']) && !$isPopupDisabled && $session['user']['loggedin']){
 		$header=str_replace("{headscript}","<script language=\"JavaScript\" type=\"text/javascript\">".popup("motd.php")."</script>",$header);
 		$session['needtoviewmotd']=true;
 	}else{
@@ -1031,6 +1071,8 @@ function page_footer(){
 
 		unset($nestedtags[$key]);
 	}
+	// Das Skript wird aus Schnellzugriffstasten aufgebaut und startet als leerer Text.
+	$script="";
 	$script.="<script language=\"JavaScript\" type=\"text/javascript\">
 	<!--
 	document.onkeypress=keyevent;
@@ -1509,7 +1551,8 @@ function addcommentary() {
 		$row = db_fetch_assoc($result);
 		db_free_result($result);
 		// Beide Texte sind unverändert; wir vergleichen sie ohne zusätzliche Backslash-Entfernung.
-		if($row['comment']!=$commentary || $row['author']!=$session['user']['acctid']){
+		// Beim ersten Kommentar gibt es noch keine Datenbankzeile; dann ist $row kein Array.
+		if (!is_array($row) || $row['comment']!=$commentary || $row['author']!=$session['user']['acctid']){
 			// Abschnitt, Spieler-ID und Kommentar werden sicher als getrennte Werte gespeichert.
 			$sql="INSERT INTO commentary (postdate,section,author,comment) VALUES (NOW(),?,?,?)";
 			db_query_params($sql,array($section,(int)$session['user']['acctid'],$commentary)) or die(db_error(LINK));
@@ -1524,12 +1567,14 @@ function addcommentary() {
 function viewcommentary($section,$message="Kommentar hinzufügen?",$limit=10,$talkline="sagt") {
 	global $HTTP_POST_VARS,$session,$REQUEST_URI,$HTTP_GET_VARS, $doublepost;
 	$nobios = array("motd.php"=>true);
-	if ($nobios[basename($_SERVER['SCRIPT_NAME'])]) $linkbios=false; else $linkbios=true;
+	// Nur ein vorhandener Eintrag in der Ausnahmeliste schaltet Bio-Links ab.
+	if (!empty($nobios[basename($_SERVER['SCRIPT_NAME'])])) $linkbios=false; else $linkbios=true;
 	//output("`b".basename($_SERVER['SCRIPT_NAME'])."`b`n");
 	if ($doublepost) output("`\$`bDoppelpost?`b`0`n");
 	$message = translate($message);
 
-	$com=(int)$HTTP_GET_VARS['comscroll'];
+	// Ohne Seitenzahl zeigen wir die neuesten Kommentare ab Seite 0.
+	$com = isset($HTTP_GET_VARS['comscroll']) ? (int)$HTTP_GET_VARS['comscroll'] : 0;
 	// Der Abschnitt wird als sicherer Wert gebunden; Seitenlimit und Startposition werden vorher in Zahlen umgewandelt.
 	$sql = "SELECT commentary.*,
 	               accounts.name,
@@ -1546,8 +1591,12 @@ function viewcommentary($section,$message="Kommentar hinzufügen?",$limit=10,$tal
 	         LIMIT ".(int)($com*$limit).",".(int)$limit;
 	$result = db_query_params($sql,array($section)) or die(db_error(LINK));
 	$counttoday=0;
+	$op = array();
+	$commentids = array();
 	for ($i=0;$i < db_num_rows($result);$i++){
 	  $row = db_fetch_assoc($result);
+		// Jeder Kommentar beginnt mit leerem Text, bis die passende Ausgabeform gebaut ist.
+		$op[$i] = "";
 		$row['comment']=preg_replace("'[`][^123456789!@#$%&QqRr*~^?VvGgTtAa]'","",$row['comment']);
 		$commentids[$i] = $row['commentid'];
 /* limit posts
@@ -1605,11 +1654,13 @@ function viewcommentary($section,$message="Kommentar hinzufügen?",$limit=10,$tal
 			addnav("","superuser.php?op=commentdelete&commentid=$commentids[$i]&return=".URLEncode($_SERVER['REQUEST_URI']));
 			$matches=array();
 			preg_match("/[(][^)]*[)]/",$op[$i],$matches);
-			$sect=$matches[0];
+			// Ohne passenden Titel gehoert der Kommentar in die allgemeine Liste.
+			$sect = isset($matches[0]) ? $matches[0] : "x";
 		}
 		//output($op[$i],true);
 		$out.=$op[$i];
-		if (!is_array($outputcomments[$sect])) $outputcomments[$sect]=array();
+		// Eine Gruppe wird erst beim ersten Kommentar angelegt.
+		if (!isset($outputcomments[$sect]) || !is_array($outputcomments[$sect])) $outputcomments[$sect]=array();
 		array_push($outputcomments[$sect],$out);
 	}
 	ksort($outputcomments);
@@ -1685,8 +1736,12 @@ function expbar() {
 	foreach ($exparray as $key => $val) {
 		$exparray[$key]= round($val + ($session['user']['dragonkills']/4) * $key * 100,0);
 	}
-	$exp = $session['user']['experience']-$exparray[$session['user']['level']-1];
-	$req=$exparray[$session['user']['level']]-$exparray[$session['user']['level']-1];
+	// Stufe 1 hat noch keinen vorherigen Erfahrungswert; dort beginnt die Leiste bei 0.
+	$level = max(1, (int)$session['user']['level']);
+	$previousRequirement = isset($exparray[$level-1]) ? $exparray[$level-1] : 0;
+	$nextRequirement = isset($exparray[$level]) ? $exparray[$level] : ($previousRequirement + 1);
+	$exp = $session['user']['experience'] - $previousRequirement;
+	$req = $nextRequirement - $previousRequirement;
 	$u="<font face=\"verdana\" size=1>".$session['user']['experience']."<br>".grafbar($req,$exp)."</font>";
 	return($u);
 }
@@ -1724,9 +1779,6 @@ $link = db_pconnect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME, isset($DB_CHARSET) ?
 db_select_db ($DB_NAME) or die (db_error($link));
 define("LINK",$link);
 
-require_once "translator.php";
-
-
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
@@ -1744,6 +1796,23 @@ if (!isset($_SESSION['session']) || !is_array($_SESSION['session'])) {
     $_SESSION['session'] = array();
 }
 $session =& $_SESSION['session'];
+// Neue Besucher erhalten sichere Grundwerte, statt Warnungen wegen leerer Sessiondaten zu zeigen.
+$sessionDefaults = array('loggedin'=>false, 'lasthit'=>0, 'message'=>'', 'counter'=>0, 'allowednavs'=>array(), 'bufflist'=>array());
+foreach ($sessionDefaults as $defaultKey=>$defaultValue) {
+	if (!isset($session[$defaultKey])) $session[$defaultKey]=$defaultValue;
+}
+// Ein anonymer Besucher hat noch keinen Spieler-Datensatz; diese Werte sind harmlose Startwerte.
+if (!isset($session['user']) || !is_array($session['user'])) $session['user']=array();
+$userDefaults = array('loggedin'=>false, 'acctid'=>0, 'dragonkills'=>0, 'superuser'=>0, 'weapon'=>'', 'hitpoints'=>0, 'bufflist'=>'', 'uniqueid'=>'', 'hashorse'=>0, 'beta'=>0, 'prefs'=>array(), 'lastmotd'=>0, 'name'=>'', 'login'=>'', 'gentime'=>0, 'gentimecount'=>0, 'gensize'=>0);
+foreach ($userDefaults as $defaultKey=>$defaultValue) {
+	if (!isset($session['user'][$defaultKey])) $session['user'][$defaultKey]=$defaultValue;
+}
+// Diese Cookies werden erst bei spaeteren Besuchen gesendet und sind anfangs leer.
+foreach (array('language','lgi','template') as $cookieName) {
+	if (!isset($_COOKIE[$cookieName])) $_COOKIE[$cookieName]='';
+}
+// Der Uebersetzer braucht Session und Cookies und wird deshalb jetzt geladen.
+require_once "translator.php";
 //echo nl2br(htmlentities(output_array($session)));
 //register_global($_SESSION);
 register_global($_SERVER);
@@ -1759,6 +1828,8 @@ $session['lasthit']=strtotime(date("r"));
 
 $revertsession=$session;
 
+// PATH_INFO gibt es bei normalen URLs oft nicht und wird darum vorher sicher gesetzt.
+$PATH_INFO = isset($PATH_INFO) ? $PATH_INFO : "";
 if ($PATH_INFO != "") {
 	$SCRIPT_NAME=$PATH_INFO;
 	$REQUEST_URI="";
@@ -1780,6 +1851,9 @@ if ($REQUEST_URI==""){
 	$_SERVER['REQUEST_URI'] = $REQUEST_URI;
 }
 $SCRIPT_NAME=substr($SCRIPT_NAME,strrpos($SCRIPT_NAME,"/")+1);
+// Bei einem ersten Besuch ist noch keine eigene Vorlagendatei ausgewaehlt.
+$templatename="";
+$templatemessage="";
 if (strpos($REQUEST_URI,"?")){
 	$REQUEST_URI=$SCRIPT_NAME.substr($REQUEST_URI,strpos($REQUEST_URI,"?"));
 }else{
@@ -1796,7 +1870,9 @@ if ($session['loggedin']){
 		$session['user']=db_fetch_assoc($result);
 		$session['output']=$session['user']['output'];
 		$session['user']['dragonpoints']=unserialize($session['user']['dragonpoints']);
-		$session['user']['prefs']=unserialize($session['user']['prefs']);
+		$session['user']['prefs']=@unserialize($session['user']['prefs']);
+		// Falsche oder alte Einstellungsdaten werden als leere Liste behandelt.
+		if (!is_array($session['user']['prefs'])) $session['user']['prefs']=array();
 		if (!is_array($session['user']['dragonpoints'])) $session['user']['dragonpoints']=array();
 		if (is_array(unserialize($session['user']['allowednavs']))){
 			$session['allowednavs']=unserialize($session['user']['allowednavs']);
@@ -1814,10 +1890,11 @@ if ($session['loggedin']){
 		redirect("index.php","Account verschwunden!");
 	}
 	db_free_result($result);
-	if ($session['allowednavs'][$REQUEST_URI] && !$allownonnav[$SCRIPT_NAME]){
+	// Neue oder umgeleitete Sitzungen haben diese Schluessel manchmal noch nicht; empty() prueft sie ohne PHP-Warnung.
+	if (!empty($session['allowednavs'][$REQUEST_URI]) && empty($allownonnav[$SCRIPT_NAME])){
 		$session['allowednavs']=array();
 	}else{
-		if (!$allownonnav[$SCRIPT_NAME]){
+		if (empty($allownonnav[$SCRIPT_NAME])){
 			redirect("badnav.php","Navigation auf $REQUEST_URI nicht erlaubt");
 		}
 	}
@@ -1835,7 +1912,8 @@ if ($session['user']['loggedin']!=true && !$allowanonymous[$SCRIPT_NAME]){
 
 $session['counter']++;
 $nokeeprestore=array("newday.php"=>1,"badnav.php"=>1,"motd.php"=>1,"mail.php"=>1,"petition.php"=>1,"chat.php"=>1);
-if (!$nokeeprestore[$SCRIPT_NAME]) { //strpos($REQUEST_URI,"newday.php")===false && strpos($REQUEST_URI,"badnav.php")===false && strpos($REQUEST_URI,"motd.php")===false && strpos($REQUEST_URI,"mail.php")===false
+// Die meisten Seiten duerfen als Ruecksprungziel gespeichert werden; Sonderseiten nicht.
+if (!isset($nokeeprestore[$SCRIPT_NAME]) || !$nokeeprestore[$SCRIPT_NAME]) { //strpos($REQUEST_URI,"newday.php")===false && strpos($REQUEST_URI,"badnav.php")===false && strpos($REQUEST_URI,"motd.php")===false && strpos($REQUEST_URI,"mail.php")===false
   $session['user']['restorepage']=$REQUEST_URI;
 }else{
 

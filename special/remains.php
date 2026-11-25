@@ -59,13 +59,13 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 		case 7:
 		case 8:
 		case 9:
-			$sql="SELECT id,name,value1 FROM items WHERE class='Fluch' AND owner=".$session['user']['acctid']." ORDER BY id LIMIT 1";
-			$result=db_query($sql);
+			$sql="SELECT id,name,value1 FROM items WHERE class=? AND owner=? ORDER BY id LIMIT 1"; // Die Fluchart und der Besitzer werden sicher an die Abfrage uebergeben.
+			$result=db_query_params($sql,array("Fluch",(int)$session["user"]["acctid"]));
 			if (db_num_rows($result)>0){
 			  	$row = db_fetch_assoc($result);
 				output("Die Fee befreit dich von `\$$row[name]`G.");
 				if ($row['name']=="Der Ring") $session['user']['maxhitpoints']+=$row['value1'];
-				db_query("DELETE FROM items WHERE id=$row[id]");
+				 db_query_params("DELETE FROM items WHERE id=?",array((int)$row["id"])); // Nur der zuvor gefundene Fluch-Gegenstand wird geloescht.
 			}else{
 				output("Die Fee segnet dich.");
 				$session['bufflist']['segen2'] = array("name"=>"`GSegen","rounds"=>8,"wearoff"=>"`GDer Segen wirkt nicht mehr.","dmgmod"=>1.1,"roundmsg"=>"`9Der Segen der Grabfee gibt dir Kraft.","activate"=>"offense");
@@ -186,8 +186,8 @@ if ($battle) {
 			$row2['buff']=unserialize($row['buff']);
 			$session['bufflist'][$row2['buff']['name']]=$row2['buff'];
 		}
-		db_query("INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES ('".$row['name']."',".$session['user']['acctid'].",'Fluch',$row[value1],$row[value2],$row[gold],$row[gems],'".$row['description']."',$row[hvalue],'".$row['buff']."')");
-		addnews("`G".$session['user']['name']."`G kam dem Tod näher, als ".($session['user']['sex']?"ihr":"ihm")." lieb war.");
+		$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description,hvalue,buff) VALUES (?,?,?,?,?,?,?,?,?,?)"; // Alle Werte des Fluchs werden gebunden, damit Texte Sonderzeichen behalten.
+		db_query_params($sql,array($row["name"],(int)$session["user"]["acctid"],"Fluch",(int)$row["value1"],(int)$row["value2"],(int)$row["gold"],(int)$row["gems"],$row["description"],(int)$row["hvalue"],$row["buff"]));
 	} else {
 		fightnav(true,true);
 	}

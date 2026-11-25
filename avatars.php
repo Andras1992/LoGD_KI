@@ -7,9 +7,11 @@ require_once "common.php";
 isnewday(2);
 
 if ($_GET['op']=="block"){
-    $sql = "UPDATE accounts SET avatar='' WHERE acctid=$_GET[userid]";
-	systemmail($_GET['userid'],"Dein Avatar wurde entfernt","Der Administrator hat beschlossen, dass dein Avatar unangebracht ist, oder nicht funktionierte, und hat ihn entfernt.`n`nWenn du darüber diskutieren willst, benutze bitte den Link zur Hilfeanfrage.");
-	db_query($sql);
+        // Die Kontonummer wird als Zahl an die Abfrage gebunden, damit die URL sie nicht als SQL veraendern kann.
+    $acctid = (int)db_unquote_legacy_input($_GET['userid']);
+    $sql = "UPDATE accounts SET avatar='' WHERE acctid=?";
+	systemmail($acctid,"Dein Avatar wurde entfernt","Der Administrator hat beschlossen, dass dein Avatar unangebracht ist, oder nicht funktionierte, und hat ihn entfernt.`n`nWenn du darüber diskutieren willst, benutze bitte den Link zur Hilfeanfrage.");
+	db_query_params($sql, array($acctid));
 }
 $ppp=25; // Player Per Page to display
 if (!$_GET['limit']){

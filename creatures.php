@@ -57,53 +57,49 @@ if ($session['user']['superuser'] >= 2){
 	addnav("G?Zurück zur Grotte","superuser.php");
 	addnav("W?Zurück zum Weltlichen","village.php");
 	if ($HTTP_POST_VARS['save']<>""){
+		// Ein fehlender Ort wird als Anfangswert gesetzt, damit neue Formulare ohne Ortsauswahl funktionieren.
 		if (!isset($HTTP_POST_VARS['location'])) $HTTP_POST_VARS['location']=0;
-		if ($HTTP_POST_VARS['id']!=""){
-			$sql="UPDATE creatures SET ";
-			//unset($HTTP_POST_VARS[save]);
-			foreach ($HTTP_POST_VARS as $key => $val) {
-				if (substr($key,0,8)=="creature") $sql.="$key = \"$val\", ";
-			}
-			reset($creaturestats[(int)$HTTP_POST_VARS['creaturelevel']]);
-			foreach ($creaturestats[$HTTP_POST_VARS['creaturelevel']] as $key => $val) {
-				if ( $key!="creaturelevel" && substr($key,0,8)=="creature"){
-					$sql.="$key = \"".addslashes($val)."\", ";
-				}
-			}
-			$sql.=" location=\"".(int)($_POST['location'])."\", ";
-			//$sql = substr($sql,0,strlen($sql)-2);
-			$sql.= " createdby=\"".addslashes($session['user']['login'])."\" ";
-			$sql.= " WHERE creatureid='$HTTP_POST_VARS[id]'";
-			//output($sql);
-			db_query($sql) or output("`\$".db_error(LINK)."`0`n`#$sql`0`n");
-			output(db_affected_rows()." ".(db_affected_rows()==1?"Eintrag":"Einträge")." geändert.");
+		$creatureLevel=(int)$HTTP_POST_VARS['creaturelevel'];
+		if (!isset($creaturestats[$creatureLevel])){
+			output("Ungueltige Kreaturenstufe.");
 		}else{
-			$cols = array();
-			$vals = array();
-			
-			foreach ($HTTP_POST_VARS as $key => $val) {
-				if (substr($key,0,8)=="creature" || $key=="location") {
-					array_push($cols,$key);
-					array_push($vals,$val);
-					//$sql.="$key = \"$val\", ";
-				}
+			// Erlaubte Spaltennamen kommen nur aus der festen Kreaturenstatistik, nie aus den Formularnamen.
+			$fields=$creaturestats[$creatureLevel];
+			// Diese drei Textfelder stehen im Formular, gehoeren aber nicht zur Zahlen-Tabelle der Standardwerte.
+			$fields['creaturename']='';
+			$fields['creatureweapon']='';
+			$fields['creaturelose']='';
+			$fields['location']=0;
+			$fields['createdby']='';
+			$columns=array();
+			$values=array();
+			foreach ($fields as $fieldName => $defaultValue){
+				$columns[]=$fieldName;
+				if ($fieldName=="createdby") $values[]=$session['user']['login'];
+				elseif ($fieldName=="location") $values[]=(int)$HTTP_POST_VARS['location'];
+				elseif (isset($HTTP_POST_VARS[$fieldName])) $values[]=db_unquote_legacy_input($HTTP_POST_VARS[$fieldName]);
+				else $values[]=$defaultValue;
 			}
-			reset($creaturestats[(int)$HTTP_POST_VARS['creaturelevel']]);
-			foreach ($creaturestats[$HTTP_POST_VARS['creaturelevel']] as $key => $val) {
-				if ($key!="creaturelevel"){
-					//$sql.="$key = \"".addslashes($val)."\", ";
-					array_push($cols,$key);
-					array_push($vals,$val);
-				}
+			if ($HTTP_POST_VARS['id']!=""){
+				// Spaltennamen stammen aus bekannten Spielwerten; alle Eingaben und die Datensatz-ID werden gebunden.
+				$setParts=array();
+				foreach ($columns as $columnName) $setParts[]=chr(96).$columnName.chr(96)."=?";
+				$sql="UPDATE creatures SET ".implode(",",$setParts)." WHERE creatureid=?";
+				$values[]=(int)$HTTP_POST_VARS['id'];
+				db_query_params($sql,$values) or output("Fehler: ".db_error(LINK));
+				output(db_affected_rows()." Datensatz(e) geaendert.");
+			}else{
+				// Spaltennamen stammen aus der festen Statistik; Platzhalter halten Texte aus dem SQL-Befehl heraus.
+				$quotedColumns=array();
+				foreach ($columns as $columnName) $quotedColumns[]=chr(96).$columnName.chr(96);
+				$placeholders=implode(",",array_fill(0,count($values),"?"));
+				$sql="INSERT INTO creatures (".implode(",",$quotedColumns).") VALUES (".$placeholders.")";
+				db_query_params($sql,$values);
 			}
-			$sql="INSERT INTO creatures (".join(",",$cols).",createdby) VALUES (\"".join("\",\"",$vals)."\",\"".addslashes($session['user']['login'])."\")";
-			//echo $sql;
-			db_query($sql);
 		}
-	}
-	if ($HTTP_GET_VARS['op']=="del"){
-		$sql = "DELETE FROM creatures WHERE creatureid = \"$HTTP_GET_VARS[id]\"";
-		db_query($sql);
+	}	if ($HTTP_GET_VARS['op']=="del"){
+$sql="DELETE FROM creatures WHERE creatureid=?"; // Die Kreaturen-ID wird beim Loeschen als Zahl gebunden.
+		db_query_params($sql,array((int)db_unquote_legacy_input($HTTP_GET_VARS['id'])));
 		if (db_affected_rows()>0){
 			output("Kreatur gelöscht`n`n");
 		}else{
@@ -142,8 +138,8 @@ if ($session['user']['superuser'] >= 2){
 	}else{
 		if ($HTTP_GET_VARS['op']=="edit" || $HTTP_GET_VARS['op']=="add"){
 			if ($HTTP_GET_VARS['op']=="edit"){
-				$sql = "SELECT * FROM creatures WHERE creatureid=$HTTP_GET_VARS[id]";
-				$result = db_query($sql) or die(db_error(LINK));
+$sql = "SELECT * FROM creatures WHERE creatureid=?"; // Die angeforderte Kreaturen-ID wird als Zahl gebunden.
+				$result = db_query_params($sql,array((int)db_unquote_legacy_input($HTTP_GET_VARS['id']))) or die(db_error(LINK));
 				if (db_num_rows($result)<>1){
 					output("`4Fehler`0, diese Kreatur wurde nicht gefunden!");
 				}else{

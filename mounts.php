@@ -8,13 +8,15 @@ addnav("M?Return to the Mundane","village.php");
 addnav("Add a mount","mounts.php?op=add");
 
 if ($_GET['op']=="del"){
-	$sql = "UPDATE mounts SET mountactive=0 WHERE mountid='{$_GET['id']}'";
-	db_query($sql);
+	// Die Tiernummer wird als Zahl gebunden, damit der URL-Wert keinen SQL-Befehl veraendern kann.
+	$sql = "UPDATE mounts SET mountactive=0 WHERE mountid=?";
+	db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	$_GET['op']="";
 }
 if ($_GET['op']=="undel"){
-	$sql = "UPDATE mounts SET mountactive=1 WHERE mountid='{$_GET['id']}'";
-	db_query($sql);
+	// Beim Aktivieren wird die Tiernummer ebenfalls sicher als Zahl gebunden.
+	$sql = "UPDATE mounts SET mountactive=1 WHERE mountid=?";
+	db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	$_GET['op']="";
 }
 
@@ -53,8 +55,9 @@ if ($_GET['op']==""){
 	mountform(array());
 }elseif ($_GET['op']=="edit"){
 	addnav("Mount Editor Home","mounts.php");
-	$sql = "SELECT * FROM mounts WHERE mountid='{$_GET['id']}'";
-	$result = db_query($sql);
+	// Die angezeigte Tiernummer wird als Zahl gebunden, bevor der Datensatz gelesen wird.
+	$sql = "SELECT * FROM mounts WHERE mountid=?";
+	$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id'])));
 	if (db_num_rows($result)<=0){
 		output("`iThis mount was not found.`i");
 	}else{
@@ -65,8 +68,11 @@ if ($_GET['op']==""){
 	}
 }elseif ($_GET['op']=="save"){
 	$buff = array();
-	reset($_POST['mount']['mountbuff']);
-	$_POST['mount']['mountbuff']['activate']=join(",",$_POST['mount']['mountbuff']['activate']);
+	// Ohne angekreuzte Buff-Felder fehlt das Activate-Array; dann speichern wir eine leere Liste.
+	$mountBuff = isset($_POST['mount']['mountbuff']) && is_array($_POST['mount']['mountbuff']) ? $_POST['mount']['mountbuff'] : array();
+	$activate = isset($mountBuff['activate']) && is_array($mountBuff['activate']) ? $mountBuff['activate'] : array();
+	$mountBuff['activate'] = implode(",", $activate);
+	$_POST['mount']['mountbuff'] = $mountBuff;
 	foreach ($_POST['mount']['mountbuff'] as $key => $val) {
 		if ($val>""){
 			$buff[$key]=stripslashes($val);
@@ -75,26 +81,33 @@ if ($_GET['op']==""){
 	//$buff['activate']=join(",",$buff['activate']);
 	$_POST['mount']['mountbuff']=$buff;
 	reset($_POST['mount']);
-	$keys='';
-	$vals='';
-	$sql='';
-	$i=0;
+	// Nur bekannte Datenbankfelder duerfen in den SQL-Text; alle eigentlichen Werte werden als Parameter gebunden.
+	$allowedFields = array('mountname', 'mountdesc', 'mountcategory', 'mountcostgems', 'mountcostgold', 'mountforestfights', 'tavern', 'newday', 'recharge', 'partrecharge', 'mine_canenter', 'mine_candie', 'mine_cansave', 'mine_tethermsg', 'mine_deathmsg', 'mine_savemsg', 'mountbuff');
+	$numberFields = array('mountcostgems', 'mountcostgold', 'mountforestfights', 'tavern', 'mine_canenter', 'mine_candie', 'mine_cansave');
+	$columns = array();
+	$assignments = array();
+	$params = array();
 	foreach ($_POST['mount'] as $key => $val) {
-		if (is_array($val)) $val = addslashes(serialize($val));
-		if ($_GET['id']>""){
-			$sql.=($i>0?",":"")."$key='$val'";
-		}else{
-			$keys.=($i>0?",":"")."$key";
-			$vals.=($i>0?",":"")."'$val'";
+		// Fremde Feldnamen werden ignoriert, weil SQL-Platzhalter keine Spaltennamen ersetzen koennen.
+		if (!in_array($key, $allowedFields, true)) continue;
+		$columns[] = "`$key`";
+		$assignments[] = "`$key`=?";
+		if (is_array($val)) {
+			$val = serialize($val);
+		} else {
+			$val = db_unquote_legacy_input($val);
 		}
-		$i++;
+		if (in_array($key, $numberFields, true)) $val = (int)$val;
+		$params[] = $val;
 	}
-	if ($_GET['id']>""){
-		$sql="UPDATE mounts SET $sql WHERE mountid='{$_GET['id']}'";
-	}else{
-		$sql="INSERT INTO mounts ($keys) VALUES ($vals)";
+	if ($_GET['id'] > "") {
+		// Die Mount-ID wird nach den Feldwerten als letzte Zahl gebunden.
+		$sql = "UPDATE mounts SET " . implode(",", $assignments) . " WHERE mountid=?";
+		$params[] = (int)db_unquote_legacy_input($_GET['id']);
+	} else {
+		$sql = "INSERT INTO mounts (" . implode(",", $columns) . ") VALUES (" . implode(",", array_fill(0, count($columns), "?")) . ")";
 	}
-	db_query($sql);
+	db_query_params($sql, $params);
 	if (db_affected_rows()>0){
 		output("Mount saved!");
 	}else{

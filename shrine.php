@@ -68,12 +68,11 @@ if ($HTTP_GET_VARS['op']==""){
 	}
 }else if ($HTTP_GET_VARS['op']=="findname"){
 	$what=$_GET['what'];
-	$string="%";
-	for ($x=0;$x<strlen($_POST['to']);$x++){
-		$string .= substr($_POST['to'],$x,1)."%";
-	}
-	$sql = "SELECT name,login,acctid,alive,deathpower FROM accounts WHERE alive=0 AND name LIKE '".addslashes($string)."'";
-	$result = db_query($sql);
+	// Wir bauen die Teilnamensuche aus dem echten Eingabetext und binden sie als Daten.
+	$searchName = db_unquote_legacy_input($_POST['to']);
+	$string = "%" . implode("%", str_split($searchName)) . "%";
+	$sql = "SELECT name,login,acctid,alive,deathpower FROM accounts WHERE alive=0 AND name LIKE ?";
+	$result = db_query_params($sql, array($string));
 	if (db_num_rows($result)==1){
 		$row = db_fetch_assoc($result);
 		output("<form action='shrine.php?op=pickname&what=$what' method='POST'>",true);
@@ -104,7 +103,9 @@ if ($HTTP_GET_VARS['op']==""){
 	}
 }else if($_GET['op']=="pickname") {
 	$what=$_GET['what'];
-	$result = db_query($sql = "SELECT name,acctid,alive,lasthit,lastip,emailaddress,uniqueid FROM accounts WHERE login='{$_POST['to']}'");
+	// Der ausgewaehlte Login wird als Suchwert an PDO gebunden.
+	$sql = "SELECT name,acctid,alive,lasthit,lastip,emailaddress,uniqueid FROM accounts WHERE login=?";
+	$result = db_query_params($sql, array(db_unquote_legacy_input($_POST['to'])));
 	if (db_num_rows($result)==1){
 		$row = db_fetch_assoc($result);
 		if (ac_check($row)){

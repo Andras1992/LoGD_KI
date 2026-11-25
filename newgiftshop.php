@@ -18,6 +18,12 @@
 // added items with buffs
 
 require_once "common.php";
+
+// Dieses Hilfsprogramm speichert Geschenke mit getrennten Werten, damit Namen und Texte das SQL nicht veraendern koennen.
+function giftshop_add_item($itemName, $ownerId, $price, $description, $hvalue=0, $buff="") {
+	$sql = "INSERT INTO items (name,owner,class,gold,description,hvalue,buff) VALUES (?,?,?,?,?,?,?)"; // Fragezeichen sind sichere Platzhalter fuer die Geschenkwerte.
+	db_query_params($sql,array($itemName,(int)$ownerId,"Geschenk",(int)$price,$description,(int)$hvalue,$buff));
+}
 checkday();
 page_header("Geschenkeladen");
 output("`c`b`&Geschenkeladen`0`b`c`n`n");
@@ -99,31 +105,28 @@ if ($HTTP_GET_VARS['op']=="" && $session['user']['turns']>0){
 }
 if ($HTTP_GET_VARS['op']=="send"){
 	$gift=$HTTP_GET_VARS['op2'];
-	if (isset($_POST['search']) || $_GET['search']>""){
-		if ($_GET['search']>"") $_POST['search']=$_GET['search'];
-		$search="%";
-		for ($x=0;$x<strlen($_POST['search']);$x++){
-			$search .= substr($_POST['search'],$x,1)."%";
-		}
-		$search="name LIKE '".$search."' AND ";
-		if ($_POST['search']=="weiblich") $search="sex=1 AND ";
-		if ($_POST['search']=="männlich") $search="sex=0 AND ";
-	}else{
-		$search="";
+	$searchCondition=""; // Suchfilter und Suchtext werden getrennt vorbereitet, damit Eingaben kein SQL veraendern.
+	$searchParams=array(); // In dieser Liste liegen die Werte fuer die Platzhalter der Abfrage.
+	$searchTerm=trim(db_unquote_legacy_input($_POST["search"] ?? $_GET["search"] ?? "")); // Fehlende Suchwoerter werden als leer behandelt.
+	if ($searchTerm!="") {
+		if ($searchTerm=="weiblich") { $searchCondition="sex=? AND"; $searchParams[]=1; }
+		elseif ($searchTerm==("m".chr(195).chr(164)."nnlich")) { $searchCondition="sex=? AND"; $searchParams[]=0; }
+		else { $searchCondition="name LIKE ? AND"; $searchParams[]="%".$searchTerm."%"; }
 	}
 	$ppp=25; // Player Per Page to display
 	if (!$_GET['limit']){
 		$page=0;
 	}else{
-		$page=(int)$_GET['limit'];
-		addnav("Vorherige Seite","newgiftshop.php?op=send&op2=$gift&limit=".($page-1)."&search=$_POST[search]");
+		$page=max(0,(int)db_unquote_legacy_input($_GET["limit"])); // Eine negative Seitenzahl kann keine ungueltige Datenbankabfrage erzeugen.
+		addnav("Vorherige Seite","newgiftshop.php?op=send&op2=$gift&limit=".($page-1)."&search=".rawurlencode($searchTerm)."");
 	}
-	$limit="".($page*$ppp).",".($ppp+1);
-	$sql = "SELECT login,name,level,sex,acctid FROM accounts WHERE $search locked=0 AND acctid<>".$session['user']['acctid']." AND lastip<>'".$session['user']['lastip']."' AND charm>1 ORDER BY login,level LIMIT $limit";
-	$result = db_query($sql);
-	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","newgiftshop.php?op=send&op2=$gift&limit=".($page+1)."&search=$_POST[search]");
+	$offset=$page*$ppp; // Startposition und Trefferzahl werden als Zahlen fuer LIMIT vorbereitet.
+	$pageSize=$ppp+1; // Ein zusaetzlicher Treffer zeigt an, ob es eine weitere Seite gibt.
+	$sql="SELECT login,name,level,sex,acctid FROM accounts WHERE ".$searchCondition." locked=0 AND acctid<>? AND lastip<>? AND charm>1 ORDER BY login,level LIMIT ?,?"; // Empfaenger, IP-Adresse und Seitenlimit werden sicher gebunden.
+	$result=db_query_params($sql,array_merge($searchParams,array((int)$session["user"]["acctid"],$session["user"]["lastip"],(int)$offset,(int)$pageSize)));
+	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","newgiftshop.php?op=send&op2=$gift&limit=".($page+1)."&search=".rawurlencode($searchTerm)."");
 	output("`rWem willst du das Geschenk schicken?`n`n");
-	output("<form action='newgiftshop.php?op=send&op2=$gift' method='POST'>Nach Name suchen: <input name='search' value='$_POST[search]'><input type='submit' class='button' value='Suchen'></form>",true);
+	output("<form action=\"newgiftshop.php?op=send&op2=$gift\" method=\"POST\">Nach Name suchen: <input name=\"search\" value=\"".htmlspecialchars($searchTerm,ENT_QUOTES,"UTF-8")."\"><input type=\"submit\" class=\"button\" value=\"Suchen\"></form>",true); // Der Suchtext wird maskiert angezeigt, damit Eingaben kein HTML einschleusen.
 	addnav("","newgiftshop.php?op=send&op2=$gift");
 	output("<table cellpadding='3' cellspacing='0' border='0'><tr class='trhead'><td>Name</td><td>Level</td><td>Geschlecht</td></tr>",true);
 	for ($i=0;$i<db_num_rows($result);$i++){
@@ -139,7 +142,7 @@ if ($HTTP_GET_VARS['op']=="send"){
 	addnav("Zurück zum Laden","newgiftshop.php");
 }
 if ($HTTP_GET_VARS['op']=="send2"){
-	$name=$HTTP_GET_VARS['name'];
+	$name=(int)db_unquote_legacy_input($HTTP_GET_VARS["name"]); // Empfaenger-ID wird vor jeder Verwendung als Zahl geprueft.
 	$effekt="";
 	if ($HTTP_GET_VARS['op2']=="gift1"){
 		$gift="Tulpe";
@@ -159,23 +162,23 @@ if ($HTTP_GET_VARS['op']=="send2"){
 	}
 	if ($HTTP_GET_VARS['op2']=="gift5"){
 		$gift="Freundschaftsbändchen";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Freundschaftsbändchen',$name,'Geschenk',12,'Ein Freundschaftsbändchen von ".$session['user']['name']."')");
+			giftshop_add_item($gift,$name,12,"Ein Freundschaftsbaendchen von ".$session["user"]["name"]); // Geschenkname und Spielertext werden sicher gespeichert.
 		$session['user']['gold']-=60;
 	}
 	if ($HTTP_GET_VARS['op2']=="gift6"){
 		$gift="Freundschaftsanhänger";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Freundschaftsanhänger',$name,'Geschenk',20,'Ein Freundschaftsänhänger von ".$session['user']['name']."')");
+			giftshop_add_item($gift,$name,20,"Ein Freundschaftsanhang von ".$session["user"]["name"]); // Geschenkname und Spielertext werden sicher gespeichert.
 		$session['user']['gold']-=100;
 	}
 	if ($HTTP_GET_VARS['op2']=="gift7"){
 		$gift="Halskette";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Halskette',$name,'Geschenk',40,'Diese Halskette hat dir ".$session['user']['name']." geschenkt.')");
+			giftshop_add_item($gift,$name,40,"Dieses Geschenk hat dir ".$session["user"]["name"]." geschickt."); // Spielername wird als Textwert gespeichert.
 		$session['user']['gold']-=200;
 	}
 	if ($HTTP_GET_VARS['op2']=="gift8"){
 		$gift="Plüschdrachen";
 		$effekt="`RDer ist ja soooooo süüüüüüüüüüüssss!!!`0";
-		db_query("INSERT INTO items (name,owner,class,gold,description) VALUES ('Plüschdrachen',$name,'Geschenk',100,'`REin `@Grüner Drachen`R aus Plüsch zum Kuscheln. Der ist von ".$session['user']['name'].".')");
+			giftshop_add_item($gift,$name,100,"Ein Plueschdrache von ".$session["user"]["name"].".",0,""); // Auch der persoenliche Absendertext bleibt ein sicherer Datenwert.
 		$session['user']['gold']-=500;
 	}
 	if ($HTTP_GET_VARS['op2']=="gift9"){
@@ -183,7 +186,7 @@ if ($HTTP_GET_VARS['op']=="send2"){
 		$buff = array("name"=>"`1Heilkräuter","rounds"=>20,"wearoff"=>"`1Die Heilkräuter verlieren ihre Wirkung!`0","regen"=>1.2,"roundmsg"=>"`1Die Heilkräuter heilen deine Wunden.`0","activate"=>"defense");
 		$buff=serialize($buff);
 		$effekt="Diese Heilkräuter heilen Wunden, bleiben aber nicht lange frisch.";
-		db_query("INSERT INTO items (name,owner,class,gold,description,hvalue,buff) VALUES ('Beutel Heilkräuter',$name,'Geschenk',500,'$effekt',1,'$buff')");
+			giftshop_add_item($gift,$name,500,$effekt,1,$buff); // Beschreibung und Wirkung des Geschenks werden sicher gebunden.
 		$session['user']['gold']-=1000;
 	}
 	if ($HTTP_GET_VARS['op2']=="gift10"){
@@ -195,14 +198,14 @@ if ($HTTP_GET_VARS['op']=="send2"){
 		$buff = array("name"=>"`rAmulettaura`0","rounds"=>10,"wearoff"=>"`rDie Aura des Amuletts verschwindet.`0","defmod"=>1.1,"activate"=>"roundstart");
 		$buff=serialize($buff);
 		$effekt="Als du das Amulett anlegst, hüllt es dich in eine merkwürdige, schützende Aura. Der Beipackzettel verrät dir, dass das Amulett nach 3 Tagen seine Wirkung verliert und zu Staub zerfallen wird.";
-		db_query("INSERT INTO items (name,owner,class,gold,description,hvalue,buff) VALUES ('Goldenes Amulett',$name,'Geschenk',1000,'$effekt',3,'$buff')");
+			giftshop_add_item($gift,$name,1000,$effekt,3,$buff); // Beschreibung und Wirkung des Geschenks werden sicher gebunden.
 		$session['user']['gold']-=2000;
 	}
 	if ($HTTP_GET_VARS['op2']=="gift12"){
 		$gift="Seltsamer Schädel";
 		$gefallen=e_rand(5,10);
 		$effekt="Du untersuchst dieses merkwürdige Geschenk genauer. Dabei rutscht es dir aus der Hand und zerplatzt am Boden in 1000 Stücke. Doch eine seltsame Kraft wird frei, die dir $gefallen Gefallen bei Ramius bringt!";
-		db_query("UPDATE accounts SET deathpower=deathpower+$gefallen WHERE acctid=$name");
+			db_query_params("UPDATE accounts SET deathpower=deathpower+? WHERE acctid=?",array((int)$gefallen,(int)$name)); // Gefallen und Empfaenger-ID werden als Zahlen gebunden.
 		$session['user']['gold']-=3000;
 	}
 	$mailmessage=$session['user']['name'];
@@ -225,7 +228,7 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 		$find = array('%Y','%y','%m','%n','%d','%j');
 		$replace = array('','',sprintf('%02d',$geb[1]),(int)$geb[1],sprintf('%02d',$geb[2]),(int)$geb[2]);
 		$geb = str_replace($find,$replace,getsetting('gamedateformat','%Y-%m-%d'));
-		$result=db_query("SELECT login,name FROM accounts WHERE locked=0 AND birthday LIKE '%$geb%' AND acctid<>".$session['user']['acctid']." ORDER BY login ASC");
+		$result=db_query_params("SELECT login,name FROM accounts WHERE locked=0 AND birthday LIKE ? AND acctid<>? ORDER BY login ASC",array("%".$geb."%",(int)$session["user"]["acctid"])); // Das Geburtstagsdatum wird als Suchwert gebunden.
 		if ($wer=="" && db_num_rows($result)<=0){
 			output("`r".($session['user']['sex']?"Der Mann":"Die Frau")." hinter dem Ladentisch schaut dich verwirrt an, denn heute, $geb, ist für niemanden ein besonderer Tag. Das Bewerfen mit Torten könnte an Tagen, an denen das Ziel nicht Geburtstag hat, von diesem als Angriff gewertet werden. ");
 			output("Darum sollte man auf diesen Brauch an normalen Tagen besser verzichten.`nEnttäuscht wendest du dich ab.");
@@ -242,7 +245,8 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 			addnav("","newgiftshop.php?op=cake");
 		}
 	}else{
-		$result=db_query("SELECT acctid,name,sex FROM accounts WHERE login='$_POST[throw]' LIMIT 1");
+		// Der ausgewaehlte Spielername wird als Datenwert gebunden und nicht als SQL-Text eingesetzt.
+		$result=db_query_params("SELECT acctid,name,sex FROM accounts WHERE login=? LIMIT 1", array(db_unquote_legacy_input($_POST['throw'])));
 		if (db_num_rows($result)<=0){
 			output("`r $_POST[throw]s Geburtstag ist entweder schon vorbei, oder es gibt ihn gar nicht.`nEnttäuscht wendest du dich ab.");
 			addnav("Zurück in den Garten","gardens.php");
@@ -254,7 +258,7 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 			addnav("Zurück in den Garten","gardens.php");
 		}else{
 			$row = db_fetch_assoc($result);
-			$result2=db_query("SELECT * FROM items WHERE class='Geschenk' AND owner=$row[acctid] AND name='Tortenreste'");
+			$result2=db_query_params("SELECT * FROM items WHERE class=? AND owner=? AND name=?",array("Geschenk",(int)$row["acctid"],"Tortenreste")); // Besitzer und Gegenstandsname werden sicher gesucht.
 			$torte=e_rand(1,7);
 			if (db_num_rows($result2)>0) $item = db_fetch_assoc($result2);
 			if (db_num_rows($result2)>0) $torte=$item['value2'];
@@ -288,12 +292,13 @@ if ($_GET['op']=="cake"){ // this part was done for claymore's birthday :)
 			output("`r...wirfst du sie ".($row['sex']?"ihr":"ihm")." mitten ins Gesicht und brüllst ".($row['sex']?"ihr":"ihm")." ein fröhliches `b`RHAPPY BIRTHDAY`b`r entgegen.`n`n");
 			output("`&$row[name]`r wird an den Tortenresten sicher noch lange ".($row['sex']?"ihre":"seine")." Freude haben. ".($row['sex']?"Sie":"Er")." trägt damit die klebrigen Reste von $item[hvalue] Torten an sich herum." );
 			if (db_num_rows($result2)>0){
-				$sql="UPDATE items SET hvalue=$item[hvalue] WHERE class='Geschenk' AND owner=$row[acctid] AND name='Tortenreste'";
+				$sql="UPDATE items SET hvalue=? WHERE class=? AND owner=? AND name=?"; // Anzahl und Besitzer der vorhandenen Tortenreste werden sicher gebunden.
+				db_query_params($sql,array((int)$item["hvalue"],"Geschenk",(int)$row["acctid"],"Tortenreste"));
 			}else{
-				$sql="INSERT INTO items (name,owner,class,gold,description,value2,hvalue,buff) VALUES ('Tortenreste',$row[acctid],'Geschenk',0,'Tortenreste von $item[hvalue] Geburtstagstorten kleben an dir.',$torte,$item[hvalue],'$buff')";
-				systemmail($row['acctid'],"`rAchtung! Torte!","`&`bPLATSCH!`b`r Zu spät.`nDu wurdest von deiner ersten Geburtstagstorte getroffen... weitere werden heute bestimmt noch folgen. Es ist eine $wie Sorte. (Die genaue Anzahl siehst du in deinem Inventar.)");
+				$sql="INSERT INTO items (name,owner,class,gold,description,value2,hvalue,buff) VALUES (?,?,?,?,?,?,?,?)"; // Neue Tortenreste werden mit gebundenen Werten angelegt.
+				db_query_params($sql,array("Tortenreste",(int)$row["acctid"],"Geschenk",0,"Tortenreste von ".(int)$item["hvalue"]." Geburtstagstorten kleben an dir.",(int)$torte,(int)$item["hvalue"],$buff));
+				systemmail($row["acctid"],"`rAchtung! Torte!","`&`bPLATSCH!`b`r Zu spaet. Du wurdest von deiner ersten Geburtstagstorte getroffen.");
 			}
-			db_query($sql);
 			$session['user']['reputation']+=2;
 			$session['user']['witch']++;
 			$session['user']['gold']-=(15*$session['user']['level']);

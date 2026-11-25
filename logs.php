@@ -13,6 +13,9 @@ by anpera
 
 	
 require_once("common.php");
+// Leere Standardwerte verhindern Warnungen, wenn eine URL oder ein Formular ein Feld nicht mitschickt.
+$_GET += array('op'=>'','in'=>'','out'=>'','subop'=>'','limit'=>0,'order'=>'','id'=>'','ip'=>'','pw'=>'','act'=>'','searchby'=>'','userid'=>'');
+$_POST += array('setupban'=>'','userid'=>array(),'type'=>'','ip'=>'','id'=>'','duration'=>0,'reason'=>'','deleteuser'=>'','stdreason'=>0,'savereason'=>'');
 
 page_header("Logs und Mail");
 
@@ -22,13 +25,14 @@ if ($_GET['op']=="mail"){
 		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET['limit'];
+			$page=max(0,(int)$_GET['limit']);
 			addnav("Vorherige Seite","logs.php?op=mail&in=$_GET[in]&limit=".($page-1)."");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		output("`qYe Olde Mail (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") -- Alle Mails: Inbox $_GET[in] `0`n`n");
-		$sql = "SELECT mail.*,accounts.login AS absender FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgfrom WHERE msgto=$_GET[in] ORDER BY sent DESC LIMIT $limit";
-		$result = db_query($sql) or die(db_error(LINK));
+		// Die Postfach-ID wird als Zahl gebunden; der Seitenbereich wird vorher numerisch berechnet.
+		$sql = "SELECT mail.*,accounts.login AS absender FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgfrom WHERE msgto=? ORDER BY sent DESC LIMIT $limit";
+		$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['in']))) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=mail&in=$_GET[in]&limit=".($page+1)."");
 		output("<table align='center'><tr><td>`bDatum`b</td><td>`bAbsender`b</td><td>`bBetreff`b</td></tr>",true);
 		for ($i=0;$i<db_num_rows($result);$i++){
@@ -43,13 +47,14 @@ if ($_GET['op']=="mail"){
 		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET['limit'];
+			$page=max(0,(int)$_GET['limit']);
 			addnav("Vorherige Seite","logs.php?op=mail&out=$_GET[in]&limit=".($page-1)."");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		output("`qYe Olde Mail (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") -- Alle Mails: Outbox $_GET[out] `0`n`n");
-		$sql = "SELECT mail.*,accounts.login AS empfaenger FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgto WHERE msgfrom=$_GET[out] ORDER BY sent DESC LIMIT $limit";
-		$result = db_query($sql) or die(db_error(LINK));
+		// Die Konto-ID der gesendeten Nachrichten bleibt ein gebundener Zahlenwert.
+		$sql = "SELECT mail.*,accounts.login AS empfaenger FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgto WHERE msgfrom=? ORDER BY sent DESC LIMIT $limit";
+		$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['out']))) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=mail&out=$_GET[out]&limit=".($page+1)."");
 		output("<table align='center'><tr><td>`bDatum`b</td><td>`bEmpfänger`b</td><td>`bBetreff`b</td></tr>",true);
 		for ($i=0;$i<db_num_rows($result);$i++){
@@ -61,11 +66,12 @@ if ($_GET['op']=="mail"){
 		addnav("Zurück","logs.php?op=mail");
 	}else{
 		if (!$_GET['subop']) $_GET['subop']="system";
+		$sort="sent";
 		$ppp=25; // Player Per Page to display
 		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET['limit'];
+			$page=max(0,(int)$_GET['limit']);
 			addnav("Vorherige Seite","logs.php?op=mail&limit=".($page-1)."&subop=$_GET[subop]&order=$sort");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
@@ -73,6 +79,8 @@ if ($_GET['op']=="mail"){
 		if ($_GET['order']) $sort=$_GET['order'];
 		output("`qYe Olde Mail (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") -- ".($_GET['subop']=="all"?"Private Mails":"Systemnachrichten")."`0`n`n");
 		//addnav($_GET[subop]=="system"?"Normale Nachrichten":"Systemnachrichten","logs.php?op=mail&subop=".($_GET[subop]=="system"?"all":"system")."&order=$_GET[order]&limit=$_GET[limit]"); // ist möglicherweise nicht erlaubt
+		// Nur diese drei Spalten sind als Sortierung fuer die Mailliste erlaubt.
+		$sort = in_array($sort, array("sent","msgfrom","msgto"), true) ? $sort : "sent";
 		$sql = "SELECT mail.*,accounts.login AS empfaenger FROM mail LEFT JOIN accounts ON accounts.acctid=mail.msgto WHERE ".($_GET['subop']=="system"?"msgfrom=0":"msgfrom<>0")." AND msgto<>0 ORDER BY $sort DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=mail&limit=".($page+1)."&order=$sort&subop=$_GET[subop]");
@@ -82,7 +90,8 @@ if ($_GET['op']=="mail"){
 		addnav("","logs.php?op=mail&limit=$page&order=msgfrom&subop=$_GET[subop]");
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
-			$row2=db_fetch_assoc(db_query("SELECT acctid,login FROM accounts WHERE acctid=$row[msgfrom]"));
+			// Die Absender-ID stammt aus dem Datenbankeintrag und wird als Zahl gebunden.
+			$row2=db_fetch_assoc(db_query_params("SELECT acctid,login FROM accounts WHERE acctid=?", array((int)$row['msgfrom'])));
 			output("<tr><td>$row[sent]</td><td><a href='logs.php?op=mail&out=$row2[acctid]'>$row2[login]</a></td><td><a href='logs.php?op=mail&in=$row[msgto]'>$row[empfaenger]</a></td><td>$row[subject]</td></tr><tr><td colspan='4'>$row[body]</td></tr>",true);
 			output("<tr><td colspan='4'><hr></td></tr>",true);
 			addnav("","logs.php?op=mail&in=$row[msgto]");
@@ -94,18 +103,22 @@ if ($_GET['op']=="mail"){
 	}
 }else if ($_GET['op']=="faillog"){
 	if ($_GET['id']){
+			$sort="date";
 		$ppp=25; // Player Per Page to display
 		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET['limit'];
+			$page=max(0,(int)$_GET['limit']);
 			addnav("Vorherige Seite","logs.php?op=faillog&id=$_GET[id]&limit=".($page-1)."&order=$sort&pw=$_GET[pw]");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sort="date";
 		if ($_GET['order']) $sort=$_GET['order'];
-		$sql = "SELECT * FROM faillog WHERE acctid=$_GET[id] ORDER BY $sort DESC LIMIT $limit";
-		$result = db_query($sql) or die(db_error(LINK));
+		// Die Spieler-ID wird gebunden, damit die URL den Datenbankbefehl nicht veraendern kann.
+		// Fuer diese Liste sind nur Datum und IP als Sortierung erlaubt.
+		$sort = in_array($sort, array("date","ip"), true) ? $sort : "date";
+		$sql = "SELECT * FROM faillog WHERE acctid=? ORDER BY $sort DESC LIMIT $limit";
+		$result = db_query_params($sql, array((int)db_unquote_legacy_input($_GET['id']))) or die(db_error(LINK));
 		output("Fehlgeschlagene Logins (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") für ID $_GET[id]`n`n");
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=faillog&id=$_GET[id]&limit=".($page+1)."&order=$sort&pw=$_GET[pw]");
 		output("<table align='center'><tr><td>`b<a href='logs.php?op=faillog&id=$_GET[id]&limit=$page&order=date'>Datum</a>`b</td><td>`b<a href='logs.php?op=faillog&id=$_GET[id]&limit=$page&order=ip'>IP</a>`b</td>".($_GET['pw']?"<td>`bfalsches PW`b</td>":"")."</tr>",true);
@@ -125,12 +138,14 @@ if ($_GET['op']=="mail"){
 		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET['limit'];
+			$sort="date";
+			$page=max(0,(int)$_GET['limit']);
 			addnav("Vorherige Seite","logs.php?op=faillog&ip=$_GET[ip]&limit=".($page-1)."&pw=$_GET[pw]");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
-		$sql = "SELECT faillog.*,accounts.name AS absender FROM faillog LEFT JOIN accounts ON accounts.acctid=faillog.acctid WHERE ip='$_GET[ip]' ORDER BY date DESC LIMIT $limit";
-		$result = db_query($sql) or die(db_error(LINK));
+		// Die IP-Adresse ist Text und wird als Parameter sicher gebunden.
+		$sql = "SELECT faillog.*,accounts.name AS absender FROM faillog LEFT JOIN accounts ON accounts.acctid=faillog.acctid WHERE ip=? ORDER BY date DESC LIMIT $limit";
+		$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['ip']))) or die(db_error(LINK));
 		output("Fehlgeschlagene Logins (".($_GET['limit']*$ppp)."-".($_GET['limit']*$ppp+$ppp).") von IP $_GET[ip]`n`n");
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=faillog&ip=$_GET[ip]&limit=".($page+1)."&pw=$_GET[pw]");
 		output("<table align='center'><tr><td>`bDatum`b</td><td>`bName`b</td>".($_GET['pw']?"<td>`bfalsches PW`b</td>":"")."</tr>",true);
@@ -149,12 +164,14 @@ if ($_GET['op']=="mail"){
 		if (!$_GET['limit']){
 			$page=0;
 		}else{
-			$page=(int)$_GET['limit'];
+			$page=max(0,(int)$_GET['limit']);
 			addnav("Vorherige Seite","logs.php?op=faillog&limit=".($page-1)."&order=$sort");
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sort="date";
 		if ($_GET['order']) $sort=$_GET['order'];
+		// Nur bekannte Spaltennamen duerfen die Reihenfolge der Fehlerliste bestimmen.
+		$sort = in_array($sort, array("date","acctid","ip"), true) ? $sort : "date";
 		$sql = "SELECT faillog.*,accounts.name AS absender FROM faillog LEFT JOIN accounts ON accounts.acctid=faillog.acctid WHERE 1 ORDER BY $sort DESC LIMIT $limit";
 		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","logs.php?op=faillog&limit=".($page+1)."&order=$sort");
@@ -175,16 +192,22 @@ if ($_GET['op']=="mail"){
 	if (!empty($_POST['setupban']) && isset($_POST['userid']) && is_array($_POST['userid']) && count($_POST['userid'])>0) {
 		output("<form action='logs.php?op=multi&act=saveban&searchby=$_GET[searchby]' method='POST'>",true);
 		if ($_POST['setupban']=='IPs bannen') {
-			$sql = 'SELECT lastip FROM accounts WHERE acctid IN ("'.implode('","',$_POST['userid']).'") GROUP BY lastip';
-			$result = db_query($sql);
+            // Konto-IDs werden erst in Zahlen umgewandelt und dann sicher an SQL gebunden.
+            $selectedIds = array_map('intval', $_POST['userid']);
+            $idPlaceholders = implode(',', array_fill(0, count($selectedIds), '?'));
+            $sql = "SELECT lastip FROM accounts WHERE acctid IN ($idPlaceholders) GROUP BY lastip";
+            $result = db_query_params($sql, $selectedIds);
 			$ips = array();
 			while ($row = db_fetch_assoc($result)) $ips[] = $row['lastip'];
 			output('Sperre für die IP '.implode(', ',$ips).'`n');
 			output('<input type="hidden" name="type" value="ip"><input type="hidden" name="ip" value="'.implode('|',$ips).'">',true);
 		}
 		else {
-			$sql = 'SELECT uniqueid FROM accounts WHERE acctid IN ("'.implode('","',$_POST['userid']).'") GROUP BY uniqueid';
-			$result = db_query($sql);
+            // Dieselben Konto-IDs werden gebunden, um die eindeutigen Spielerkennungen auszulesen.
+            $selectedIds = array_map('intval', $_POST['userid']);
+            $idPlaceholders = implode(',', array_fill(0, count($selectedIds), '?'));
+            $sql = "SELECT uniqueid FROM accounts WHERE acctid IN ($idPlaceholders) GROUP BY uniqueid";
+            $result = db_query_params($sql, $selectedIds);
 			$ids = array();
 			while ($row = db_fetch_assoc($result)) $ids[] = $row['uniqueid'];
 			output('Sperre für die ID '.implode(', ',$ids).'`n');
@@ -201,16 +224,11 @@ if ($_GET['op']=="mail"){
 
 		// PHP 8 reserviert $this fuer Objekte; hier speichern wir den gerade bearbeiteten Ban-Wert in einer normalen Variable.
 		foreach ($vals AS $loopValue) {
-			$sql = "INSERT INTO bans (";
-			if ($_POST['type']=="ip"){
-				$sql.="ipfilter";
-			}else{
-				$sql.="uniqueid";
-			}
-			$sql.=",banexpire,banreason) VALUES (";
-			$sql.="\"$loopValue\"";
-			$sql.=",\"".((int)$_POST['duration']==0?"0000-00-00":date("Y-m-d",strtotime("+$_POST[duration] days")))."\",";
-			$sql.="\"$_POST[reason]\")";
+            // Die Spalte wird aus zwei festen Namen gewaehlt; IP, ID und Begruendung bleiben Datenwerte.
+            $banColumn = ($_POST['type']=="ip") ? "ipfilter" : "uniqueid";
+            $duration = (int)db_unquote_legacy_input($_POST['duration']);
+            $banExpire = ($duration==0) ? "0000-00-00" : date("Y-m-d",strtotime("+".$duration." days"));
+            $sql = "INSERT INTO bans ($banColumn,banexpire,banreason) VALUES (?,?,?)";
 			if ($_POST['type']=="ip"){
 				if (substr($_SERVER['REMOTE_ADDR'],0,strlen($loopValue)) == $loopValue){
 					$sql = "";
@@ -223,7 +241,7 @@ if ($_GET['op']=="mail"){
 				}
 			}
 			if ($sql!=""){
-				db_query($sql) or die(db_error(LINK));
+                db_query_params($sql, array(db_unquote_legacy_input($loopValue), $banExpire, db_unquote_legacy_input($_POST['reason']))) or die(db_error(LINK));
 				output(db_affected_rows()." Bann eingetragen.`n`n");
 				output(db_error(LINK));
 			}
@@ -263,36 +281,23 @@ if ($_GET['op']=="mail"){
 		output('</form>',true);
 		addnav('','logs.php?op=multi&act=dodeleteuser&searchby='.$_GET['searchby'].'&userid='.implode(',',$userIds));
 	}
-	elseif ($_GET['act']=='dodeleteuser') {
-		$userid = explode(',',$_GET['userid']);
+	elseif ($_GET['act']=='dodeleteuser' && $_SERVER['REQUEST_METHOD']=='POST') {
+		// Das Loeschen darf nur nach dem bestaetigten Formular per POST starten, nie durch einen einfachen Link.
+		$userid = array_map('intval', explode(',', $_GET['userid']));
 		// Diese Schleife verarbeitet jede ausgewaehlte Spieler-ID einzeln.
 		foreach ($userid AS $loopValue) {
-			deleteuser($loopValue,$_POST['stdreason'],$_POST['reason'],$_POST['savereason']);
+			deleteuser($loopValue, (int)$_POST['stdreason'], $_POST['reason'], !empty($_POST['savereason']));
 		}
-		output('`n');
+		output('
+');
 	}
 	else output('`n');
 
 
-	$in_ip = $in_id = '';
-	if ($_GET['searchby']!='id') {
-		$sql = 'SELECT lastip FROM accounts WHERE lastip!="" GROUP BY lastip HAVING COUNT(*) > 1';
-		$result = db_query($sql) or die(db_error(LINK));
-		while ($row = db_fetch_assoc($result)) {
-			$in_ip .= ',"'.$row['lastip'].'"';
-		}
-	}
-	if ($_GET['searchby']!='ip') {
-		$sql = 'SELECT uniqueid FROM accounts WHERE uniqueid!="" GROUP BY uniqueid HAVING COUNT(*) > 1';
-		$result = db_query($sql) or die(db_error(LINK));
-		while ($row = db_fetch_assoc($result)) {
-			$in_id .= ',"'.$row['uniqueid'].'"';
-		}
-	}
-
-	$ip = $id = $users = array();
-	$sql = 'SELECT acctid,name,lastip,uniqueid,dragonkills,level FROM accounts WHERE (lastip IN (-1'.$in_ip.') OR uniqueid IN (-1'.$in_id.')) AND locked="0" ORDER BY dragonkills ASC, level ASC';
+	// Unterabfragen finden IPs und Kennungen, die bei mehr als einem Konto vorkommen; alle Werte bleiben in der Datenbank und werden nicht in SQL-Text eingesetzt.
+	$sql = 'SELECT acctid,name,lastip,uniqueid,dragonkills,level FROM accounts WHERE ((lastip IN (SELECT lastip FROM accounts WHERE LENGTH(lastip)>0 GROUP BY lastip HAVING COUNT(*) > 1) AND LENGTH(lastip)>0) OR (uniqueid IN (SELECT uniqueid FROM accounts WHERE LENGTH(uniqueid)>0 GROUP BY uniqueid HAVING COUNT(*) > 1) AND LENGTH(uniqueid)>0)) AND locked=0 ORDER BY dragonkills ASC, level ASC';
 	$result = db_query($sql) or die(db_error(LINK));
+	$ip = $id = $users = array();
 	while ($row = db_fetch_assoc($result)) {
 		if ((!isset($id[$row['uniqueid']]) || $_GET['searchby']=='ip') && (!isset($ip[$row['lastip']]) || $_GET['searchby']=='id')) {
 			if ($_GET['searchby']!='id') $ip[$row['lastip']] = count($users);
