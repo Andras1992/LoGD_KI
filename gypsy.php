@@ -20,8 +20,8 @@ if ($_GET['op']=="pay"){
 		}
 	}else{
 		page_header("Zigeunerzelt");
-		addnav("Zurück zum Dorf","village.php");
-		output("`5Du bietest der alten Zigeunerin deine `^{$session[user][gold]}`5 Gold für die Beschwörungssitzung. Sie informiert dich, dass die Toten zwar tot, aber deswegen trotzdem nicht billig sind.");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
+		output("`5Du bietest der alten Zigeunerin deine `^{$session[user][gold]}`5 Gold fÃ¼r die BeschwÃ¶rungssitzung. Sie informiert dich, dass die Toten zwar tot, aber deswegen trotzdem nicht billig sind.");
 	}
 }elseif ($_GET['op']=="talk"){
 	page_header("In tiefer Trance sprichst du mit den Schatten");
@@ -36,7 +36,7 @@ if ($_GET['op']=="pay"){
 		if ($i<$count) $names.=", "; 
 	} 
 	db_free_result($result); 
-	output("`5Du fühlst die Anwesenheit von $names`5.`n`n"); 
+	output("`5Du fÃ¼hlst die Anwesenheit von $names`5.`n`n"); 
 	output("`5Solange du in tiefer Trance bist, kannst du mit den Toten sprechen:`n");
 	viewcommentary("shade","Sprich zu den Toten",25,"spricht");
 	addnav("Erwachen","village.php");
@@ -44,20 +44,20 @@ if ($_GET['op']=="pay"){
 	page_header("In tiefer Trance sprichst du mit den Schatten");
 	output("`5Die Zigeunerin versetzt dich in tiefe Trance.`n`% Du findest ".($session['user']['sex']?"deinen Mann":"deine Frau")." im Land der Schatten und flirtest eine Weile mit ".($session['user']['sex']?"ihm, um sein":"ihr, um ihr")." Leid zu lindern. ");
 	output("`n`^Du bekommst einen Charmepunkt.");
-	$session['bufflist']['lover']=array("name"=>"`!Schutz der Liebe","rounds"=>60,"wearoff"=>"`!Du vermisst deine große Liebe!`0","defmod"=>1.2,"roundmsg"=>"Deine große Liebe lässt dich an deine Sicherheit denken!","activate"=>"defense");
+	$session['bufflist']['lover']=array("name"=>"`!Schutz der Liebe","rounds"=>60,"wearoff"=>"`!Du vermisst deine groÃŸe Liebe!`0","defmod"=>1.2,"roundmsg"=>"Deine groÃŸe Liebe lÃ¤sst dich an deine Sicherheit denken!","activate"=>"defense");
 	$session['user']['charm']++;
 	$session['user']['seenlover']=1;
 	addnav("Erwachen","village.php");
 }elseif($_GET['op']=="buy"){
 	page_header("Zigeunerzelt");
 	if ($session['user']['transferredtoday']>getsetting("transferreceive",3)){
-		output("`5Du hast heute schon genug Geschäfte gemacht. `6Vessa`5 hat keine Lust mit dir zu handeln. Warte bis morgen.");
+		output("`5Du hast heute schon genug GeschÃ¤fte gemacht. `6Vessa`5 hat keine Lust mit dir zu handeln. Warte bis morgen.");
 	}else if ($session['user']['gems']>getsetting("selledgems",0)) {
-		output("`6Vessa`5wirft einen neidischen Blick auf dein Säckchen Edelsteine und beschließt, dir nichts mehr zu geben.");
+		output("`6Vessa`5wirft einen neidischen Blick auf dein SÃ¤ckchen Edelsteine und beschlieÃŸt, dir nichts mehr zu geben.");
 	} else {
   	      	if ($session['user']['gold']>=$costs[$_GET['level']]){
            			if (getsetting("selledgems",0) >= $_GET['level']) {
-              				output( "`6Vessa`5 grapscht sich deine `^".($costs[$_GET['level']])."`5 Goldstücke und gibt dir im Gegenzug `#".($gems[$_GET['level']])."`5 Edelstein".($gems[$_GET['level']]>=2?"e":"").".`n`n");
+              				output( "`6Vessa`5 grapscht sich deine `^".($costs[$_GET['level']])."`5 GoldstÃ¼cke und gibt dir im Gegenzug `#".($gems[$_GET['level']])."`5 Edelstein".($gems[$_GET['level']]>=2?"e":"").".`n`n");
               				$session['user']['gold']-=$costs[$_GET['level']];
               				$session['user']['gems']+=$gems[$_GET['level']];
 				$session['user']['transferredtoday']+=1;
@@ -67,33 +67,33 @@ if ($_GET['op']=="pay"){
                 				savesetting("selledgems",getsetting("selledgems",0)-$_GET['level']);
               				}
            			} else {
-              				output("`6Vessa`5 teilt dir mit, dass sie nicht mehr so viele Edelsteine hat und bittet dich später noch einmal wiederzukommen.`n`n");
+              				output("`6Vessa`5 teilt dir mit, dass sie nicht mehr so viele Edelsteine hat und bittet dich spÃ¤ter noch einmal wiederzukommen.`n`n");
            			}
         		}else{
             			output( "`6Vessa`5 zeigt dir den Stinkefinger, als du versuchst, ihr weniger zu zahlen als ihre Edelsteine momentan Wert sind.`n`n");    
         		}
 	}
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }elseif($_GET['op']=="sell"){
 	page_header("Zigeunerzelt");
 	$maxout = $session['user']['level']*getsetting("maxtransferout",25);
     	if ($session['user']['gems']<1){
         		output("`6Vessa`5 haut mit der Faust auf den Tisch und fragt dich, ob du sie veralbern willst. Du hast keinen Edelstein.`n`n");
 	}else if ($session['user']['transferredtoday']>getsetting("transferreceive",3)){
-		output("`5Du hast heute schon genug Geschäfte gemacht. `6Vessa`5 hat keine Lust mit dir zu handeln. Warte bis morgen.");
+		output("`5Du hast heute schon genug GeschÃ¤fte gemacht. `6Vessa`5 hat keine Lust mit dir zu handeln. Warte bis morgen.");
     	}else{
-        		output("`6Vessa`5 nimmt deinen Edelstein und gibt dir dafür $scost Goldstücke.`n`n");
+        		output("`6Vessa`5 nimmt deinen Edelstein und gibt dir dafÃ¼r $scost GoldstÃ¼cke.`n`n");
         		$session['user']['gold']+=$scost;
         		$session['user']['gems']-=1;
         		savesetting("selledgems",getsetting("selledgems",0)+1);
 		$session['user']['transferredtoday']+=1;
     	}
 	addnav("Zigeunerzelt","gypsy.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else{
 	checkday();
 	page_header("Zigeunerzelt");
-	output("`5Du betrittst das Zigeunerzelt hinter `#Pegasus`5' Rüstungsladen, welches eine Unterhaltung mit den Verstorbenen verspricht. Im typischen Zigeunerstil sitzt eine alte Frau hinter 
+	output("`5Du betrittst das Zigeunerzelt hinter `#Pegasus`5' RÃ¼stungsladen, welches eine Unterhaltung mit den Verstorbenen verspricht. Im typischen Zigeunerstil sitzt eine alte Frau hinter 
 	einer irgendwie schmierigen Kristallkugel. Sie sagt dir, dass die Verstorbenen nur mit den Bezahlenden reden. Der Preis ist `^$cost`5 Gold.");
 	output("`nDie Zigeunerin `6Vessa`5 gibt dir auch zu verstehen, dass sie mit Edelsteinen handelt.`nMomentan hat sie `#".getsetting("selledgems",0)."`5 Edelsteine auf Lager.");
 	if (getsetting("selledgems",0)>=1000) output(" Sie scheint aber kein Interesse an weiteren Edelsteinen zu haben. Oder sie hat einfach kein Gold mehr, um weitere Edelsteine zu kaufen.");
@@ -112,10 +112,10 @@ if ($_GET['op']=="pay"){
 		addnav("Kaufe 2 Edelsteine ($costs[2] Gold)","gypsy.php?op=buy&level=2");
 		addnav("Kaufe 3 Edelsteine ($costs[3] Gold)","gypsy.php?op=buy&level=3");
 	}
-	if (getsetting("selledgems",0)<25 && $session['user']['level']>1) addnav("Verkaufe 1 Edelstein für $scost Gold","gypsy.php?op=sell");
-	addnav("Zurück");
+	if (getsetting("selledgems",0)<25 && $session['user']['level']>1) addnav("Verkaufe 1 Edelstein fÃ¼r $scost Gold","gypsy.php?op=sell");
+	addnav("ZurÃ¼ck");
 	// addnav("Forget it","village.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }
 page_footer();
 ?>

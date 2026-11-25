@@ -11,7 +11,7 @@ if ($_GET['op']=="return") {
 checkday();
 
 output("`n`c`#Du stolperst auf eine grasbewachsene Lichtung`c");
-addnav("Zur¸ck in den Wald","forest.php?op=return");
+addnav("Zur√ºck in den Wald","forest.php?op=return");
 if ($session['user']['specialmisc'] != "Hier gibt's nichts zu sehen.") {
     if ($session['user']['hashorse']>0){
         $buff = unserialize($playermount['mountbuff']);
@@ -19,7 +19,7 @@ if ($session['user']['specialmisc'] != "Hier gibt's nichts zu sehen.") {
             if ($playermount['partrecharge']) {
                 output("`n`n{$playermount['partrecharge']}");
             } else {
-                output("`n`n`&Du erlaubst deinem {$playermount['mountname']} sich hier zu st‰rken und herumzutollen.");
+                output("`n`n`&Du erlaubst deinem {$playermount['mountname']} sich hier zu st√§rken und herumzutollen.");
             }
         } else {
             if ($playermount['recharge']) {
@@ -32,23 +32,23 @@ if ($session['user']['specialmisc'] != "Hier gibt's nichts zu sehen.") {
         $session['bufflist']['mount']=$buff;
 
         if ($session['user']['hitpoints']<$session['user']['maxhitpoints']){
-            output("`n`^Dein Nickerchen hat dich vollst‰ndig geheilt!");
+            output("`n`^Dein Nickerchen hat dich vollst√§ndig geheilt!");
             $session['user']['hitpoints'] = $session['user']['maxhitpoints'];
         }
         $session['user']['turns']--;
-        output("`n`n`^Du verlierst einen Waldkampf f¸r heute.");
+        output("`n`n`^Du verlierst einen Waldkampf f√ºr heute.");
     } else {
-        output("`n`n`&Du beschlieﬂt, dir einen Moment Zeit zu nehmen und deinen armen F¸ﬂen eine kurze Pause von deinen riskanten Abenteuern zu gˆnnen. Du genieﬂt die wunderschˆne Umgebung.");
-        output("`n`n`^Du regenerierst vollst‰ndig!");
+        output("`n`n`&Du beschlie√üt, dir einen Moment Zeit zu nehmen und deinen armen F√º√üen eine kurze Pause von deinen riskanten Abenteuern zu g√∂nnen. Du genie√üt die wundersch√∂ne Umgebung.");
+        output("`n`n`^Du regenerierst vollst√§ndig!");
         if ($session['user']['hitpoints']<$session['user']['maxhitpoints'])
             $session['user']['hitpoints'] = $session['user']['maxhitpoints'];
     }
     $session['user']['specialmisc'] = "Hier gibt's nichts zu sehen.";
 } else {
-    output("`n`n`&Du ruhst dich eine Weile hier aus und genieﬂt die Sonne und den Schatten.");
+    output("`n`n`&Du ruhst dich eine Weile hier aus und genie√üt die Sonne und den Schatten.");
 }
 $session['user']['specialinc'] = "grassyfield.php";
 
 output("`n`n`@Rede mit den anderen, die hier herumlungern.`n");
-viewcommentary("grassyfield","Hinzuf¸gen",10,"sagt");
+viewcommentary("grassyfield","Hinzuf√ºgen",10,"sagt");
 ?>

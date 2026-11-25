@@ -63,10 +63,10 @@ function filterwords($string)
 }
 
 if ($HTTP_GET_VARS['op']==""){
-    output("`6`nEin kurzer kleiner Gnom mit Blättern in den Haaren hockt neben einem kleinen Baum. Er grinst und kichert hinter einer seiner fettigen Hände.");
-    output("Für einen Moment sieht es so aus, als ob er in den Wald wegkrabbeln will, aber dann grinst er dich an.`n`n");
-    output("`6\"`@Ich werde dir einen Gefallen tun,`6\" sagt er, \"`@wenn du mein Rätsel lösen kannst!`6\"`n`n");
-    output("`6Vorübergehend verfällt er in unkontrolliertes Kichern, fasst sich wieder für einen Moment und fährt fort.`n`n");
+    output("`6`nEin kurzer kleiner Gnom mit BlÃ¤ttern in den Haaren hockt neben einem kleinen Baum. Er grinst und kichert hinter einer seiner fettigen HÃ¤nde.");
+    output("FÃ¼r einen Moment sieht es so aus, als ob er in den Wald wegkrabbeln will, aber dann grinst er dich an.`n`n");
+    output("`6\"`@Ich werde dir einen Gefallen tun,`6\" sagt er, \"`@wenn du mein RÃ¤tsel lÃ¶sen kannst!`6\"`n`n");
+    output("`6VorÃ¼bergehend verfÃ¤llt er in unkontrolliertes Kichern, fasst sich wieder fÃ¼r einen Moment und fÃ¤hrt fort.`n`n");
 
     output("`6\"`@Aber wenn du falsch liegen solltest, mein Gefallen es wird sein!`6\"`n");
     output("`6`nNimmst du die Herausforderung an?`n`n");
@@ -96,7 +96,7 @@ if ($HTTP_GET_VARS['op']==""){
         $result = db_query($sq1) or die(db_error(LINK));
         $riddle = db_fetch_assoc($result);
         $session['user']['specialmisc']="Riddle" . $riddle['id'];
-        output("`6Vor Freude kichernd stellt er sein Rätsel:`n`n");
+        output("`6Vor Freude kichernd stellt er sein RÃ¤tsel:`n`n");
         output("`6\"`@$riddle[riddle]`6\"`n`n");
         output("`6Was meinst du?");
         output("<form action='forest.php?op=yes&subop=answer' method='POST'><input name='guess'><input type='submit' class='button' value='Rate'></form>",true);
@@ -130,7 +130,7 @@ if ($HTTP_GET_VARS['op']==""){
 
         if ($correct) {
             output("`n`6\"`@Eidechsen und Kaulquappen!! Du hast es!`6\", tobt er, `n");
-            output("`6\"`@Oh na gut. Hier hast du deinen dämlichen Preis.`6\"`n`n");
+            output("`6\"`@Oh na gut. Hier hast du deinen dÃ¤mlichen Preis.`6\"`n`n");
 
             // It would be nice to have some more consequences
             $rand = e_rand(1, 10);
@@ -152,18 +152,18 @@ if ($HTTP_GET_VARS['op']==""){
                     break;
                 case 8:
                 case 9:
-                    output("Er macht ein Hokus Pokus und dreht sich um. Nach diesem Schauspiel fühlst du dich bereit für den Kampf!");
-                    output("`n`n`^Du erhältst einen zusätzlichen Waldkampf!");
+                    output("Er macht ein Hokus Pokus und dreht sich um. Nach diesem Schauspiel fÃ¼hlst du dich bereit fÃ¼r den Kampf!");
+                    output("`n`n`^Du erhÃ¤ltst einen zusÃ¤tzlichen Waldkampf!");
                     $session['user']['turns']++;
                     break;
                 case 10:
-                    output("Er schaut dir tief in die Augen, dann zieht er dir kräftig eins über die Rübe.  ");
+                    output("Er schaut dir tief in die Augen, dann zieht er dir krÃ¤ftig eins Ã¼ber die RÃ¼be.  ");
                     if ($session['user']['specialty']) {
-                        output("Als du wieder zu dir kommst, fühlst du dich ein klein wenig geschickter.`n`#");
+                        output("Als du wieder zu dir kommst, fÃ¼hlst du dich ein klein wenig geschickter.`n`#");
                         increment_specialty();
                     }else{
-                        output("Das war eine Lektion in Spaß.");
-                        output("`n`n`^Du erhältst ein paar Erfahrungspunkte!");
+                        output("Das war eine Lektion in SpaÃŸ.");
+                        output("`n`n`^Du erhÃ¤ltst ein paar Erfahrungspunkte!");
                         $session['user']['experience'] += $session['user']['level'] * 10;
                     }
                     break;
@@ -179,8 +179,8 @@ if ($HTTP_GET_VARS['op']==""){
             // $result = db_query($sq1);
             /***************/ 
 
-            output("`n`6Der merkwürdige Gnom gackert vor Freude und tanzt um dich herum. Du fühlst dich ziemlich albern dabei, als dieser verrückte Gnom um dich herum tänzelt wie eine Fee,");
-            output("`deswegen machst du dich leise aus dem Staub, solange der Gnom abgelenkt ist. Irgendwie fühlst du dich jetzt weniger als ein Held - mit diesem spöttischen Gelächter in den Ohren. ");
+            output("`n`6Der merkwÃ¼rdige Gnom gackert vor Freude und tanzt um dich herum. Du fÃ¼hlst dich ziemlich albern dabei, als dieser verrÃ¼ckte Gnom um dich herum tÃ¤nzelt wie eine Fee,");
+            output("`deswegen machst du dich leise aus dem Staub, solange der Gnom abgelenkt ist. Irgendwie fÃ¼hlst du dich jetzt weniger als ein Held - mit diesem spÃ¶ttischen GelÃ¤chter in den Ohren. ");
 
             // It would be nice to have some more consequences
             $rand = e_rand(1, 6);
@@ -188,7 +188,7 @@ if ($HTTP_GET_VARS['op']==""){
                 case 1:
                 case 2:
                 case 3:
-                    output("Nicht viel später stellst du fest, dass dir auch etwas Gold fehlt...");
+                    output("Nicht viel spÃ¤ter stellst du fest, dass dir auch etwas Gold fehlt...");
                     output("`n`n`^Du hast Gold verloren!");
 					$gold = e_rand(1, $session['user']['level']*10);
 					if ($gold > $session['user']['gold'])
@@ -197,7 +197,7 @@ if ($HTTP_GET_VARS['op']==""){
 					//debuglog("lost $gold gold to the riddlemaster");
                 case 4:
                 case 5:
-                    output("Du glaubst nicht, dass du sofort wieder einem Gegner gegenüber treten kannst.");
+                    output("Du glaubst nicht, dass du sofort wieder einem Gegner gegenÃ¼ber treten kannst.");
                     output("`n`n`^Du verlierst einen Waldkampf!");
                     if ($session['user']['turns']>0) $session['user']['turns']--;
                     break;
@@ -213,8 +213,8 @@ if ($HTTP_GET_VARS['op']==""){
         $session['user']['specialmisc']="";
     }
 }else if($HTTP_GET_VARS['op']=="no"){
-    output("`n`6Du fürchtest dich lächerlich zu machen und lehnst seine Herausforderung ab. Er war sowieso etwas gruselig.");
-    output("`n`6Der merkwürdige Gnom kichert hysterisch und verschwindet im Wald.");
+    output("`n`6Du fÃ¼rchtest dich lÃ¤cherlich zu machen und lehnst seine Herausforderung ab. Er war sowieso etwas gruselig.");
+    output("`n`6Der merkwÃ¼rdige Gnom kichert hysterisch und verschwindet im Wald.");
     $session['user']['specialinc']="";
     $session['user']['specialmisc']="";
 }

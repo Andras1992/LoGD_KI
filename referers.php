@@ -18,8 +18,8 @@ if ($_GET['op']=="rebuild"){
 		db_query_params($sql,array($site,(int)$row["refererid"]));
 	} // Ende der Schleife, die jede Adresse neu einsortiert.
 } // Ende des Neuaufbaus der Referer-Liste.
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Referer Optionen");
 addnav("",$_SERVER['REQUEST_URI']);
 addnav("Aktualisieren","referers.php?sort=".URLEncode($_GET['sort'])."");
@@ -68,7 +68,7 @@ for ($i=0;$i<db_num_rows($result);$i++){
 		}
 	}
 	if ($skippedcount>0){
-		output("<tr class='trlight'><td>$skippedtotal</td><td valign='top' colspan='2'>`i$übersprungene Aufzeichnungen (über eine Woche alt)`i</td></tr>",true);
+		output("<tr class='trlight'><td>$skippedtotal</td><td valign='top' colspan='2'>`i$Ã¼bersprungene Aufzeichnungen (Ã¼ber eine Woche alt)`i</td></tr>",true);
 	}
 	//output("</td></tr>",true);
 }

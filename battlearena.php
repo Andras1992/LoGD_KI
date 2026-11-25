@@ -18,13 +18,16 @@
 // translation by anpera
 
 require_once "common.php";
+
+// Ohne gestarteten Kampf bleibt diese Seite bei ihrer normalen Anzeige.
+$battle = false;
 checkday();
-page_header("Kämpfer-Arena");
-output("`c`b`&Kämpfer-Arena`0`b`c`n`n");
+page_header("KÃ¤mpfer-Arena");
+output("`c`b`&KÃ¤mpfer-Arena`0`b`c`n`n");
 //checkevent();
 if ($HTTP_GET_VARS['op'] == ""){
-	output("`3Die Arena ist überfüllt mit Zuschauern, der Lärm ist ohrenbetäubend.  Einige Krieger kämpfen in der Mitte der ");
-	output("Arena um ihre Ehre und um die Platzierung. Du siehst eine Tür zu einem exklusiven Gemeinschaftsraum. Eine große Tafel hängt an einer Wand.`n");
+	output("`3Die Arena ist Ã¼berfÃ¼llt mit Zuschauern, der LÃ¤rm ist ohrenbetÃ¤ubend.  Einige Krieger kÃ¤mpfen in der Mitte der ");
+	output("Arena um ihre Ehre und um die Platzierung. Du siehst eine TÃ¼r zu einem exklusiven Gemeinschaftsraum. Eine groÃŸe Tafel hÃ¤ngt an einer Wand.`n");
 	$sql = "SELECT battlepoints,name FROM accounts WHERE battlepoints > 0  ORDER BY battlepoints DESC,name";
 	$result = db_query($sql);
 	for ($i=0;$i<db_num_rows($result);$i++){
@@ -51,27 +54,27 @@ if ($HTTP_GET_VARS['op'] == ""){
 	if ($session['user']['battlepoints'] >= 336 && $session['user']['dragonkills'] > 9) output("`@Maximus `^Level 15`n");
 	output("</ul>`n`#Ein Kampf in der Arena wird dich einen Waldkampf kosten.`n",true);
 	output("`3Es ist sehr empfehlenswert, dass du dich nur in bester Verfassung einem Kampf stellst.`n");
-	output("`#Du musst eine Nutzungsgebühr bezahlen.`n");
+	output("`#Du musst eine NutzungsgebÃ¼hr bezahlen.`n");
 	if ($session['user']['gold'] < 1) output("Leider stellst du fest, dass deine Taschen leer sind.`n");
 	if ($session['user']['gold'] > 0 and $session['user']['gold'] < 50) output("Leider bemerkst du, dass du nicht genug Gold hast.`n");
 	if ($session['user']['gold'] > 49 and $session['user']['turns'] > 0) addnav("Zahle Eintritt (50 Gold)","battlearena.php?op=pay");
 	if ($session['user']['battlepoints'] > 120 and $session['user']['dragonkills'] > 4) addnav("Gesellschaftsraum","battlearena.php?op=lounge");
 	//addnav("Rangliste","battlearena.php?op=rank");
 	addnav("Rangliste","hof.php?op=battlepoints&subop=most");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }
 if ($HTTP_GET_VARS['op'] == "lounge"){
 	output("`c`b`&Veteran's Lounge`0`b`c`n`n");
 	addcommentary();
 	viewcommentary("battlearena","Angeben:",20,"prahlt:");
 	if (@file_exists("pvparena.php")){
-		addnav("Zurück zur Arena","pvparena.php");
+		addnav("ZurÃ¼ck zur Arena","pvparena.php");
 	}else{
-		addnav("Zurück zur Arena","battlearena.php");
+		addnav("ZurÃ¼ck zur Arena","battlearena.php");
 	}
 }
 if ($HTTP_GET_VARS['op'] == "rank"){
-	output("`3Diese Krieger haben sich bereits im Kampf bewährt.`n`n");
+	output("`3Diese Krieger haben sich bereits im Kampf bewÃ¤hrt.`n`n");
 	$sql = "SELECT battlepoints,name FROM accounts WHERE battlepoints > 0  ORDER BY battlepoints DESC,name";
 	$result = db_query($sql);
 	for ($i=0;$i<db_num_rows($result);$i++){
@@ -85,8 +88,8 @@ addnav("Weiter","battlearena.php");
 if ($HTTP_GET_VARS['op'] == "pay"){
 	$session['user']['gold']-=50;
 	$session['user']['turns']-=1;
-	output("`cWähle deinen Gegner.`c");
-	addnav("Wähle deinen Gegner");
+	output("`cWÃ¤hle deinen Gegner.`c");
+	addnav("WÃ¤hle deinen Gegner");
 	if ($session['user']['battlepoints'] < 13 || $session['user']['dragonkills']<1)addnav("`2Cicero","battlearena.php?op=Cicero");
 	if ($session['user']['battlepoints'] > 12 and $session['user']['dragonkills'] >= 1 && $session['user']['battlepoints'] < 72 ) addnav("`@Vibius","battlearena.php?op=Vibius");
 	if ($session['user']['battlepoints'] >= 36 and $session['user']['dragonkills'] > 2 && $session['user']['battlepoints'] < 180 ) addnav("`2Quintus","battlearena.php?op=Quintus");
@@ -143,9 +146,9 @@ if ($HTTP_GET_VARS['op'] == "win"){
 	output("Du gewinnst $winnings Gold!`n");
 	$session['user']['gold']+=$winnings;
 	$session['user']['battlepoints']+=$points;
-	if ($session['user']['hitpoints']<$session['user']['maxhitpoints']) output("`# Die Arena-Ärzte versorgen deine Wunden.");
+	if ($session['user']['hitpoints']<$session['user']['maxhitpoints']) output("`# Die Arena-Ã„rzte versorgen deine Wunden.");
 	if ($session['user']['hitpoints']==$session['user']['maxhitpoints']){
-		output("`4Ausgezeichneter Kampf! Du bekommst zusätzlich zum Gewinn dein Eintrittsgeld zurück!`n");
+		output("`4Ausgezeichneter Kampf! Du bekommst zusÃ¤tzlich zum Gewinn dein Eintrittsgeld zurÃ¼ck!`n");
 		$session['user']['gold']+=50;
 	}
 	if ($session['user']['hitpoints']<$session['user']['maxhitpoints']) $session['user']['hitpoints']+=round($session['user']['maxhitpoints']*.5);
@@ -319,9 +322,9 @@ $badguy = array(        "creaturename"=>"`@Maximus`0"
                                 $HTTP_GET_VARS['op']="prefight";
                             } 
 if ($HTTP_GET_VARS['op'] == "prefight"){ 
-	output("`#Du wirst in die Arena geführt und buchstäblich auf den Kampfplatz geworfen.`n");
-	output("`#Die Menge jubelt vor Begeisterung auf, als du ziemlich unsanft vor den Füssen deines Gegners landest.`n");
-	output($badguy['creaturename']." `#stürzt sich wie ein Wirbelwind auf dich und der Kampf beginnt.`n");
+	output("`#Du wirst in die Arena gefÃ¼hrt und buchstÃ¤blich auf den Kampfplatz geworfen.`n");
+	output("`#Die Menge jubelt vor Begeisterung auf, als du ziemlich unsanft vor den FÃ¼ssen deines Gegners landest.`n");
+	output($badguy['creaturename']." `#stÃ¼rzt sich wie ein Wirbelwind auf dich und der Kampf beginnt.`n");
 	$session['user']['specialmisc']=$badguy['creaturehealth']; 
 	$HTTP_GET_VARS['op']="fight";
 }                                          
@@ -339,7 +342,7 @@ if ($battle){
 */ 
 	if ($victory){
         		output("`n`7Du hast `^".$badguy['creaturename']." besiegt.`n");
-        		output("`#Die Menge gröhlt: \"".$session['user']['name']."`#, ".$session['user']['name']."`#\".`n");
+        		output("`#Die Menge grÃ¶hlt: \"".$session['user']['name']."`#, ".$session['user']['name']."`#\".`n");
         		output("`6Moderator: ".$session['user']['name']."`6 traf mit einem vernichtenden Schlag!");
                 	if ($badguy['creaturename']=="`@Cicero`0") addnav("Weiter","battlearena.php?op=win&op2=Cicero");
    	             	if ($badguy['creaturename']=="`@Vibius`0") addnav("Weiter","battlearena.php?op=win&op2=Vibius");
@@ -369,7 +372,7 @@ if ($battle){
 */
 	}elseif ($defeat){
                 	output("`n`7Du wurdest von `^".$badguy['creaturename']." `7geschlagen.`n");
-                	output("`#Die Menge gröhlt: \"".$badguy['creaturename']." `#".$badguy['creaturename']."`#\".`n");
+                	output("`#Die Menge grÃ¶hlt: \"".$badguy['creaturename']." `#".$badguy['creaturename']."`#\".`n");
                 	output("`6Moderator: ".$badguy['creaturename']."`6 macht den letzten Schlag!");
                 	$session['user']['hitpoints']=1;
                 	$who=$badguy['creaturename'];
@@ -419,13 +422,13 @@ if ($battle){
 			case 7:
 			break;
 			case 8:
-			output("`b".$badguy['creaturename']."`4 behauptet, deine Oma kämpft besser!`b`n");
+			output("`b".$badguy['creaturename']."`4 behauptet, deine Oma kÃ¤mpft besser!`b`n");
 			break;
 			case 9:
-			output("`b".$badguy['creaturename']."`4 sagt, du kämpfst wie ein Kind!`b`n");
+			output("`b".$badguy['creaturename']."`4 sagt, du kÃ¤mpfst wie ein Kind!`b`n");
 			break;
 			case 10:
-			output("`b".$badguy['creaturename']."`4 sagt, dass du häslich bist und dass dir deine Mami komische Sachen zum Anziehen gibt!`b`n");
+			output("`b".$badguy['creaturename']."`4 sagt, dass du hÃ¤slich bist und dass dir deine Mami komische Sachen zum Anziehen gibt!`b`n");
 			break;
 			case 11:
 			break;
@@ -435,16 +438,16 @@ if ($battle){
 	            output("`#Die Menge tobt vor Begeisterung!`n");
 	            break;
 	            case 2:
-	            output("`#Die Menge gröhlt: \"".$session['user']['name']." `#".$session['user']['name']."`#\".`n");
+	            output("`#Die Menge grÃ¶hlt: \"".$session['user']['name']." `#".$session['user']['name']."`#\".`n");
 	            break;
 	            case 3:
-	            output("`#Die Menge gröhlt: \"".$badguy['creaturename']." `#".$badguy['creaturename']."`#\".`n");
+	            output("`#Die Menge grÃ¶hlt: \"".$badguy['creaturename']." `#".$badguy['creaturename']."`#\".`n");
 	            break;
 	            case 4:
 	            output("`#Die Menge wird still.`n");
 	            break;
 	            case 5:
-	            output("`#Die Menge wird nervös!`n");
+	            output("`#Die Menge wird nervÃ¶s!`n");
 	            break;
 	            case 6:
 	            output("`#Die Menge macht eine Welle.`n");
@@ -453,25 +456,25 @@ if ($battle){
 	            output("`#Die Spannung steigt.`n");
 	            break;
 	            case 8:
-	            output("`#Die Menge brüllt: \"Nieder mit ".$badguy['creaturename']." `#\".`n");
+	            output("`#Die Menge brÃ¼llt: \"Nieder mit ".$badguy['creaturename']." `#\".`n");
 	            break;
 	            case 9:
-	            output("`#Die Menge brüllt: \"Nieder mit ".$session['user']['name']." `#\".`n");
+	            output("`#Die Menge brÃ¼llt: \"Nieder mit ".$session['user']['name']." `#\".`n");
 	            break;
 	            case 10:
-	            output("`#Die Menge kommt in Bewegung!`n Einige Zuschauer fallen in die Arena, nur um anschließend von einer Wache wieder weggetragen zu werden.`n");
+	            output("`#Die Menge kommt in Bewegung!`n Einige Zuschauer fallen in die Arena, nur um anschlieÃŸend von einer Wache wieder weggetragen zu werden.`n");
 	            break;
 	            case 11:
 	            output("`#Die Menge ruft:  \"Mach ihn fertig! Mach ihn fertig!\".`n");
 	            break;
 	            case 12:
-	            output("`#Die Menge schreit was das Zeug hält!`n");
+	            output("`#Die Menge schreit was das Zeug hÃ¤lt!`n");
 	            break;
 	            case 13:
 	            output("`#Die Menge tobt.`n");
 	            break;
 	            case 14:
-	            output("`#Ein dicker, fetter Kerl bemalt sich mit roten Kringeln und führt einen Tanz auf.`n");
+	            output("`#Ein dicker, fetter Kerl bemalt sich mit roten Kringeln und fÃ¼hrt einen Tanz auf.`n");
 	            break;
 	            case 15:
 	            output("`#Ein Fan rennt in die Arena und im Eifer des Gefechts streifst du ihn und er fliegt in eine Ecke der Arena.`n");

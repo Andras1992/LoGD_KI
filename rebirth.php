@@ -15,12 +15,12 @@ if ($_GET['op']=="rebirth1"){
 	$n=$session['user']['name'];
 	$neu=substr($n,strlen($session['user']['title']));
 	if ($what=="true"){
-		output("`n`6Du legst alle deine Besitztümer ab und beginnst mit dem beschriebenen Ritual. Noch einmal wollen die Götter von dir die Bestätigung, dass du dir ");
-		output("diesen Schritt gut überlegt hast. Du wirst `balles`b verlieren, wenn du fortfährst. Du wirst zu:`n`n");
+		output("`n`6Du legst alle deine BesitztÃ¼mer ab und beginnst mit dem beschriebenen Ritual. Noch einmal wollen die GÃ¶tter von dir die BestÃ¤tigung, dass du dir ");
+		output("diesen Schritt gut Ã¼berlegt hast. Du wirst `balles`b verlieren, wenn du fortfÃ¤hrst. Du wirst zu:`n`n");
 		if ($session['user']['ctitle']){
 			output("`6Name: `4$n`n");
 		}else{
-			output("`6Name: `4".($session['user']['sex']?"Bauernmädchen":"Bauernjunge")." $neu`n");
+			output("`6Name: `4".($session['user']['sex']?"BauernmÃ¤dchen":"Bauernjunge")." $neu`n");
 		}
 		output("`6Lebenspunkte: `410`n");
 		output("`6Level: `41`n");
@@ -29,8 +29,8 @@ if ($_GET['op']=="rebirth1"){
 		output("`6Erfahrung: `40`n");
 		output("`6Gold: `4".getsetting("newplayerstartgold",10)."`n");
 		output("`6Edelsteine: `40`n");
-		output("`6Du verlierst deine Waffe, deine Rüstung und dein gesamtes Inventar.`n");
-		output("`6Du vergisst deine Rasse und alle besonderen Fähigkeiten.`n");
+		output("`6Du verlierst deine Waffe, deine RÃ¼stung und dein gesamtes Inventar.`n");
+		output("`6Du vergisst deine Rasse und alle besonderen FÃ¤higkeiten.`n");
 		if ($session['user']['house']) output("Du verlierst dein Haus.`n");
 		if ($session['user']['hashorse']) output("Du verlierst dein Tier.`n");
 		output("Du verlierst alle Drachenpunkte.`n`n`bBist du zu diesem Schritt wirklich bereit?`b");
@@ -40,8 +40,8 @@ if ($_GET['op']=="rebirth1"){
 		addnav("","rebirth.php?op=rebirth2&full=$what");
 	}
 	if ($what=="false"){
-		output("`n`6Du legst alle deine Besitztümer ab und beginnst mit dem beschriebenen Ritual. Noch einmal wollen die Götter von dir die Bestätigung, dass du dir ");
-		output("diesen Schritt gut überlegt hast. Du wirst `beiniges`b verlieren, wenn du fortfährst. Du wirst zu:`n`n");
+		output("`n`6Du legst alle deine BesitztÃ¼mer ab und beginnst mit dem beschriebenen Ritual. Noch einmal wollen die GÃ¶tter von dir die BestÃ¤tigung, dass du dir ");
+		output("diesen Schritt gut Ã¼berlegt hast. Du wirst `beiniges`b verlieren, wenn du fortfÃ¤hrst. Du wirst zu:`n`n");
 		output("`6Name: `4".$session['user']['name']."`n");
 		output("`6Lebenspunkte: `4".($session['user']['level']*10)."`n");
 		output("`6Level: `4".$session['user']['level']."`n");
@@ -50,27 +50,27 @@ if ($_GET['op']=="rebirth1"){
 		output("`6Erfahrung: `4".$session['user']['experience']."`n");
 		output("`6Gold: `40`n");
 		output("`6Edelsteine: `40`n");
-		output("`6Du verlierst deine Waffe, deine Rüstung und dein gesamtes Inventar.`n");
-		output("`6Du vergisst deine Rasse und alle besonderen Fähigkeiten.`n");
+		output("`6Du verlierst deine Waffe, deine RÃ¼stung und dein gesamtes Inventar.`n");
+		output("`6Du vergisst deine Rasse und alle besonderen FÃ¤higkeiten.`n");
 		if ($session['user']['house']) output("Du verlierst dein Haus.`n");
 		if ($session['user']['hashorse']) output("Du verlierst dein Tier.`n");
 		output("Du kannst alle Drachenpunkte neu vergeben.`n`n`bBist du zu diesem Schritt wirklich bereit?`b");
 		output("`n`n`n<form action='rebirth.php?op=rebirth2&full=$what' method='POST'>",true);
-		output("<input type='submit' class='button' value='Charakter zurücksetzen' onClick='return confirm(\"Willst du die Werte deines Charakters wirklich neu verteilen?\");'>", true);
+		output("<input type='submit' class='button' value='Charakter zurÃ¼cksetzen' onClick='return confirm(\"Willst du die Werte deines Charakters wirklich neu verteilen?\");'>", true);
 		output("</form>",true);
 		addnav("","rebirth.php?op=rebirth2&full=$what");
-		addnav("*?Erneuerung bestätigen","rebirth.php?op=rebirth2&full=$what");
+		addnav("*?Erneuerung bestÃ¤tigen","rebirth.php?op=rebirth2&full=$what");
 	}
-	addnav("Zurück zum Club","rock.php");
+	addnav("ZurÃ¼ck zum Club","rock.php");
 }else if($_GET['op']=="rebirth2"){
 	$what=$_GET['full'];
 	if ($what=="true"){
 		addnews("`#".$session['user']['name']."`# hat seinem bisherigen Leben ein Ende gesetzt und einen Neuanfang beschlossen.");
 		if (!$session['user']['ctitle']){
 			$n=$session['user']['name'];
-			$session['user']['name']=($session['user']['sex']?"Bauernmädchen":"Bauernjunge").substr($n,strlen($session['user']['title']));
+			$session['user']['name']=($session['user']['sex']?"BauernmÃ¤dchen":"Bauernjunge").substr($n,strlen($session['user']['title']));
 		}
-		$session['user']['title']=($session['user']['sex']?"Bauernmädchen":"Bauernjunge");
+		$session['user']['title']=($session['user']['sex']?"BauernmÃ¤dchen":"Bauernjunge");
 		$session['user']['level']=1;
 		$session['user']['maxhitpoints']=10;
 		$session['user']['attack']=1;
@@ -96,7 +96,7 @@ if ($_GET['op']=="rebirth1"){
 		if ($session['user']['marriedto']>0 && $session['user']['marriedto']<4294967295 && $session['user']['charisma']==4294967295){
 			$sql="UPDATE accounts SET marriedto=0,charisma=0 WHERE acctid=".$session['user']['marriedto']."";
 			db_query($sql);
-			systemmail($session['user']['marriedto'],"`6".$session['user']['name']." ist nicht mehr der selbe`0","`6{$session['user']['name']}`6 hat sich ein neues Leben gegeben. Ihr seid nicht länger verheiratet.");
+			systemmail($session['user']['marriedto'],"`6".$session['user']['name']." ist nicht mehr der selbe`0","`6{$session['user']['name']}`6 hat sich ein neues Leben gegeben. Ihr seid nicht lÃ¤nger verheiratet.");
 		}
 		$session['user']['charisma']=0;
 		$session['user']['marriedto']=0;
@@ -122,14 +122,14 @@ if ($_GET['op']=="rebirth1"){
 		}
 		$session['user']['house']=0;
 		$session['user']['housekey']=0;
-		$sql="UPDATE items SET owner=0 WHERE owner=".$session['user']['acctid']." AND class='Schlüssel'";
+		$sql="UPDATE items SET owner=0 WHERE owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel'";
 		db_query($sql);
-		$sql="DELETE FROM items WHERE owner=".$session['user']['acctid']." AND class<>'Schlüssel'";
+		$sql="DELETE FROM items WHERE owner=".$session['user']['acctid']." AND class<>'SchlÃ¼ssel'";
 		db_query($sql);
 		$session['user']['laston']="";
 		$session['user']['lasthit']=date("Y-m-d H:i:s",strtotime(date("r")."-".(86500/getsetting("daysperday",4))." seconds")); 
-		output("`n`6Du stimmst zu.`nWährend du das Ritual durchführst und dich von deinem Besitz löst, spürst du auch deine Lebenkraft, deine Erfahrung und schließlich all deine Fähigkeiten ");
-		output("schwinden. Du vergisst dein ganzes bisheriges Leben. Du fällst in eine lange Ohnmacht...");
+		output("`n`6Du stimmst zu.`nWÃ¤hrend du das Ritual durchfÃ¼hrst und dich von deinem Besitz lÃ¶st, spÃ¼rst du auch deine Lebenkraft, deine Erfahrung und schlieÃŸlich all deine FÃ¤higkeiten ");
+		output("schwinden. Du vergisst dein ganzes bisheriges Leben. Du fÃ¤llst in eine lange Ohnmacht...");
 	}
 	if ($what=="false"){
 		addnews("`#".$session['user']['name']."`# hat einen radikalen Lebenswandel beschlossen.");
@@ -146,7 +146,7 @@ if ($_GET['op']=="rebirth1"){
 		$session['user']['darkarts']=0;
 		$session['user']['thievery']=0;
 		$session['user']['magic']=0;
-		$session['user']['weapon']="Fäuste der Erneuerung";
+		$session['user']['weapon']="FÃ¤uste der Erneuerung";
 		$session['user']['armor']="Haut der Erneuerung";
 		$session['user']['hashorse']=0;
 		$session['user']['bufflist']="";
@@ -170,44 +170,44 @@ if ($_GET['op']=="rebirth1"){
 		}
 		$session['user']['house']=0;
 		$session['user']['housekey']=0;
-		$sql="UPDATE items SET owner=0 WHERE owner=".$session['user']['acctid']." AND class='Schlüssel'";
+		$sql="UPDATE items SET owner=0 WHERE owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel'";
 		db_query($sql);
-		$sql="DELETE FROM items WHERE owner=".$session['user']['acctid']." AND class<>'Schlüssel'";
+		$sql="DELETE FROM items WHERE owner=".$session['user']['acctid']." AND class<>'SchlÃ¼ssel'";
 		db_query($sql);
 		$session['user']['lasthit']=date("Y-m-d H:i:s",strtotime(date("r")."-".(86500/getsetting("daysperday",4))." seconds")); 
-		output("`n`6Du stimmst zu.`nWährend du das Ritual durchführst und dich von deinem Besitz löst, spürst du auch deine Lebenkraft und all deine Fähigkeiten ");
-		output("schwinden. Du vergisst vieles aus deinem bisherigen Leben und fällst in eine lange Ohnmacht...");
+		output("`n`6Du stimmst zu.`nWÃ¤hrend du das Ritual durchfÃ¼hrst und dich von deinem Besitz lÃ¶st, spÃ¼rst du auch deine Lebenkraft und all deine FÃ¤higkeiten ");
+		output("schwinden. Du vergisst vieles aus deinem bisherigen Leben und fÃ¤llst in eine lange Ohnmacht...");
 	}
 }else{
-	output("`n`6Du gehst zu einer bedrohlich wirkenden Tür im hinteren Bereich des Clubs. ");
+	output("`n`6Du gehst zu einer bedrohlich wirkenden TÃ¼r im hinteren Bereich des Clubs. ");
 	if ($session['user']['dragonkills']>=10){
-		addnav("Vollständige Wiedergeburt","rebirth.php?op=rebirth1&full=true");
+		addnav("VollstÃ¤ndige Wiedergeburt","rebirth.php?op=rebirth1&full=true");
 		addnav("Erneuerung","rebirth.php?op=rebirth1&full=false");
-		output("Wie von selbst öffnet sich die Tür. Dahinter siehst du einen mächtigen Altar der Götter. Du spürst förmlich, dass sich hier dein Leben grundlegend ändern kann.");
-		output(" Eine Tafel vor dem Altar bestätigt dieses Gefühl: \"`4Hier kannst du die Fehler deiner Vergangenheit rückgängig machen und um einen Neuanfang bitten. Wisse aber, dass diese ");
-		output("Entscheidung dazu die letzte deines Lebens darstellt. Du wirst morgen ohne deine weltlichen Güter und ohne Erinnerung auf dem Dorfplatz aufwachen. Nur mit ");
-		output(" Chance ausgerüstet, es noch einmal besser zu machen.`6\"`n`nWillst du neu beginnen?`n`n");
-		output("`bVollständige Wiedergeburt:`b`n");
-		output("Du würdest wieder als ".($session['user']['sex']?"Bauernmädchen":"Bauernjunge")." mit nichts als den gesammelten Donationpoints im Dorf aufwachen. Dein Leben "); 
-		output("würde beendet und im selben Moment von vorne beginnen.`n`\$Diese Option ist für Krieger gedacht, die bereits alles erreicht haben, ");
+		output("Wie von selbst Ã¶ffnet sich die TÃ¼r. Dahinter siehst du einen mÃ¤chtigen Altar der GÃ¶tter. Du spÃ¼rst fÃ¶rmlich, dass sich hier dein Leben grundlegend Ã¤ndern kann.");
+		output(" Eine Tafel vor dem Altar bestÃ¤tigt dieses GefÃ¼hl: \"`4Hier kannst du die Fehler deiner Vergangenheit rÃ¼ckgÃ¤ngig machen und um einen Neuanfang bitten. Wisse aber, dass diese ");
+		output("Entscheidung dazu die letzte deines Lebens darstellt. Du wirst morgen ohne deine weltlichen GÃ¼ter und ohne Erinnerung auf dem Dorfplatz aufwachen. Nur mit ");
+		output(" Chance ausgerÃ¼stet, es noch einmal besser zu machen.`6\"`n`nWillst du neu beginnen?`n`n");
+		output("`bVollstÃ¤ndige Wiedergeburt:`b`n");
+		output("Du wÃ¼rdest wieder als ".($session['user']['sex']?"BauernmÃ¤dchen":"Bauernjunge")." mit nichts als den gesammelten Donationpoints im Dorf aufwachen. Dein Leben "); 
+		output("wÃ¼rde beendet und im selben Moment von vorne beginnen.`n`\$Diese Option ist fÃ¼r Krieger gedacht, die bereits alles erreicht haben, ");
 		output("oder die keinen Sinn mehr in ihrem einsamen Leben oberhalb der normalen Gesellschaft sehen.`n`n");
 // Bad idea for balance...?
 		output("`bErneuerung:`b`n");
-		output("Drachenkills, Titel, Ehepartner und deine Erinnerung bleiben dir erhalten, jedoch legst du alle anderen weltlichen Besitztümer ab und wirst es sehr schwer haben, dich wieder ");
-		output(" an das knallharte Leben mit dem Drachen zu gewöhnen. Dafür kannst du alle Drachenpunkte neu vergeben.");
+		output("Drachenkills, Titel, Ehepartner und deine Erinnerung bleiben dir erhalten, jedoch legst du alle anderen weltlichen BesitztÃ¼mer ab und wirst es sehr schwer haben, dich wieder ");
+		output(" an das knallharte Leben mit dem Drachen zu gewÃ¶hnen. DafÃ¼r kannst du alle Drachenpunkte neu vergeben.");
 
 	}else{
-		output("Doch alle Versuche, diese Tür zu öffnen, schlagen fehl. Du erkundigst dich im Club nach dieser Tür und bekommst tatsächlich eine Antwort: \"`4");
-		output("Hinter dieser Tür steht ein mächtiger Altar der Götter. Es ist ein Altar des Vergesssens, des Todes und der Erneuerung. Nur sehr mächtigen Kriegern ");
-		output("ist es gestattet, diesen Altar zu benutzen. Dort können sie über ihr bisheriges Leben nachdenken und um einen Neuanfang bitten. Du wirst noch ");
+		output("Doch alle Versuche, diese TÃ¼r zu Ã¶ffnen, schlagen fehl. Du erkundigst dich im Club nach dieser TÃ¼r und bekommst tatsÃ¤chlich eine Antwort: \"`4");
+		output("Hinter dieser TÃ¼r steht ein mÃ¤chtiger Altar der GÃ¶tter. Es ist ein Altar des Vergesssens, des Todes und der Erneuerung. Nur sehr mÃ¤chtigen Kriegern ");
+		output("ist es gestattet, diesen Altar zu benutzen. Dort kÃ¶nnen sie Ã¼ber ihr bisheriges Leben nachdenken und um einen Neuanfang bitten. Du wirst noch ");
 		if ($session['user']['dragonkills']<5) output("sehr viele");
 		if ($session['user']['dragonkills']>=5 && $session['user']['dragonkills']<9) output("ein paar");
 		if ($session['user']['dragonkills']>=9) output("einen");
-		output(" Drachen erschlagen müssen, bevor du den Schrein betreten kannst.`6\"");
+		output(" Drachen erschlagen mÃ¼ssen, bevor du den Schrein betreten kannst.`6\"");
 	}
-	addnav("Zurück zum Club","rock.php");
+	addnav("ZurÃ¼ck zum Club","rock.php");
 }
-addnav("Zurück zum Dorf","village.php");
+addnav("ZurÃ¼ck zum Dorf","village.php");
 
 page_footer();
 ?>

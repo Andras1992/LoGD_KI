@@ -3,8 +3,8 @@ require_once "common.php";
 isnewday(3);
 
 page_header("Retitler");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Titel neu zuweisen","retitle.php?op=rebuild");
 if ($_GET['op']=="rebuild"){
 
@@ -33,7 +33,7 @@ if ($_GET['op']=="rebuild"){
 				$row['name'] = $newtitle." ".$row['name'];
 			}
 		}
-        output("`@Ändere `^$oname`@ auf `^{$row['name']} `@($newtitle-{$row['dragonkills']}[{$row['sex']}]({$row['ctitle']}`@))`n");
+        output("`@Ã„ndere `^$oname`@ auf `^{$row['name']} `@($newtitle-{$row['dragonkills']}[{$row['sex']}]({$row['ctitle']}`@))`n");
         if ($session['user']['acctid']==$row['acctid']){
             $session['user']['title']=$newtitle;
             $session['user']['name']=$row['name'];
@@ -43,7 +43,7 @@ if ($_GET['op']=="rebuild"){
         }
     }
 }else{
-    output("Diese Seite lässt dich alle Usertitel anpassen, wenn die im Drachenscript verändert wurden.");
+    output("Diese Seite lÃ¤sst dich alle Usertitel anpassen, wenn die im Drachenscript verÃ¤ndert wurden.");
 }
 page_footer();
 ?>

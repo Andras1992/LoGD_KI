@@ -6,16 +6,16 @@ require_once "common.php";
 if ($session['user']['loggedin']) {
 	checkday();
 	if ($session['user']['alive']) {
-		addnav("Zurück zum Dorf","village.php");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 	} else {
-		addnav("Zurück zu den Schatten", "shades.php");
+		addnav("ZurÃ¼ck zu den Schatten", "shades.php");
 	}
 	addnav("Gerade Online","list.php");
 }else{
 	addnav("Login Seite","index.php");
 	addnav("Gerade Online","list.php");
 }
-page_header("Kämpferliste");
+page_header("KÃ¤mpferliste");
 
 $playersperpage=50;
 

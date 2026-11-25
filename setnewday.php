@@ -21,7 +21,7 @@ db_query($sql);
 
 switch(e_rand(1,9)){
 	case 1:
-	$clouds="Wechselhaft und k¸hl, mit sonnigen Abschnitten";
+	$clouds="Wechselhaft und k√ºhl, mit sonnigen Abschnitten";
                 break;
             	case 2:
   	$clouds="Warm und sonnig";
@@ -36,7 +36,7 @@ switch(e_rand(1,9)){
  	$clouds="Kalt bei klarem Himmel";
                 break;
             	case 6:
-  	$clouds="Heiﬂ und sonnig";
+  	$clouds="Hei√ü und sonnig";
                 break;
             	case 7:
   	$clouds="Starker Wind mit vereinzelten Regenschauern";
@@ -53,7 +53,7 @@ savesetting("weather",$clouds);
 // Vendor in town?
 if (e_rand(1,3)==1){
 	savesetting("vendor","1");
-	$sql = "INSERT INTO news(newstext,newsdate,accountid) VALUES ('`qDer Wanderh‰ndler ist heute im Dorf!`0',NOW(),0)";
+	$sql = "INSERT INTO news(newstext,newsdate,accountid) VALUES ('`qDer Wanderh√§ndler ist heute im Dorf!`0',NOW(),0)";
 	db_query($sql) or die(db_error($link));
 }else{
 	savesetting("vendor","0");
@@ -117,12 +117,12 @@ for ($i=0;$i<db_num_rows($result);$i++){
 
 // can't send mail on anpera.net
 
-	mail($row['emailaddress'],"LoGD Charakter verf‰llt",
+	mail($row['emailaddress'],"LoGD Charakter verf√§llt",
 	"
 	Einer oder mehrere deiner Charaktere von Legend of the Green Dragon auf 
 	".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."
-	verf‰llt demn‰chst und wird gelˆscht. Wenn du den Charakter retten willst, solltest
-	 du dich bald mˆglichst mal damit einloggen!
+	verf√§llt demn√§chst und wird gel√∂scht. Wenn du den Charakter retten willst, solltest
+	 du dich bald m√∂glichst mal damit einloggen!
 	 Falls der Charakter ein Haus hatte, ist dieses bereits enteignet.",
 	"From: ".getsetting("gameadminemail","postmaster@localhost.com")
 	);

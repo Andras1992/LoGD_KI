@@ -3,7 +3,7 @@ require_once "common.php";
 
 if ($session['user']['slainby']!=""){
 	page_header("Du wurdest besiegt!");
-		output("`\$Du wurdest in ".$session['user']['killedin']."`\$ von `%".$session['user']['slainby']."`\$ besiegt und um alles Gold beraubt, das du bei dir hattest. Das kostet dich 5% deiner Erfahrung. Meinst du nicht es ist Zeit für Rache?");
+		output("`\$Du wurdest in ".$session['user']['killedin']."`\$ von `%".$session['user']['slainby']."`\$ besiegt und um alles Gold beraubt, das du bei dir hattest. Das kostet dich 5% deiner Erfahrung. Meinst du nicht es ist Zeit fÃ¼r Rache?");
 	addnav("Weiter",$REQUEST_URI);
 	$session['user']['slainby']="";
 	page_footer();
@@ -42,7 +42,7 @@ db_query_params($sql,array(db_unquote_legacy_input($_POST['meldung'])));
 		addnav("Log out","login.php?op=logout");
 		//addnav("News");
 	}
-		addnav("Über das Spiel","about.php");
+		addnav("Ãœber das Spiel","about.php");
 	if ($session['user']['superuser']){
 		addnav("Neuer Tag","newday.php");
 	}
@@ -59,7 +59,7 @@ db_query_params($sql,array(db_unquote_legacy_input($_POST['meldung'])));
 	$result = db_query($sql) or die(db_error(LINK));
 	$date=date("D, M j, Y",$timestamp);
 	
-	output("`c`b`!News für $date".($totaltoday>$newsperpage?" (Meldungen ".($pageoffset+1)." - ".min($pageoffset+$newsperpage,$totaltoday)." von $totaltoday)":"")."`c`b`0");
+	output("`c`b`!News fÃ¼r $date".($totaltoday>$newsperpage?" (Meldungen ".($pageoffset+1)." - ".min($pageoffset+$newsperpage,$totaltoday)." von $totaltoday)":"")."`c`b`0");
 	
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
@@ -72,7 +72,7 @@ db_query_params($sql,array(db_unquote_legacy_input($_POST['meldung'])));
 	}
 	if (db_num_rows($result)==0){
 		output("`c`2-=-`@=-=`2-=-`@=-=`2-=-`@=-=`2-=-`0`c");
-		output("`1`b`c Es ist nichts erwähnenswertes passiert. Alles in allem bisher ein langweiliger Tag. `c`b`0");
+		output("`1`b`c Es ist nichts erwÃ¤hnenswertes passiert. Alles in allem bisher ein langweiliger Tag. `c`b`0");
 	}
 	output("`c`2-=-`@=-=`2-=-`@=-=`2-=-`@=-=`2-=-`0`c");
 	if ($totaltoday>$newsperpage){
@@ -101,10 +101,10 @@ db_query_params($sql,array(db_unquote_legacy_input($_POST['meldung'])));
 */
 	addnav("Vorherige News","news.php?offset=".($offset+1));
 	if ($offset>0){
-		addnav("Nächste News","news.php?offset=".($offset-1));
+		addnav("NÃ¤chste News","news.php?offset=".($offset-1));
 	}
 /*
-	addnav("Über das Spiel","about.php");
+	addnav("Ãœber das Spiel","about.php");
 	if ($session[user][superuser]){
 		addnav("Neuer Tag","newday.php");
 	}

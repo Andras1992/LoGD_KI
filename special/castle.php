@@ -34,12 +34,12 @@ function castlenav($what, $runden){
 		case "main":
 		addnav("Burghof"); 
 		addnav("Wunschbrunnen (1 Edelstein)","forest.php?op=well");
-		addnav("Glücksspieler","stonesgame.php");
+		addnav("GlÃ¼cksspieler","stonesgame.php");
 		// addnav("Orc Fields Bar","forest.php?op=bar");
-		if ($runden>0) addnav("Übungsraum","forest.php?op=train");
+		if ($runden>0) addnav("Ãœbungsraum","forest.php?op=train");
 		addnav("Shops"); 
 		addnav("Waffenschmied","forest.php?op=blacksmith"); 
-		addnav("Rüstungsschmied","forest.php?op=armourer"); 
+		addnav("RÃ¼stungsschmied","forest.php?op=armourer"); 
 		addnav("Kala's Beautyshop","forest.php?op=medicine"); 
 		addnav("Sonstige");
 		if ($runden>0) addnav("Katakomben betreten...","forest.php?op=catacombs"); 
@@ -81,8 +81,8 @@ function catacombs(){
 	} 
 	switch (e_rand(1,2)){ 
 		case 1: 
-		output("`n<a href='forest.php?op=south'>Süden</a>",true); 
-		addnav("Süden","forest.php?op=south"); 
+		output("`n<a href='forest.php?op=south'>SÃ¼den</a>",true); 
+		addnav("SÃ¼den","forest.php?op=south"); 
 		addnav("","forest.php?op=south"); 
 		$where=true; 
 		break; 
@@ -112,8 +112,8 @@ function catacombs(){
 			addnav("","forest.php?op=east"); 
 			break; 
 			case 3: 
-			output("`n<a href='forest.php?op=south'>Süden</a>",true); 
-			addnav("Süden","forest.php?op=south"); 
+			output("`n<a href='forest.php?op=south'>SÃ¼den</a>",true); 
+			addnav("SÃ¼den","forest.php?op=south"); 
 			addnav("","forest.php?op=south"); 
 			break; 
 			case 4: 
@@ -124,31 +124,31 @@ function catacombs(){
 			case 5:
 			switch(e_rand(1,5)){
 				case 1:
-				addnews($session['user']['name']." hat große Reichtümer in den Katakomben gefunden!"); 
+				addnews($session['user']['name']." hat groÃŸe ReichtÃ¼mer in den Katakomben gefunden!"); 
 				$gems = e_rand(1,3); 
 				$gold = e_rand($session['user']['level']*11,$session['user']['level']*100); 
-				output("`^ Vorwärts!`n`n`%Du erreichst eine verschlossene Tür und drückst sie auf. Dahinter findest du Berge von Reichtümern und du stopfst dir die Taschen voll!`n"); 
+				output("`^ VorwÃ¤rts!`n`n`%Du erreichst eine verschlossene TÃ¼r und drÃ¼ckst sie auf. Dahinter findest du Berge von ReichtÃ¼mern und du stopfst dir die Taschen voll!`n"); 
 				output("`n`^Du hast $gems Edelsteine und $gold Gold mitgenommen!"); 
 				$session['user']['gems']+=$gems; 
 				$session['user']['gold']+=$gold; 
 				break;
 				case 2:
-				output("`^ Vorwärts!`n`n`%Du erreichst eine verschlossene Tür und drückst sie auf. Dahinter findest du Berge von Gold und du stopfst dir die Taschen voll!`n"); 
+				output("`^ VorwÃ¤rts!`n`n`%Du erreichst eine verschlossene TÃ¼r und drÃ¼ckst sie auf. Dahinter findest du Berge von Gold und du stopfst dir die Taschen voll!`n"); 
 				$gold = e_rand($session['user']['level']*11,$session['user']['level']*100);
-				output("`n`^Du hast $gold Gold mitnehmen können!"); 
+				output("`n`^Du hast $gold Gold mitnehmen kÃ¶nnen!"); 
 				$session['user']['gold']+=$gold; 
 				break;
 				case 3:
-				output("`^ Vorwärts!`n`n`%Du erreichst eine verschlossene Tür und drückst sie auf. Dahinter findest du ... `bnichts`b! Ein anderer war wohl schneller als du.`n"); 
-				output("`nSchwer enttäuscht suchst du einen Ausgang aus den Katakomben."); 
+				output("`^ VorwÃ¤rts!`n`n`%Du erreichst eine verschlossene TÃ¼r und drÃ¼ckst sie auf. Dahinter findest du ... `bnichts`b! Ein anderer war wohl schneller als du.`n"); 
+				output("`nSchwer enttÃ¤uscht suchst du einen Ausgang aus den Katakomben."); 
 				break;
 				case 4:
-				output("`^ Vorwärts!`n`n`%Du erreichst eine verschlossene Tür und drückst sie auf. Dahinter findest du ... `bnichts`b! Ein anderer war wohl schneller als du.`n"); 
-				output("Schwer enttäuscht suchst du einen Ausgang aus den Katakomben.`n`nWenigstens hast du durch das Herumirren etwas an `^Erfahrung`% gewonnen."); 
+				output("`^ VorwÃ¤rts!`n`n`%Du erreichst eine verschlossene TÃ¼r und drÃ¼ckst sie auf. Dahinter findest du ... `bnichts`b! Ein anderer war wohl schneller als du.`n"); 
+				output("Schwer enttÃ¤uscht suchst du einen Ausgang aus den Katakomben.`n`nWenigstens hast du durch das Herumirren etwas an `^Erfahrung`% gewonnen."); 
 				$session['user']['experience']+=$session['user']['experience']*0.02;
 				break;
 				case 5:
-				output("`^ Vorwärts!`n`n`%Du erreichst eine verschlossene Tür und drückst sie auf. Dahinter findest du einen besonders schönen Edelstein und steckst ihn ein!`n"); 
+				output("`^ VorwÃ¤rts!`n`n`%Du erreichst eine verschlossene TÃ¼r und drÃ¼ckst sie auf. Dahinter findest du einen besonders schÃ¶nen Edelstein und steckst ihn ein!`n"); 
 				output("`n`^Du hast 1 Edelstein gefunden!"); 
 				$session['user']['gems']+=1; 
 				break;
@@ -163,32 +163,32 @@ function catacombs(){
 
 if ($HTTP_GET_VARS['op']=="enter"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Die Wache tritt beiseite und du läufst durch das Tor in die Burg. Die Mitte des Burghofs ist ein großer, mit Gras bewachsener Platz, um den herum viele interessante Stände und Läden sind. Einige davon klingen wirklich verlockend! Du weisst gar nicht, wo du zuerst hingehen sollst, aber auf dem Platz stehen einige Leute, so beschließt du, sie einfach zu fragen.`n"); 
+	output("`#Die Wache tritt beiseite und du lÃ¤ufst durch das Tor in die Burg. Die Mitte des Burghofs ist ein groÃŸer, mit Gras bewachsener Platz, um den herum viele interessante StÃ¤nde und LÃ¤den sind. Einige davon klingen wirklich verlockend! Du weisst gar nicht, wo du zuerst hingehen sollst, aber auf dem Platz stehen einige Leute, so beschlieÃŸt du, sie einfach zu fragen.`n"); 
 	viewcommentary("Courtyard","Frage nach Tipps",30,"fragt"); 
 	castlenav("main", $runden); 
 /******Leave Castle******/ 
 }elseif ($HTTP_GET_VARS['op']=="leave"){ 
 	$session['user']['specialinc']="";
 	$session['user']['specialmisc'] = 0;
-	output("`#Du beschließt, daß du keine Zeit für die Burg hast und kehrst um. Du nimmst den selben Pfad zurück in den Wald, den du gekommen bist..."); 
-	//output("`n`n`^Du vertrödelst einen Waldkampf!"); 
+	output("`#Du beschlieÃŸt, daÃŸ du keine Zeit fÃ¼r die Burg hast und kehrst um. Du nimmst den selben Pfad zurÃ¼ck in den Wald, den du gekommen bist..."); 
+	//output("`n`n`^Du vertrÃ¶delst einen Waldkampf!"); 
 	//if ($session[user][turns]>0) $session[user][turns]--; 
 }elseif ($HTTP_GET_VARS['op']=="leavecastle"){ 
 	$session['user']['specialinc']="";
 	$session['user']['specialmisc'] = 0;
-	output("`#Du gehst durch das Tor und über den Pfad zurück in den Wald."); 
-	output("`n`n`^Du vertrödelst einen Waldkampf!"); 
+	output("`#Du gehst durch das Tor und Ã¼ber den Pfad zurÃ¼ck in den Wald."); 
+	output("`n`n`^Du vertrÃ¶delst einen Waldkampf!"); 
 	if ($session['user']['turns']>0) $session['user']['turns']--; 
 /********Return to Courtyard*******/ 
 }elseif ($HTTP_GET_VARS['op']=="return"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Du gehst nach draussen. Die Mitte des Burghofs ist ein großer, mit Gras bewachsener Platz, um den herum viele interessante Stände und Läden sind. Einige davon klingen wirklich verlockend! Du weisst gar nicht, wo du zuerst hingehen sollst, aber auf dem Platz stehen einige Leute, so beschließt du, sie einfach zu fragen.`n"); 
+	output("`#Du gehst nach draussen. Die Mitte des Burghofs ist ein groÃŸer, mit Gras bewachsener Platz, um den herum viele interessante StÃ¤nde und LÃ¤den sind. Einige davon klingen wirklich verlockend! Du weisst gar nicht, wo du zuerst hingehen sollst, aber auf dem Platz stehen einige Leute, so beschlieÃŸt du, sie einfach zu fragen.`n"); 
 	viewcommentary("Courtyard","Frage nach Tipps",30,"fragt"); 
 	castlenav("main", $runden); 
 /*********catacombs*******/ 
 }elseif ($HTTP_GET_VARS['op']=="catacombs"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Du betrittst die Katakomben. Ein Schild am Eingang warnt: `%'Große Reichtümer warten im Inneren, aber ebenso großes Leid! Der Weg nach draussen liegt im `^Osten`%... Merk dir das!!'`n"); 
+	output("`#Du betrittst die Katakomben. Ein Schild am Eingang warnt: `%'GroÃŸe ReichtÃ¼mer warten im Inneren, aber ebenso groÃŸes Leid! Der Weg nach draussen liegt im `^Osten`%... Merk dir das!!'`n"); 
 	catacombs(); 
 }elseif ($HTTP_GET_VARS['op']=="north"){ 
 	$session['user']['specialinc']="castle.php"; 
@@ -215,7 +215,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 	} 
 }elseif ($HTTP_GET_VARS['op']=="south"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Im Inneren der Katakomben gehst du auf der Suche nach Reichtum nach `^Süden`#...`n"); 
+	output("`#Im Inneren der Katakomben gehst du auf der Suche nach Reichtum nach `^SÃ¼den`#...`n"); 
 	catacombs(); 
 }elseif ($HTTP_GET_VARS['op']=="west"){ 
 	$session['user']['specialinc']="castle.php"; 
@@ -225,7 +225,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 	$session['user']['specialmisc'] = 0;
 	output("`#Du hast es geschafft einen Ausgang aus den Katakomben zu finden. Allerdings musst du feststellen, dass du wieder im Wald gelandet bist. Dein Abenteuer in den Katakomben hatte seinen Preis...`n"); 
 	$ff = e_rand(1,4);
-	output("`n`^Du verlierst $ff Waldkämpfe!"); 
+	output("`n`^Du verlierst $ff WaldkÃ¤mpfe!"); 
 	if ($session['user']['turns']>0) $session['user']['turns']-=$ff; 
 /*********Bar*******/ 
 }elseif ($HTTP_GET_VARS['op']=="bar"){ 
@@ -238,28 +238,28 @@ if ($HTTP_GET_VARS['op']=="enter"){
 }elseif ($HTTP_GET_VARS['op']=="armourer"){ 
 	$session['user']['specialinc']="castle.php"; 
 	if (strchr($session['user']['armor'],"High-Grade")){ 
-		output("`#Du betrittst `@Thoric's`# Rüstungsladen. Du siehst Thoric in ein Buch vertieft in einer Ecke sitzen. Er schaut auf und wirft sofort einen Blick auf dein(e/n) `^".$session['user']['armor']."`#. `%'Schön zu sehen, daß du meine Handwerkskunst trägst.'`# murmelt er, bevor er sich wieder seinem Buch zuwendet."); 
+		output("`#Du betrittst `@Thoric's`# RÃ¼stungsladen. Du siehst Thoric in ein Buch vertieft in einer Ecke sitzen. Er schaut auf und wirft sofort einen Blick auf dein(e/n) `^".$session['user']['armor']."`#. `%'SchÃ¶n zu sehen, daÃŸ du meine Handwerkskunst trÃ¤gst.'`# murmelt er, bevor er sich wieder seinem Buch zuwendet."); 
 	}else{ 
 		$newdefence = $session['user']['armordef'] + 2; 
 		$cost = $session['user']['armordef'] * 200;
-		output("`#Du betrittst `@Thoric's`# Rüstungsladen. Du siehst Thoric in ein Buch vertieft in einer Ecke sitzen. Er schaut auf und wirft sofort einen Blick auf dein(e/n) `^".$session['user']['armor']."`#. ");
+		output("`#Du betrittst `@Thoric's`# RÃ¼stungsladen. Du siehst Thoric in ein Buch vertieft in einer Ecke sitzen. Er schaut auf und wirft sofort einen Blick auf dein(e/n) `^".$session['user']['armor']."`#. ");
 		if ($cost == 0){
-			output("`%'Sieht nicht so aus, als ob ich aus damit irgendetwas machen könnte.'`#, murmelt er, bevor er sich wieder seinem Buch zuwendet.");
+			output("`%'Sieht nicht so aus, als ob ich aus damit irgendetwas machen kÃ¶nnte.'`#, murmelt er, bevor er sich wieder seinem Buch zuwendet.");
 			output("`n`n`^Niedergeschlagen machst du dich daran den Laden zu verlassen...");
 		}else if ($cost > $session['user']['gold']){
-			output("`%'Ich könnte das zu eine(r/m) `!High-Grade ".$session['user']['armor']."`% mit `^$newdefence`% Rüstungsschutz machen, wenn du willst. Und das kostet dich nur `^$cost`% Gold!'`#, murmelt er, bevor er sich wieder seinem Buch zuwendet.");
-			output("`n`n`^Da du aber nicht so viel Gold dabei hast, beschließt du den Laden zu verlassen...");
+			output("`%'Ich kÃ¶nnte das zu eine(r/m) `!High-Grade ".$session['user']['armor']."`% mit `^$newdefence`% RÃ¼stungsschutz machen, wenn du willst. Und das kostet dich nur `^$cost`% Gold!'`#, murmelt er, bevor er sich wieder seinem Buch zuwendet.");
+			output("`n`n`^Da du aber nicht so viel Gold dabei hast, beschlieÃŸt du den Laden zu verlassen...");
 		}else{
-			output("`%'Ich könnte das zu eine(r/m) `!High-Grade ".$session['user']['armor']."`% mit `^$newdefence`% Rüstungsschutz machen, wenn du willst. Und das kostet dich nur `^$cost`% Gold!'`#, murmelt er, bevor er sich wieder seinem Buch zuwendet.");
-			output("`n`n<a href='forest.php?op=upgradearmour'>Rüstung verbessern</a>",true); 
+			output("`%'Ich kÃ¶nnte das zu eine(r/m) `!High-Grade ".$session['user']['armor']."`% mit `^$newdefence`% RÃ¼stungsschutz machen, wenn du willst. Und das kostet dich nur `^$cost`% Gold!'`#, murmelt er, bevor er sich wieder seinem Buch zuwendet.");
+			output("`n`n<a href='forest.php?op=upgradearmour'>RÃ¼stung verbessern</a>",true); 
 			addnav("","forest.php?op=upgradearmour"); 
-			addnav("Rüstung verbessern","forest.php?op=upgradearmour"); 
+			addnav("RÃ¼stung verbessern","forest.php?op=upgradearmour"); 
 		} 
 	} 
 	castlenav("return", $runden); 
 }elseif ($HTTP_GET_VARS['op']=="upgradearmour"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#`@Thoric`# nimmt dein(e/n) `^".$session['user']['armor']."`# und arbeitet eine Weile daran. Bald steht er auf, passt dir die Rüstung an und macht noch ein paar abschließende Änderungen. Die Rüstung fühlt sich jetzt etwas schwerer an, scheint aber tatsächlich von viel höherer Qualität zu sein als vorher. Zufrieden verlässt du den Laden."); 
+	output("`#`@Thoric`# nimmt dein(e/n) `^".$session['user']['armor']."`# und arbeitet eine Weile daran. Bald steht er auf, passt dir die RÃ¼stung an und macht noch ein paar abschlieÃŸende Ã„nderungen. Die RÃ¼stung fÃ¼hlt sich jetzt etwas schwerer an, scheint aber tatsÃ¤chlich von viel hÃ¶herer QualitÃ¤t zu sein als vorher. Zufrieden verlÃ¤sst du den Laden."); 
 	$newarmor = "High-Grade ".$session['user']['armor']; 
 	$cost = $session['user']['armordef'] * 200; 
 	$session['user']['gold']-=$cost; 
@@ -272,17 +272,17 @@ if ($HTTP_GET_VARS['op']=="enter"){
 }elseif ($HTTP_GET_VARS['op']=="blacksmith"){ 
 	$session['user']['specialinc']="castle.php"; 
 	if (strchr($session['user']['weapon'],"High-Grade")){ 
-		output("`#Du betrittst die Schmiede. Der Waffenschmied beugt sich über einen Schmelztiegel mit geschmolzenem Metall und betrachtet dein(e/n) `^".$session['user']['weapon']."`#. `%'Das war ne tolle Arbeit, die ich da für dich gemacht hab, also warum bist du hier?'`#, gibt er an. Etwas enttäuscht verlässt du die Schmiede."); 
+		output("`#Du betrittst die Schmiede. Der Waffenschmied beugt sich Ã¼ber einen Schmelztiegel mit geschmolzenem Metall und betrachtet dein(e/n) `^".$session['user']['weapon']."`#. `%'Das war ne tolle Arbeit, die ich da fÃ¼r dich gemacht hab, also warum bist du hier?'`#, gibt er an. Etwas enttÃ¤uscht verlÃ¤sst du die Schmiede."); 
 	}else{ 
 		$newattack = $session['user']['weapondmg'] + 2; 
 		$cost = $session['user']['weapondmg'] * 200; 
-		output("`#Du betrittst die Schmiede. Der Waffenschmied beugt sich über einen Schmelztiegel mit geschmolzenem Metall und betrachtet dein(e/n) `^".$session['user']['weapon']."`#. "); 
+		output("`#Du betrittst die Schmiede. Der Waffenschmied beugt sich Ã¼ber einen Schmelztiegel mit geschmolzenem Metall und betrachtet dein(e/n) `^".$session['user']['weapon']."`#. "); 
 		if ($cost == 0){ 
 			output("`%'Du erwartest doch nicht, dass sowas bearbeite? Komm wieder wenn du eine ordentliche Waffe hast.'");
 			output("`n`n`^Niedergeschlagen machst du dich daran den Laden zu verlassen...");
 		}else if ($cost > $session['user']['gold']){
 			output("`%'Daraus kann ich ein `5High-Grade ".$session['user']['weapon']."`% mit `5$newattack`% Schaden machen! Aber das wird dich `5$cost`% Gold kosten...'");
-			output("`n`n`^Da du nicht genug Gold hast, beschließt du den Laden zu verlassen..."); 
+			output("`n`n`^Da du nicht genug Gold hast, beschlieÃŸt du den Laden zu verlassen..."); 
 		}else{ 
 			output("`%'Daraus kann ich ein `5High-Grade ".$session['user']['weapon']."`% mit `5$newattack`% Schaden machen! Aber das wird dich `5$cost`% Gold kosten...'");
 			output("`n`n<a href='forest.php?op=upgradeweapon'>Waffe verbessern</a>",true); 
@@ -294,7 +294,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 	castlenav("return", $runden); 
 }elseif ($HTTP_GET_VARS['op']=="upgradeweapon"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Der Waffenschmied nimmt `^".$session['user']['weapon']."`# und arbeitet eine Weile daran. Bald steht er auf und gibt dir deine Waffe zurück. Sie scheint etwas schwerer zu sein, aber die Qualität scheint wesentlich besser als vorher zu sein. Zufrieden verlässt du den Shop. "); 
+	output("`#Der Waffenschmied nimmt `^".$session['user']['weapon']."`# und arbeitet eine Weile daran. Bald steht er auf und gibt dir deine Waffe zurÃ¼ck. Sie scheint etwas schwerer zu sein, aber die QualitÃ¤t scheint wesentlich besser als vorher zu sein. Zufrieden verlÃ¤sst du den Shop. "); 
 	$newweapon = "High-Grade ".$session['user']['weapon']; 
 	$cost = $session['user']['weapondmg'] * 200; 
 	$session['user']['gold']-=$cost; 
@@ -306,9 +306,9 @@ if ($HTTP_GET_VARS['op']=="enter"){
 /********Training Room********/ 
 }elseif ($HTTP_GET_VARS['op']=="train"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Du betrittst den Trainingsraum und schaust dich um. Du siehst diverse Schwerter, Dummies und Trainer. Hier kannst du Waldkämpfe zum Trainieren verbringen und gefahrlos deine Erfahrung steigern.`n"); 
+	output("`#Du betrittst den Trainingsraum und schaust dich um. Du siehst diverse Schwerter, Dummies und Trainer. Hier kannst du WaldkÃ¤mpfe zum Trainieren verbringen und gefahrlos deine Erfahrung steigern.`n"); 
 	if ($session['user']['turns'] < 1){ 
-		output("`n`n`%Du hast leider keine Waldkämpfe zum Trainieren übrig!"); 
+		output("`n`n`%Du hast leider keine WaldkÃ¤mpfe zum Trainieren Ã¼brig!"); 
 	}else{ 
 		output("`%Wieviele Runden willst du trainieren?`n"); 
 		output("<form action='forest.php?op=rain2' method='POST'><input name='trai' id='trai'><input type='submit' class='button' value='Trainieren'></form>",true); 
@@ -321,7 +321,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 	$session['user']['specialinc']="castle.php"; 
 	if ($session['user']['turns'] <= $trai) $trai = $session['user']['turns'];
 	if ($session['user']['turns']<=0){
-		output("`^Du fällst erschöpft um und landest sehr unsanft auf dem rauhen Boden, bevor du trainieren konntest. Du verlierst einen Teil deiner Lebensenergie.");
+		output("`^Du fÃ¤llst erschÃ¶pft um und landest sehr unsanft auf dem rauhen Boden, bevor du trainieren konntest. Du verlierst einen Teil deiner Lebensenergie.");
 		$session['user']['hitpoints']=round($session['user']['hitpoints']*0.8);
 		if ($session['user']['hitpoints']<=0) $session['user']['hitpoints']=1;
 	}else{
@@ -335,12 +335,12 @@ if ($HTTP_GET_VARS['op']=="enter"){
 /********Well********/ 
 }elseif ($HTTP_GET_VARS['op']=="well"){ 
 	$session['user']['specialinc']="castle.php"; 
-	output("`#Auf einer Seite des Burgplatzes befindet sich ein Wunschbrunnen. Du läufst hin und schaust hinunter. Ein Schild davor behauptet: `^'Wirf einen Edelstein hinein und wünsch dir was...'"); 
+	output("`#Auf einer Seite des Burgplatzes befindet sich ein Wunschbrunnen. Du lÃ¤ufst hin und schaust hinunter. Ein Schild davor behauptet: `^'Wirf einen Edelstein hinein und wÃ¼nsch dir was...'"); 
 	$castleoptions = unserialize($session['user']['specialmisc']);
 	if ($session['user']['gems'] < 1 && (e_rand(1,10) != 7 || $castleoptions['well_uses']>=1)){ 
-		output("`n`n`%Da du keinen Edelstein hast, hat sich die Sache für dich erledigt..."); 
+		output("`n`n`%Da du keinen Edelstein hast, hat sich die Sache fÃ¼r dich erledigt..."); 
 	}else{ 
-		output("`n`nDu wirfst einen Edelstein hinein und wünschst dir ");
+		output("`n`nDu wirfst einen Edelstein hinein und wÃ¼nschst dir ");
 		$session['user']['gems']--;
 		$castleoptions['well_uses']+=1;
 		$rand1 = e_rand(1,6); 
@@ -355,10 +355,10 @@ if ($HTTP_GET_VARS['op']=="enter"){
 			output("`^Mehr Lebenskraft..."); 
 			break; 
 			case 4: 
-			output("`^Den Edelstein zurück..."); 
+			output("`^Den Edelstein zurÃ¼ck..."); 
 			break; 
 			case 5: 
-			output("`^Einen längeren Tag..."); 
+			output("`^Einen lÃ¤ngeren Tag..."); 
 			break; 
 			case 6: 
 			output("`^Mehr Charme..."); 
@@ -369,10 +369,10 @@ if ($HTTP_GET_VARS['op']=="enter"){
 			case 1: 
 			case 2: 
 			case 3:  
-			output("`n`n`%Leider gewähren dir die Götter diesen Wunsch nicht."); 
+			output("`n`n`%Leider gewÃ¤hren dir die GÃ¶tter diesen Wunsch nicht."); 
 			break; 
 			case 4: 
-			output("`n`n`%Die Götter gewähren dir diesen Wunsch!"); 
+			output("`n`n`%Die GÃ¶tter gewÃ¤hren dir diesen Wunsch!"); 
 			switch ($rand1){ 
 				case 1: 
 				$reward = e_rand($session['user']['experience'] * 0.05,$session['user']['experience'] * 0.1); 
@@ -387,7 +387,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 				case 3: 
 				$reward = 1; 
 				$session['user']['maxhitpoints'] += $reward; 
-				output("`6$reward `^zusätzlichen Lebenspunkt..."); 
+				output("`6$reward `^zusÃ¤tzlichen Lebenspunkt..."); 
 				break; 
 				case 4: 
 				$gems = e_rand(2,4); 
@@ -397,7 +397,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 				case 5: 
 				$ff = e_rand(1,4); 
 				$session['user']['turns'] += $ff; 
-				output("`6$ff `^mehr Waldkämpfe..."); 
+				output("`6$ff `^mehr WaldkÃ¤mpfe..."); 
 				break; 
 				case 6: 
 				$charm = e_rand(1,5); 
@@ -418,8 +418,8 @@ if ($HTTP_GET_VARS['op']=="enter"){
 	$cost = ($loglev * ($session['user']['maxhitpoints']-$session['user']['hitpoints'])) + ($loglev*10);
 	$cost=$cost*0.9; 
 	$cost = round($cost,0); 
-	output("`3Die wunderschöne Kala begrüsst dich in ihrem Beautyshop. \"`6Ah.. hallo {$session['user']['name']}.`6 Brauchst du Heilung? Willst du schöner werden? Oder soll sich deine Schönheit endlich bezahlt machen? Dann bist du hier genau richtig!`3\", sagt sie."); 
-	output("Du fragst sie, was genau sie damit meint. \"`6Also: Heilung dürfte dir klar sein. Mit einer Gesichtsmaske - vorzugsweise aus Gurken von Violet - kann ich dich attraktiver machen. Und wenn du willst, kannst du mir etwas von deiner Schönheit ... überlassen und dafür etwas Erfahrung gewinnen.`3\"");
+	output("`3Die wunderschÃ¶ne Kala begrÃ¼sst dich in ihrem Beautyshop. \"`6Ah.. hallo {$session['user']['name']}.`6 Brauchst du Heilung? Willst du schÃ¶ner werden? Oder soll sich deine SchÃ¶nheit endlich bezahlt machen? Dann bist du hier genau richtig!`3\", sagt sie."); 
+	output("Du fragst sie, was genau sie damit meint. \"`6Also: Heilung dÃ¼rfte dir klar sein. Mit einer Gesichtsmaske - vorzugsweise aus Gurken von Violet - kann ich dich attraktiver machen. Und wenn du willst, kannst du mir etwas von deiner SchÃ¶nheit ... Ã¼berlassen und dafÃ¼r etwas Erfahrung gewinnen.`3\"");
 	if ($session['user']['hitpoints'] < $session['user']['maxhitpoints']) addnav("Komplette Heilung (`^$cost Gold`0)","forest.php?op=buy1");
 	addnav("Gurkenmaske (`#1 Edelstein`0)","forest.php?op=maske");
 	if ($session['user']['charm']>0) addnav("Charme opfern (`^100 Gold`0)","forest.php?op=copfer");
@@ -434,7 +434,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 		$session['user']['gold']-=$cost; 
 		//debuglog("spent $cost gold on healing"); 
 		$session['user']['hitpoints'] = $session['user']['maxhitpoints']; 
-		output("`3Kala gibt dir einen großen, wohlschmeckenden Heiltrank. Du bist angenehm überrascht, da du eigentlich etwas ähnliches wie das Zeug vom Heiler im Wald erwartet hättest. Kala's Trank entfaltet sofort seine Wirkung.`n`n`^Du bist vollständig geheilt."); 
+		output("`3Kala gibt dir einen groÃŸen, wohlschmeckenden Heiltrank. Du bist angenehm Ã¼berrascht, da du eigentlich etwas Ã¤hnliches wie das Zeug vom Heiler im Wald erwartet hÃ¤ttest. Kala's Trank entfaltet sofort seine Wirkung.`n`n`^Du bist vollstÃ¤ndig geheilt."); 
 	}else{ 
 		output("`3\"`6Also ohne Gold bekommst du hier gar nichts! Verschwinde lieber!`3\" raunzt Kala dich an, als sie merkt, dass du keine $cost Gold dabei hast."); 
 	} 
@@ -447,11 +447,11 @@ if ($HTTP_GET_VARS['op']=="enter"){
 		//debuglog("spent 1 gem for charm in castle"); 
 		$session['user']['charm']+= 1;
 		$castleoptions['beautyshop_uses']+=1; 
-		output("`3Du gibst ihr einen Edelstein und Kala packt dich mit einer Kraft, die du ihr nicht zugetraut hättest, auf einen Stuhl und fängt sofort an dein Gesicht mir irgendwelchen mehr oder weniger schleimigen Dingen zu bedecken. Dabei scheint sie hin und wieder ");
-		output(" von den Zutaten zu naschen, aber sicher bist du dir nicht, denn deine Augen waren das Erste, was unter Gurkenscheiben verschwunden ist. Du kommst dir ziemlich albern vor, aber nach einiger Zeit, als du das Ergebnis präsentiert bekommst, bist du der Meinung, dass es sich doch gelohnt hat.");
-		output("`n`n`^Du erhältst einen Charmepunkt!");
+		output("`3Du gibst ihr einen Edelstein und Kala packt dich mit einer Kraft, die du ihr nicht zugetraut hÃ¤ttest, auf einen Stuhl und fÃ¤ngt sofort an dein Gesicht mir irgendwelchen mehr oder weniger schleimigen Dingen zu bedecken. Dabei scheint sie hin und wieder ");
+		output(" von den Zutaten zu naschen, aber sicher bist du dir nicht, denn deine Augen waren das Erste, was unter Gurkenscheiben verschwunden ist. Du kommst dir ziemlich albern vor, aber nach einiger Zeit, als du das Ergebnis prÃ¤sentiert bekommst, bist du der Meinung, dass es sich doch gelohnt hat.");
+		output("`n`n`^Du erhÃ¤ltst einen Charmepunkt!");
 	}else if ($castleoptions['beautyshop_uses']>=3) {
-		output("`3\"`6Ja, ich könnte dir noch eine Gurkenmaske machen, aber helfen wird sie dir heute nicht mehr. Ich habe alles getan, was in meiner Macht steht.`3\" Mit diesen Worten geleitet Kala dich hinaus zum Burghof.");
+		output("`3\"`6Ja, ich kÃ¶nnte dir noch eine Gurkenmaske machen, aber helfen wird sie dir heute nicht mehr. Ich habe alles getan, was in meiner Macht steht.`3\" Mit diesen Worten geleitet Kala dich hinaus zum Burghof.");
 	} else { 
 		output("`3\"`6Also ohne Edelstein bekommst du hier gar nichts! Verschwinde lieber!`3\" raunzt Kala dich an, als sie merkt, dass du keinen Edelstein hast."); 
 	}
@@ -470,8 +470,8 @@ if ($HTTP_GET_VARS['op']=="enter"){
 		$castleoptions = unserialize($session['user']['specialmisc']); 
 		if ($castleoptions['beautyshop_uses']>0) $castleoptions['beautyshop_uses']-=1;
 		$session['user']['specialmisc'] = serialize($castleoptions);
-		output("`3Kala nimmt dein Gold und reibt dein Gesicht mit einer übel riechenden Pampe ein. Nach einer Weile wäscht sie dir das Zeug mit Wasser ab - und gibt dir das Wasser mit der Pampe zu trinken!");
-		output(" Noch etwas benommen von dem furchtbaren Anblick im Spiegel leistest du kaum Widerstand und trinkst.`n`n`^Du VERLIERST $amt Charmepunkte!`nDu bekommst $exp Erfahrungspunkte dafür.");
+		output("`3Kala nimmt dein Gold und reibt dein Gesicht mit einer Ã¼bel riechenden Pampe ein. Nach einer Weile wÃ¤scht sie dir das Zeug mit Wasser ab - und gibt dir das Wasser mit der Pampe zu trinken!");
+		output(" Noch etwas benommen von dem furchtbaren Anblick im Spiegel leistest du kaum Widerstand und trinkst.`n`n`^Du VERLIERST $amt Charmepunkte!`nDu bekommst $exp Erfahrungspunkte dafÃ¼r.");
 	}else{ 
 		output("`3\"`6Also ohne Gold bekommst du hier gar nichts! Verschwinde lieber!`3\" raunzt Kala dich an, als sie merkt, dass du keine 100 Gold dabei hast."); 
 	} 
@@ -497,16 +497,16 @@ if ($HTTP_GET_VARS['op']=="enter"){
 			$HTTP_GET_VARS['skill']=""; 
 			if ($HTTP_GET_VARS['skill']=="") $session['user']['buffbackup']=serialize($session['bufflist']); 
 			$session['bufflist']=array(); 
-			output("`&Dein Stolz verbietet es dir, deine besonderen Fähigkeiten einzusetzen!`0"); 
+			output("`&Dein Stolz verbietet es dir, deine besonderen FÃ¤higkeiten einzusetzen!`0"); 
 		} 
 		include "battle.php"; 
 		if ($victory){ 
-			output("`n`#Du hast die Greifenwache besiegt und dir wird der Eintritt zur Burg gewährt!`n"); 
+			output("`n`#Du hast die Greifenwache besiegt und dir wird der Eintritt zur Burg gewÃ¤hrt!`n"); 
 			$session['user']['reputation']++;
-			output("`n`%Die Wache tritt beiseite und du läufst durch das Tor in die Burg. Die Mitte des Burghofs ist ein großer, mit Gras bewachsener Platz, um den herum viele interessante Stände und Läden sind. Einige davon klingen wirklich verlockend!`n"); 
+			output("`n`%Die Wache tritt beiseite und du lÃ¤ufst durch das Tor in die Burg. Die Mitte des Burghofs ist ein groÃŸer, mit Gras bewachsener Platz, um den herum viele interessante StÃ¤nde und LÃ¤den sind. Einige davon klingen wirklich verlockend!`n"); 
 			castlenav("main", $runden); 
 		}elseif ($defeat){ 
-			output("`n`^Kurz vor dem endgültigen Todesstoß fliegt die Greifenwache zurück auf ihren Platz und bewacht wieder das Tor. Du hast nur noch 1 Lebenspunkt und verlierst 3 Waldkämpfe, aber du hast Glück, noch am Leben zu sein !"); 
+			output("`n`^Kurz vor dem endgÃ¼ltigen TodesstoÃŸ fliegt die Greifenwache zurÃ¼ck auf ihren Platz und bewacht wieder das Tor. Du hast nur noch 1 Lebenspunkt und verlierst 3 WaldkÃ¤mpfe, aber du hast GlÃ¼ck, noch am Leben zu sein !"); 
 			$session['user']['hitpoints']=1; 
 			$session['user']['turns']-=2; 
 			$session['user']['specialinc']=""; 
@@ -517,17 +517,17 @@ if ($HTTP_GET_VARS['op']=="enter"){
 } else {
 	if (e_rand(1,100) <95){ 
 		$session['user']['specialinc']="castle.php";
-		output("`#Du folgst einem unbefestigten Pfad und siehst dabei in der Ferne gelegentlich eine große Burg... Könnte `bdas`b die legendäre `^Orkburg`# sein?`n"); 
-		output("`%Du kommst näher und bist dir plötzlich gar nicht mehr so sicher, ob du dich der Burg wirklich weiter nähern, oder lieber umkehren solltest.`n`n"); 
-		output("`#Aber du gibst dir einen Ruck, lässt deine Ängste hinter dir und läufst weiter auf die Burg zu. Als du näher kommst, bemerkst du, daß ein Greif vor dem Tor Wache hält. Du kommst dort an und die mystische Kreatur spricht dich an. `%'Willkommen in der Orkburg! Wenn du hier rein willst, musst du deine Tapferkeit entweder schon beim Kampf mit dem `@Grünen Drachen`% bewiesen haben, oder du musst mich in einem fairen Kampf besiegen!'"); 
+		output("`#Du folgst einem unbefestigten Pfad und siehst dabei in der Ferne gelegentlich eine groÃŸe Burg... KÃ¶nnte `bdas`b die legendÃ¤re `^Orkburg`# sein?`n"); 
+		output("`%Du kommst nÃ¤her und bist dir plÃ¶tzlich gar nicht mehr so sicher, ob du dich der Burg wirklich weiter nÃ¤hern, oder lieber umkehren solltest.`n`n"); 
+		output("`#Aber du gibst dir einen Ruck, lÃ¤sst deine Ã„ngste hinter dir und lÃ¤ufst weiter auf die Burg zu. Als du nÃ¤her kommst, bemerkst du, daÃŸ ein Greif vor dem Tor Wache hÃ¤lt. Du kommst dort an und die mystische Kreatur spricht dich an. `%'Willkommen in der Orkburg! Wenn du hier rein willst, musst du deine Tapferkeit entweder schon beim Kampf mit dem `@GrÃ¼nen Drachen`% bewiesen haben, oder du musst mich in einem fairen Kampf besiegen!'"); 
 		if ($session['user']['dragonkills']>0){
 			output("`n`n`^Da du den Drachen bereits mindestens 1x gekillt hast, darfst du passieren."); 
 			output("`n`n<a href='forest.php?op=enter'>Die Burg betreten</a>`n<a href='forest.php?op=leave'>Umkehren</a>",true); 
 			addnav("Die Burg betreten","forest.php?op=enter"); 
 			addnav("","forest.php?op=enter"); 
 		}else{ 
-			output("`n`n<a href='forest.php?op=guardfight'>Bekämpfe die Wache</a>`n<a href='forest.php?op=leave'>Kehre um</a>",true); 
-			addnav("Wache bekämpfen","forest.php?op=guardfight"); 
+			output("`n`n<a href='forest.php?op=guardfight'>BekÃ¤mpfe die Wache</a>`n<a href='forest.php?op=leave'>Kehre um</a>",true); 
+			addnav("Wache bekÃ¤mpfen","forest.php?op=guardfight"); 
 			addnav("","forest.php?op=guardfight"); 
 		} 
 		addnav("","forest.php?op=leave"); 
@@ -536,7 +536,7 @@ if ($HTTP_GET_VARS['op']=="enter"){
 		$session['user']['specialinc']="";
 		$session['user']['specialmisc'] = 0;
 		output("`#Du folgst einem unbefestigten Pfad und verirrst dich total!"); 
-		output("`n`n`^Beim Versuch, einen Weg zurück zu finden, verlierst du 2 Waldkämpfe!`n`n"); 
+		output("`n`n`^Beim Versuch, einen Weg zurÃ¼ck zu finden, verlierst du 2 WaldkÃ¤mpfe!`n`n"); 
 		if ($session['user']['turns']>0) $session['user']['turns']-=2; 
 		forest();
 	}

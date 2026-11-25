@@ -8,7 +8,7 @@ require_once "common.php";
 if (!isset($_GET['op'])) {
 	$_GET['op'] = '';
 }
-page_header("Über Legend of the Green Dragon");
+page_header("Ãœber Legend of the Green Dragon");
 $time = (strtotime(date("1981-m-d H:i:s",strtotime(date("r")."-".getsetting("gameoffsetseconds",0)." seconds"))))*getsetting("daysperday",4) % strtotime("1981-01-01 00:00:00"); 
 $time = gametime();
 
@@ -35,13 +35,13 @@ if ($_GET['op']==""){
 			$impressum=getsetting("impressum","");
 			if ($impressum){
 				output("<hr>",true);
-				output("`@Impressum/Hoster/Verantwortlich für diesen Server:`n`n`2$impressum");
+				output("`@Impressum/Hoster/Verantwortlich fÃ¼r diesen Server:`n`n`2$impressum");
 			}
 			output("<hr>",true);
 			//output("Put your own information here and uncomment this line by removing the '/' marks.");
 			output("You can get this german version including all mods, hacks and addons <a href=\"http://www.anpera.net/forum/index.php?c=12\" target=\"_blank\">here</a>.`n",true);
 			output("Visit <a href='http://dragonprime.cawsquad.net/' target='_blank'>DragonPrime</a> for more mods!`n`n",true);
-			output("`@Ein dickes Danke an `^MightyE`@ für dieses großartige Spiel!     `2 -anpera-");
+			output("`@Ein dickes Danke an `^MightyE`@ fÃ¼r dieses groÃŸartige Spiel!     `2 -anpera-");
 			break;
 		case "1":
 			/* NOTICE
@@ -91,134 +91,134 @@ if ($_GET['op']==""){
 	addnav("Modifikationen","about.php?op=modifications");
 	addnav("GNU GPL","about.php?op=gpl");
 }elseif($_GET['op']=="setup"){
-	addnav("Über LoGD","about.php");
+	addnav("Ãœber LoGD","about.php");
 	addnav("Modifikationen","about.php?op=modifications");
 	$setup = array(
 		"Spieleinstellungen,title",
 		"pvp"=>"Spieler gegen Spieler erlaubt,viewonly",
-		"pvpday"=>"Erlaubte Anzahl Spielerkämpfe pro Tag,viewonly",
+		"pvpday"=>"Erlaubte Anzahl SpielerkÃ¤mpfe pro Tag,viewonly",
 		"pvpimmunity"=>"Tage die Spieler sicher vor PvP sind,viewonly",
-		"pvpminexp"=>"Nötige Erfahrungspunkte bevor ein Spieler im PvP angreifbar wird,viewonly",
-		"soap"=>"Spielerbeiträge 'bereinigen' (Wortfilter),viewonly",
-		"newplayerstartgold"=>"Startmenge an Gold für neue Charaktere,viewonly",
+		"pvpminexp"=>"NÃ¶tige Erfahrungspunkte bevor ein Spieler im PvP angreifbar wird,viewonly",
+		"soap"=>"SpielerbeitrÃ¤ge 'bereinigen' (Wortfilter),viewonly",
+		"newplayerstartgold"=>"Startmenge an Gold fÃ¼r neue Charaktere,viewonly",
 		"avatare"=>"Avatare erlaubt?,viewonly",
-		"maxonline"=>"Maximal gleichzeitig online (0 für unbegrenzt),viewonly",
+		"maxonline"=>"Maximal gleichzeitig online (0 fÃ¼r unbegrenzt),viewonly",
 
 		"Neue Tage,title",
-		"fightsforinterest"=>"Um Zinsen zu bekommen muss ein Spieler weniger Waldkämpfe haben als,viewonly",
+		"fightsforinterest"=>"Um Zinsen zu bekommen muss ein Spieler weniger WaldkÃ¤mpfe haben als,viewonly",
 		"maxinterest"=>"Maximaler Zinssatz (%),viewonly",
 		"mininterest"=>"Minimaler Zinssatz (%),viewonly",
 		"daysperday"=>"Spieltage pro Kalendertag,viewonly",
-		"specialtybonus"=>"Extras des Spezialgebiets täglich einsetzen,viewonly",
+		"specialtybonus"=>"Extras des Spezialgebiets tÃ¤glich einsetzen,viewonly",
 
 		"Handelseinstellungen,title",
 		"borrowperlevel"=>"Maximum das ein Spieler pro Level leihen kann,viewonly",
-		"transferperlevel"=>"Maximum das ein Spieler pro Level des Empfängers überweisen kann,viewonly",
-		"mintransferlev"=>"Mindestlevel für Überweisungen,viewonly",
-		"transferreceive"=>"Überweisungen die ein Spieler pro Tag empfangen darf,viewonly",
-		"maxtransferout"=>"Absolutes Maximum das ein Spieler pro Tag und Level überweisen darf,viewonly",
+		"transferperlevel"=>"Maximum das ein Spieler pro Level des EmpfÃ¤ngers Ã¼berweisen kann,viewonly",
+		"mintransferlev"=>"Mindestlevel fÃ¼r Ãœberweisungen,viewonly",
+		"transferreceive"=>"Ãœberweisungen die ein Spieler pro Tag empfangen darf,viewonly",
+		"maxtransferout"=>"Absolutes Maximum das ein Spieler pro Tag und Level Ã¼berweisen darf,viewonly",
 		
 		"Kopfgeld,title",
 		"bountymin"=>"Mindestbetrag pro Level der Zielperson,viewonly",
 		"bountymax"=>"Maximalbetrag pro Level der Zielperson,viewonly",
-		"bountylevel"=>"Mindestlevel um Opfer sein zu können,viewonly",
-		"bountyfee"=>"Gebühr für Dag Durnick in Prozent,viewonly",
+		"bountylevel"=>"Mindestlevel um Opfer sein zu kÃ¶nnen,viewonly",
+		"bountyfee"=>"GebÃ¼hr fÃ¼r Dag Durnick in Prozent,viewonly",
 		"maxbounties"=>"Anzahl an Kopfgeldern die ein Spieler pro Tag aussetzen darf,viewonly",
 
 		"Wald,title",
-		"turns"=>"Waldkämpfe (Züge) pro Tag,viewonly",
-		"dropmingold"=>"Waldbewohner lassen wenigstens 1/4 des möglichen Golds fallen,viewonly",
+		"turns"=>"WaldkÃ¤mpfe (ZÃ¼ge) pro Tag,viewonly",
+		"dropmingold"=>"Waldbewohner lassen wenigstens 1/4 des mÃ¶glichen Golds fallen,viewonly",
 		"lowslumlevel"=>"Mindestlevel zum Herumstreifen,viewonly",
 		
 		"Mail Einstellungen,title",
-		"mailsizelimit"=>"Maximale Nachrichtengröße,viewonly",
+		"mailsizelimit"=>"Maximale NachrichtengrÃ¶ÃŸe,viewonly",
 		"inboxlimit"=>"Maximale Anzahl an Nachrichten in der Inbox,viewonly",
-		"oldmail"=>"Alte Nachrichten werden automatisch gelöscht nach Tagen,viewonly",
+		"oldmail"=>"Alte Nachrichten werden automatisch gelÃ¶scht nach Tagen,viewonly",
 	
-		"Inhaltsverfallsdatum (0 für keines),title",
+		"Inhaltsverfallsdatum (0 fÃ¼r keines),title",
 		"expirecontent"=>"Tage die Kommentare und Neuigkeiten aufgehoben werden,viewonly",
-		"expiretrashacct"=>"Accounts die sich nie eingeloggt haben werden nach x Tagen gelöscht. x =,viewonly",
-		"expirenewacct"=>"Level 1 Charaktere ohne Drachenkill werden nach x Tagen gelöscht. x =,viewonly",
-		"expireoldacct"=>"Alle anderen Accounts werden nach x Tagen Inaktivität gelöscht. x =,viewonly",
-		"LOGINTIMEOUT"=>"Sekunden Inaktivität bis zum automatischen Logout,viewonly",
+		"expiretrashacct"=>"Accounts die sich nie eingeloggt haben werden nach x Tagen gelÃ¶scht. x =,viewonly",
+		"expirenewacct"=>"Level 1 Charaktere ohne Drachenkill werden nach x Tagen gelÃ¶scht. x =,viewonly",
+		"expireoldacct"=>"Alle anderen Accounts werden nach x Tagen InaktivitÃ¤t gelÃ¶scht. x =,viewonly",
+		"LOGINTIMEOUT"=>"Sekunden InaktivitÃ¤t bis zum automatischen Logout,viewonly",
 	
-		"Nützliche Infos,title",
-		"Tageslänge: ".round(($dayduration/60/60),0)." Stunden,viewonly",
+		"NÃ¼tzliche Infos,title",
+		"TageslÃ¤nge: ".round(($dayduration/60/60),0)." Stunden,viewonly",
 		"aktuelle Serveruhrzeit: ".date("Y-m-d h:i:s a").",viewonly",
 		"Letzter neuer Tag: ".date("h:i:s a",strtotime(date("r")."-$realsecssofartoday seconds")).",viewonly",
 		"aktuelle Spielzeit: ".getgametime().",viewonly",
-		"Nächster neuer Tag: ".date("h:i:s a",strtotime(date("r")."+$realsecstotomorrow seconds"))." (".date("H\\h i\\m s\\s",strtotime("1980-01-01 00:00:00 + $realsecstotomorrow seconds"))."),viewonly",
+		"NÃ¤chster neuer Tag: ".date("h:i:s a",strtotime(date("r")."+$realsecstotomorrow seconds"))." (".date("H\\h i\\m s\\s",strtotime("1980-01-01 00:00:00 + $realsecstotomorrow seconds"))."),viewonly",
 		"weather"=>"Heutiges Wetter:,viewonly"
 		);
 	
-	output("`@<h3>Einstellungen für diesen Server</h3>`2LoGD 0.9.7+jt komplett auf deutsch, mit Sound und vielen Extras!`n`n",true);
+	output("`@<h3>Einstellungen fÃ¼r diesen Server</h3>`2LoGD 0.9.7+jt komplett auf deutsch, mit Sound und vielen Extras!`n`n",true);
 	//output("<table border=1>",true);
 	showform($setup,$settings,true);
 	//output("</table>",true);
 
 }elseif($_GET['op']=="modifications"){
-	addnav("Über LoGD","about.php");
+	addnav("Ãœber LoGD","about.php");
 	addnav("Spieleinstellungen","about.php?op=setup");
-	output("`#Hier läuft `iLegend of the Green Dragon`i Version 0.9.7+jt mit folgenden Änderungen und Erweiterungen:");
-	output("<ul>`#`bDeutsche Übersetzung`b`3<li>Basiert auf translator_de.php von anpera<li>Rätsel und Spott von weasel<li>Monster von anpera, leopolt, Reandor, theklaus ",true);
-	output("<li>Waffen und Rüstungen von theklaus<li>Titel von den Spielern aus Pandiswelt</ul>",true);
+	output("`#Hier lÃ¤uft `iLegend of the Green Dragon`i Version 0.9.7+jt mit folgenden Ã„nderungen und Erweiterungen:");
+	output("<ul>`#`bDeutsche Ãœbersetzung`b`3<li>Basiert auf translator_de.php von anpera<li>RÃ¤tsel und Spott von weasel<li>Monster von anpera, leopolt, Reandor, theklaus ",true);
+	output("<li>Waffen und RÃ¼stungen von theklaus<li>Titel von den Spielern aus Pandiswelt</ul>",true);
 	output("<ul>`#`bBesondere Ereignisse (Forest Events)`b`3<li>Aphrodite: Erquickender Quicky mit einer Gottheit. (Reznarth, anpera)",true);
-	output("<li>Bushes: Dein Weg durch dichtes Gestrüpp kann teuer werden - oder eine grosse Belohnung bieten (bibir)",true);
-	output("<li>Cookies: Kekse im Wald? Sehr ungewöhnlich. (Asuka, Warchild, Zelda)",true);
+	output("<li>Bushes: Dein Weg durch dichtes GestrÃ¼pp kann teuer werden - oder eine grosse Belohnung bieten (bibir)",true);
+	output("<li>Cookies: Kekse im Wald? Sehr ungewÃ¶hnlich. (Asuka, Warchild, Zelda)",true);
 	output("<li>Findtreasure: Finde einen hohlen Baumstamm, der eine Schatzkarte enthalten kann (gefunden auf http://www.lotgd.de, Modifikationen von anpera)<li>GoldenEgg: Finde das einzigartige Goldene Ei, das eine ganz besondere Verbindung mit dem Totenreich hat. Lass es dir nicht im PvP abnehmen! (anpera)",true);
-	output("<li>Gladiator: Lasse dich von einem alten Gladiator zu Arenakämpfen antreiben. (anpera)",true);
+	output("<li>Gladiator: Lasse dich von einem alten Gladiator zu ArenakÃ¤mpfen antreiben. (anpera)",true);
 	output("<li>Graeultat: Eine Leiche dreht dir den Magen um. (Joerg Ledergerber)",true);
 	output("<li>jewelrymaker: Ein elfischer Kunsthandwerker schmiedet dir ein Kunstwerk aus deinem Gold. (Warchild)",true);
-	output("<li>Lake: Ein kleiner See, aus dem man trinken kann (weasel?)<li>Necromancer: Treffe einen finsteren Totenbeschwörer, der Verbindungen zu Ramius und ins Schattenreich hat (TheDragonReborn, Modifikationen von anpera)",true);
-	output("<li>Randdragon: Begegne dem Grünen Drachen im Wald und spüre die Bedrohung hautnah. (Voratus)",true);
-	output("<li>Remains: Eine Leiche eines deiner Mitstreiter erweckt deine Neugier. Doch ein mächtiger Fluch lastet auf ihr! (Voratus, anpera)",true);
-	output("<li>Sacrificealtar: Ein Opferaltar der Götter (TheDragonReborn)",true);
-	output("<li>Slump: Verliere Geld im Wald, welches vom jüngsten Spieler und vom letzten Drachentöter gestohlen wird. (bibir)",true);
-	output("<li>Smith: Ein Schmied bietet dir an, deine Rüstung oder Waffe zu verbessern (jtraub)<li>Stonehenge: Finde einen mysteriösen Ort im Wald (TheDragonReborn)<li>Stumble: Rutsche auf Pferdemist aus. (Zanzara, anpera)",true);
-	output("<li>Tempel: Spende für die Renovierung eines alten Tempels und erhalte mit etwas Glück ein Geschenk von den Göttern. (Romulus von Grauhaar)",true);
+	output("<li>Lake: Ein kleiner See, aus dem man trinken kann (weasel?)<li>Necromancer: Treffe einen finsteren TotenbeschwÃ¶rer, der Verbindungen zu Ramius und ins Schattenreich hat (TheDragonReborn, Modifikationen von anpera)",true);
+	output("<li>Randdragon: Begegne dem GrÃ¼nen Drachen im Wald und spÃ¼re die Bedrohung hautnah. (Voratus)",true);
+	output("<li>Remains: Eine Leiche eines deiner Mitstreiter erweckt deine Neugier. Doch ein mÃ¤chtiger Fluch lastet auf ihr! (Voratus, anpera)",true);
+	output("<li>Sacrificealtar: Ein Opferaltar der GÃ¶tter (TheDragonReborn)",true);
+	output("<li>Slump: Verliere Geld im Wald, welches vom jÃ¼ngsten Spieler und vom letzten DrachentÃ¶ter gestohlen wird. (bibir)",true);
+	output("<li>Smith: Ein Schmied bietet dir an, deine RÃ¼stung oder Waffe zu verbessern (jtraub)<li>Stonehenge: Finde einen mysteriÃ¶sen Ort im Wald (TheDragonReborn)<li>Stumble: Rutsche auf Pferdemist aus. (Zanzara, anpera)",true);
+	output("<li>Tempel: Spende fÃ¼r die Renovierung eines alten Tempels und erhalte mit etwas GlÃ¼ck ein Geschenk von den GÃ¶ttern. (Romulus von Grauhaar)",true);
 	output("<li>Vampire: Begegne einem Vampir, der mit deiner Lebenskraft handelt und die Lebenskraft auf dem Realm gerecht halten kann. (genmac, lonestrider, anpera)",true);
-	output("<li>Wannabe Knight: Ein Möchtegern Ritter schlägt dich im Wald nieder. Möchtest du Rache? (Robert, theklaus)<li>waterfall: Untersuche einen Wasserfall (Kevin Kilgore)</ul>",true);
+	output("<li>Wannabe Knight: Ein MÃ¶chtegern Ritter schlÃ¤gt dich im Wald nieder. MÃ¶chtest du Rache? (Robert, theklaus)<li>waterfall: Untersuche einen Wasserfall (Kevin Kilgore)</ul>",true);
 	output("<ul>`#`bAddons und Erweiterungen`b`3",true);
 	output("<li>Avatare: Verlinke ein Bild deines Helden in deiner Bio. (anpera)",true);
-	output("<li>Battle Arena: Kämpfe in der Arena gegen verschieden Gladiatoren um die Ehre. (Lonny Luberts)",true);
-	output("<li>Bettelstein für Spenden an die Ärmsten der Armen. (ThunderEye)",true);
-	output("<li>Diebstahl: Klaue Waffen oder Rüstungen, statt sie zu kaufen. Aber nimm dich vor den Ladenbesitzern in acht! (anpera)",true);
-	output("<li>Dorfbrunnen: Zum Entsorgen ungewollter Schlüssel. (Chaosmaker)",true);
-	output("<li>Durandils Trampelpfad gibt den Weg zu schönen Orten für Paare frei. (Durandil)",true);
-	output("<li>Füttere dein Tier, wenn es nicht mehr kämpfen kann. (anpera)",true);
-	output("<li>Edelsteinhandel: Bei der Zigeunerin können begrenzt Edelsteine ge- und verkauft werden. (anpera, lonestrider) Edelstentransfer zwischen Spielern ist in der Bank gegen Gebühr möglich. (anpera)",true);
+	output("<li>Battle Arena: KÃ¤mpfe in der Arena gegen verschieden Gladiatoren um die Ehre. (Lonny Luberts)",true);
+	output("<li>Bettelstein fÃ¼r Spenden an die Ã„rmsten der Armen. (ThunderEye)",true);
+	output("<li>Diebstahl: Klaue Waffen oder RÃ¼stungen, statt sie zu kaufen. Aber nimm dich vor den Ladenbesitzern in acht! (anpera)",true);
+	output("<li>Dorfbrunnen: Zum Entsorgen ungewollter SchlÃ¼ssel. (Chaosmaker)",true);
+	output("<li>Durandils Trampelpfad gibt den Weg zu schÃ¶nen Orten fÃ¼r Paare frei. (Durandil)",true);
+	output("<li>FÃ¼ttere dein Tier, wenn es nicht mehr kÃ¤mpfen kann. (anpera)",true);
+	output("<li>Edelsteinhandel: Bei der Zigeunerin kÃ¶nnen begrenzt Edelsteine ge- und verkauft werden. (anpera, lonestrider) Edelstentransfer zwischen Spielern ist in der Bank gegen GebÃ¼hr mÃ¶glich. (anpera)",true);
 	output("<li>Gartenflirt: Flirte mit anderen Spielern und heirate sie. (anpera)",true);
-	output("<li>Geschenkeshop: Schenke anderen Spieler mehr oder weniger nützliche Dinge. (Lonny Luberts, anpera)",true);
-	output("<li>Häuser: Baue oder kaufe ein Haus, wohne und teile Resourcen mit Freunden. Oder breche in die Häuser deiner Feinde ein. Jetzt mit Möbeln! (anpera)",true);
-	output("<li>Hexenhaus: Der Spieler kann bestimmte Aktionen zurücksetzen, neue Waldkämpfe kaufen oder seinen letzten Waldkampf in ein besonderes Ereignis verwandeln. Die Hexe weiß auch mit Flüchen umzugehen. (anpera)",true);
-	output("<li>Inventar und Itemsystem: Finde mächtige Gegenstände, Artefakte, Flüche, oder einfach Schrott bei besiegten Monstern oder bei Händlern. Verkaufe oder benutze sie! (anpera)",true);
-	output("<li>Lodge und Donationpoint-System: Neben Punkten für Spenden kann der Spieler auch während des Spiels Donationspoints sammeln und für diese in der Jägerhütte bestimmte Extras freischalten. Unter anderem farbige Namen, eigene Titel, PvP-Immunität, zur Burg reiten, Heilerin Golinda, mehr Waldkämpfe, ... (anpera, weasel)",true);
-	output("<li>PvP-Arena: Kämpfe in der Arena mit allen Spezialfertigkeiten und Buffs online (oder offline) gegen andere Spieler. (anpera)",true);
+	output("<li>Geschenkeshop: Schenke anderen Spieler mehr oder weniger nÃ¼tzliche Dinge. (Lonny Luberts, anpera)",true);
+	output("<li>HÃ¤user: Baue oder kaufe ein Haus, wohne und teile Resourcen mit Freunden. Oder breche in die HÃ¤user deiner Feinde ein. Jetzt mit MÃ¶beln! (anpera)",true);
+	output("<li>Hexenhaus: Der Spieler kann bestimmte Aktionen zurÃ¼cksetzen, neue WaldkÃ¤mpfe kaufen oder seinen letzten Waldkampf in ein besonderes Ereignis verwandeln. Die Hexe weiÃŸ auch mit FlÃ¼chen umzugehen. (anpera)",true);
+	output("<li>Inventar und Itemsystem: Finde mÃ¤chtige GegenstÃ¤nde, Artefakte, FlÃ¼che, oder einfach Schrott bei besiegten Monstern oder bei HÃ¤ndlern. Verkaufe oder benutze sie! (anpera)",true);
+	output("<li>Lodge und Donationpoint-System: Neben Punkten fÃ¼r Spenden kann der Spieler auch wÃ¤hrend des Spiels Donationspoints sammeln und fÃ¼r diese in der JÃ¤gerhÃ¼tte bestimmte Extras freischalten. Unter anderem farbige Namen, eigene Titel, PvP-ImmunitÃ¤t, zur Burg reiten, Heilerin Golinda, mehr WaldkÃ¤mpfe, ... (anpera, weasel)",true);
+	output("<li>PvP-Arena: KÃ¤mpfe in der Arena mit allen Spezialfertigkeiten und Buffs online (oder offline) gegen andere Spieler. (anpera)",true);
 	output("<li>Schrein: Erwecke andere Spieler aus dem Totenreich. (unbekannt, anpera)",true);
 	output("<li>Schwarzes Brett: Hinterlasse Mitteilungen und Suchanzeigen auf einem schwarzen Brett in der Kneipe. (anpera)",true);
-	output("<li>Sound und Musik: Bestimmten Ereignissen sind Klänge oder Musik zugeordnet. Sound kann im Spielerprofil individuell deaktiviert werden. (anpera, nTE)",true);
+	output("<li>Sound und Musik: Bestimmten Ereignissen sind KlÃ¤nge oder Musik zugeordnet. Sound kann im Spielerprofil individuell deaktiviert werden. (anpera, nTE)",true);
 	output("<li>Spendiere Freibier in der Kneipe. (anpera)",true);
 	output("<li>Spieldatum: Neben Spielzeiten gibt es auch ein Spieldatum, das aber keinen Einfluss auf das Alter von Spielern hat. (Chaosmaker)",true);
 	output("<li>Warchild's Akademie: Lasse dich in deinen besonderen Fertigkeiten ausbilden. (Warchild)",true);
-	output("<li>Wetter: Das Wetter hat Auswirkungen auf deine besonderen Fähigkeiten und den Kampfverlauf (Talisman, JT, anpera)",true);
+	output("<li>Wetter: Das Wetter hat Auswirkungen auf deine besonderen FÃ¤higkeiten und den Kampfverlauf (Talisman, JT, anpera)",true);
 	output("<li>Wiedergeburt: Wenn du alles erreicht hast, kannst du wiedergeboren werden. (Luke, anpera)",true);
-	output("<li>Tortenschlacht: Begrüsse neue Spieler und Charaktere, die ihren Spieljahrestag haben, mit einer Geburtstagstorte. (anpera)",true);
-	output("<li>Zaubersystem: Schleudere deinen Gegnern mächtige Zauber entgegen, die du kaufen oder finden kannst. (anpera)",true);
+	output("<li>Tortenschlacht: BegrÃ¼sse neue Spieler und Charaktere, die ihren Spieljahrestag haben, mit einer Geburtstagstorte. (anpera)",true);
+	output("<li>Zaubersystem: Schleudere deinen Gegnern mÃ¤chtige Zauber entgegen, die du kaufen oder finden kannst. (anpera)",true);
 	output("</ul><ul>`#`bGameplay / Balancing`b`3",true);
-	output("<li>Anzahl der Spieler, die gleichzeitig online sein können, ist begrenzt. (anpera)",true);
-	output("<li>AutoChallenge Grüner Drachen: Wie die Meister holt sich der Drachen seine \"Opfer\", sobald sie überfällig sind. (anpera)",true);
-	output("<li>AutoFight: Kämpfe jede Kampfrunde selbst, oder lasse die nächsten 5 oder alle Kampfrunden automatisch ablaufen. (anpera)",true);
+	output("<li>Anzahl der Spieler, die gleichzeitig online sein kÃ¶nnen, ist begrenzt. (anpera)",true);
+	output("<li>AutoChallenge GrÃ¼ner Drachen: Wie die Meister holt sich der Drachen seine \"Opfer\", sobald sie Ã¼berfÃ¤llig sind. (anpera)",true);
+	output("<li>AutoFight: KÃ¤mpfe jede Kampfrunde selbst, oder lasse die nÃ¤chsten 5 oder alle Kampfrunden automatisch ablaufen. (anpera)",true);
 	output("<li>Ehrenhaftes Verhalten wird belohnt, Schurken werden bestraft. (anpera)",true);
-	output("<li>PvP-Schutz kleinerer Charaktere vor Charakteren, die über 5 Drachenkills mehr als ihr Opfer haben. (anpera)",true);
+	output("<li>PvP-Schutz kleinerer Charaktere vor Charakteren, die Ã¼ber 5 Drachenkills mehr als ihr Opfer haben. (anpera)",true);
 	output("</ul><ul>`#`bSonstiges`b`3",true);
 	output("<li>Neue Rasse: Echsenwesen (anpera)",true);
-	output("<li>Ruhmeshalle: Sortiere nach Reichtum, Schönheit, Stärke, Schlagkraft, Gefallen, Geschwindigkeit, oder betrachte dir die Liste der Heldenpaare. (anpera, jtraub, MightyE)",true);
+	output("<li>Ruhmeshalle: Sortiere nach Reichtum, SchÃ¶nheit, StÃ¤rke, Schlagkraft, Gefallen, Geschwindigkeit, oder betrachte dir die Liste der Heldenpaare. (anpera, jtraub, MightyE)",true);
 	output("<li>Skin 'Jade' als alternatives Design (Josh Canning)",true);
-	output("<li>Statusbalken für Lebensenergie, Erfahrung und vieles mehr. (dvd871, anpera)",true);
-	output("<li>PHP 5 Kompatibilität (thx to Zarzal!)",true);
-	output("<li>Kleinere Modifikationen: 45 Titel (nicegames.de), Aprilscherz deaktiviert, Codeoptimierunge (Chaosmaker), erweiterte F.A.Q., erweiterte Superuserfunktionen, Forumlink, keine Zinsen mehr für Superreiche, konfigurierbares Impressum, Lotterie in der Kneipe (unbekannt, anpera), Multiaccount-Cheat-Schutz (anpera), neuste Schlagzeile auf dem Dorfplatz, neuste Spieler auf der Startseite, Online/Offline-Anzeige in jedem Chat, Rasse in Kämpferliste, Suchfunktion in langen Listen, Uhrzeit im Totenreich, verbessertes Login (nTE), Willkommens-News, Zox Grill in Darkhorse Tavern (Reznarth?), zusätzliche `qF`Ra`ar`9b`8e`vn`r.`V.`T.",true);
+	output("<li>Statusbalken fÃ¼r Lebensenergie, Erfahrung und vieles mehr. (dvd871, anpera)",true);
+	output("<li>PHP 5 KompatibilitÃ¤t (thx to Zarzal!)",true);
+	output("<li>Kleinere Modifikationen: 45 Titel (nicegames.de), Aprilscherz deaktiviert, Codeoptimierunge (Chaosmaker), erweiterte F.A.Q., erweiterte Superuserfunktionen, Forumlink, keine Zinsen mehr fÃ¼r Superreiche, konfigurierbares Impressum, Lotterie in der Kneipe (unbekannt, anpera), Multiaccount-Cheat-Schutz (anpera), neuste Schlagzeile auf dem Dorfplatz, neuste Spieler auf der Startseite, Online/Offline-Anzeige in jedem Chat, Rasse in KÃ¤mpferliste, Suchfunktion in langen Listen, Uhrzeit im Totenreich, verbessertes Login (nTE), Willkommens-News, Zox Grill in Darkhorse Tavern (Reznarth?), zusÃ¤tzliche `qF`Ra`ar`9b`8e`vn`r.`V.`T.",true);
 	output("</ul>`3...und vieles mehr.",true);
-	output("`n`n\"Changes Log\" mit allen Änderungen seit 14.1.2004 gibt es `b<a href='http://www.anpera.net/forum/viewtopic.php?t=317' target='_blank'>hier</a>`b.",true);
+	output("`n`n\"Changes Log\" mit allen Ã„nderungen seit 14.1.2004 gibt es `b<a href='http://www.anpera.net/forum/viewtopic.php?t=317' target='_blank'>hier</a>`b.",true);
 }elseif($_GET['op']=="gpl"){
 	output("`&`b`cGNU GENERAL PUBLIC LICENSE`b`nVersion 2, June 1991`c
 `n`n`0
@@ -429,12 +429,12 @@ necessary.  Here is a sample; alter the names:
 This General Public License does not permit incorporating your program into proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the library.  If this is what you want to do, use the GNU Library General
 Public License instead of this License.");
-	addnav("Über LoGD","about.php");
+	addnav("Ãœber LoGD","about.php");
 }else{
 
 }
 if ($session['user']['loggedin']) {
-	addnav("Zurück zu den News","news.php");
+	addnav("ZurÃ¼ck zu den News","news.php");
 }else{
 	addnav("Login","index.php");
 }

@@ -2,22 +2,22 @@
 require_once "common.php";
 isnewday(2);
 
-page_header("Rüstungseditor");
+page_header("RÃ¼stungseditor");
 $armorlevel = (int)$_GET['level'];
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
-addnav("Rüstungseditor Home","armoreditor.php?level=$armorlevel");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
+addnav("RÃ¼stungseditor Home","armoreditor.php?level=$armorlevel");
 
-addnav("Rüstung hinzufügen","armoreditor.php?op=add&level=$armorlevel");
+addnav("RÃ¼stung hinzufÃ¼gen","armoreditor.php?op=add&level=$armorlevel");
 $values = array(1=>48,225,585,990,1575,2250,2790,3420,4230,5040,5850,6840,8010,9000,10350);
-	output("`&<h3>Rüstungen für $armorlevel Drachenkills</h3>`0",true);
+	output("`&<h3>RÃ¼stungen fÃ¼r $armorlevel Drachenkills</h3>`0",true);
 
 $armorarray=array(
-	"Rüstungen,title",
-	"armorid"=>"Rüstungs ID,hidden",
-	"armorname"=>"Rüstungsname Name",
+	"RÃ¼stungen,title",
+	"armorid"=>"RÃ¼stungs ID,hidden",
+	"armorname"=>"RÃ¼stungsname Name",
 	"defense"=>"Verteidigung,enum,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15",
-	"Rüstungen,title");
+	"RÃ¼stungen,title");
 if($_GET['op']=="edit" || $_GET['op']=="add"){
 	if ($_GET['op']=="edit"){
 		// Die Ruestungsnummer aus der URL wird als Zahl gebunden.
@@ -61,7 +61,7 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 	$row = db_fetch_assoc($res);
 	$max = $row['level'];
 	for ($i=0;$i<=$max;$i++){
-		addnav("Rüstungen für $i DKs","armoreditor.php?level=$i");
+		addnav("RÃ¼stungen fÃ¼r $i DKs","armoreditor.php?level=$i");
 	}
 	output("<table>",true);
 	$sql = "SELECT * FROM armor WHERE level=? ORDER BY defense"; // Die Ruestungsstufe wird als Zahl gebunden.
@@ -78,7 +78,7 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 			reset($row);
 		}
 		output("<tr>",true);
-		output("<td>[<a href='armoreditor.php?op=edit&id=$row[armorid]&level=$armorlevel'>Edit</a>|<a href='armoreditor.php?op=del&id=$row[armorid]&level=$armorlevel' onClick='return confirm(\"Diese Rüstung wirklich löschen?\");'>Löschen</a>]</td>",true);
+		output("<td>[<a href='armoreditor.php?op=edit&id=$row[armorid]&level=$armorlevel'>Edit</a>|<a href='armoreditor.php?op=del&id=$row[armorid]&level=$armorlevel' onClick='return confirm(\"Diese RÃ¼stung wirklich lÃ¶schen?\");'>LÃ¶schen</a>]</td>",true);
 		addnav("","armoreditor.php?op=edit&id=$row[armorid]&level=$armorlevel");
 		addnav("","armoreditor.php?op=del&id=$row[armorid]&level=$armorlevel");
 		foreach ($row as $key => $val) {

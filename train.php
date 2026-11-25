@@ -3,16 +3,20 @@
 // 14072004
 
 require_once "common.php";
-checkday();
-page_header("Blusprings Trainingslager für Krieger");
 
-output("`b`cBlusprings Trainingslager für Krieger`c`b");
+// Ohne laufenden Kampf ist diese Seite einfach die Trainingslager-Startseite.
+$battle = false;
+$victory = false;
+checkday();
+page_header("Blusprings Trainingslager fÃ¼r Krieger");
+
+output("`b`cBlusprings Trainingslager fÃ¼r Krieger`c`b");
 $sql = "SELECT * FROM masters WHERE creaturelevel = ".$session['user']['level'];
 $result = db_query($sql) or die(sql_error($sql));
 if (db_num_rows($result) > 0){
 	$master = db_fetch_assoc($result);
 	if ($master['creaturename'] == "Gadriel the Elven Ranger" && $session['user']['race'] == 2) {
-		$master['creaturewin'] = "Sowas nennt sich Elf?? Halb-Elf höchstens! Komm wieder, wenn du mehr trainiert hast.";
+		$master['creaturewin'] = "Sowas nennt sich Elf?? Halb-Elf hÃ¶chstens! Komm wieder, wenn du mehr trainiert hast.";
 		$master['creaturelose'] = "Es ist nur passend, dass ein anderer Elf sich mit mir messen konnte. Du machst gute Fortschritte.";
 	}
 	$level = $session['user']['level'];
@@ -29,18 +33,18 @@ if (db_num_rows($result) > 0){
 	//output("`\$Exp Required: $exprequired; exp possessed: ".$session[user][experience]."`0`n");
 	
 	if ($HTTP_GET_VARS['op']==""){
-		output("Der Klang von Kampf umfängt dich. Das Geklirr von Waffen in mächtigen Kämpfen lässt dein Kriegerherz höher schlagen. ");
-		output("Das alte Gebäude hinter dem Übungsplatz ist die große Akademie der geheimen Künste.");
+		output("Der Klang von Kampf umfÃ¤ngt dich. Das Geklirr von Waffen in mÃ¤chtigen KÃ¤mpfen lÃ¤sst dein Kriegerherz hÃ¶her schlagen. ");
+		output("Das alte GebÃ¤ude hinter dem Ãœbungsplatz ist die groÃŸe Akademie der geheimen KÃ¼nste.");
 		output("`n`nDein Meister ist `^$master[creaturename]`0.");
 		addnav("Warchilds Akademie","academy.php");
 		addnav("Meister befragen","train.php?op=question");
 		addnav("Meister herausfordern","train.php?op=challenge");
 		/*
 		if ($session['user']['superuser'] > 2) {
-			addnav("Superuser Level erhöhen","train.php?op=challenge&victory=1");
+			addnav("Superuser Level erhÃ¶hen","train.php?op=challenge&victory=1");
 		}
 		*/
-		addnav("Zurück zum Dorf","village.php");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else if($HTTP_GET_VARS['op']=="challenge"){
 		if ($HTTP_GET_VARS['victory']) {
 			$victory=true;
@@ -55,9 +59,9 @@ if (db_num_rows($result) > 0){
 			}
 		}
 		if ($session['user']['seenmaster']==1){
-			output("Du bist der Meinung, dass du heute vielleicht schon genug von deinem Meister hast. Die Lektion, die du heute gelernt hast, hält dich davon ab, dich nochmal so bereitwillig ");
-			output("einer derartigen Demütigung zu unterwerfen.");
-			addnav("Zurück zum Dorf","village.php");
+			output("Du bist der Meinung, dass du heute vielleicht schon genug von deinem Meister hast. Die Lektion, die du heute gelernt hast, hÃ¤lt dich davon ab, dich nochmal so bereitwillig ");
+			output("einer derartigen DemÃ¼tigung zu unterwerfen.");
+			addnav("ZurÃ¼ck zum Dorf","village.php");
 			addnav("Warchilds Akademie","academy.php");
 		}else{
 			if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/bigbong.wav\" width=10 height=10 autostart=true loop=false hidden=true volume=100>",true);
@@ -74,49 +78,49 @@ if (db_num_rows($result) > 0){
 				$battle=true;
 				if ($victory) {
 					$badguy = createarray($session['user']['badguy']);
-					output("Mit einem Wirbelsturm aus Schlägen schlägst du deinen Meister nieder.`n");
+					output("Mit einem Wirbelsturm aus SchlÃ¤gen schlÃ¤gst du deinen Meister nieder.`n");
 				}
 			}else{
-				output("Du machst dich mit ".$session['user']['weapon']." und ".$session['user']['armor']." bereit und näherst dich Meister `^$master[creaturename]`0.`n`nEine kleine Menge Zuschauer ");
-				output("hat sich versammelt und du bemerkst das Grinsen in ihren Gesichtern. Aber du fühlst dich selbstsicher. Du verneigst dich vor `^$master[creaturename]`0 und führst ");
-				output("einen perfekten Drehangriff aus, nur um zu bemerken, dass du NICHTS in den Händen hast!  `^$master[creaturename]`0 steht vor dir - mit deiner Waffe in der Hand.  ");
-				output("Kleinlaut nimmst du ".$session['user']['weapon']." entgegen und schleichst unter dem schallenden Gelächter der Zuschauer vom Trainingsplatz.");
-				addnav("Zurück zum Dorf","village.php");
+				output("Du machst dich mit ".$session['user']['weapon']." und ".$session['user']['armor']." bereit und nÃ¤herst dich Meister `^$master[creaturename]`0.`n`nEine kleine Menge Zuschauer ");
+				output("hat sich versammelt und du bemerkst das Grinsen in ihren Gesichtern. Aber du fÃ¼hlst dich selbstsicher. Du verneigst dich vor `^$master[creaturename]`0 und fÃ¼hrst ");
+				output("einen perfekten Drehangriff aus, nur um zu bemerken, dass du NICHTS in den HÃ¤nden hast!  `^$master[creaturename]`0 steht vor dir - mit deiner Waffe in der Hand.  ");
+				output("Kleinlaut nimmst du ".$session['user']['weapon']." entgegen und schleichst unter dem schallenden GelÃ¤chter der Zuschauer vom Trainingsplatz.");
+				addnav("ZurÃ¼ck zum Dorf","village.php");
 				addnav("Warchilds Akademie","academy.php");
 				$session['user']['seenmaster']=1;
 			}
 		}
 	}else if($HTTP_GET_VARS['op']=="question"){
-		output("Furchtsam näherst du dich `^$master[creaturename]`0, um ihn zu fragen, ob du bereits in der selben Klasse wie er kämpfst.");
+		output("Furchtsam nÃ¤herst du dich `^$master[creaturename]`0, um ihn zu fragen, ob du bereits in der selben Klasse wie er kÃ¤mpfst.");
 		if($session['user']['experience']>=$exprequired){
-			output("`n`n`^$master[creaturename]`0 sagt: \"Gee, deine Muskeln werden ja größer als meine...\"");
+			output("`n`n`^$master[creaturename]`0 sagt: \"Gee, deine Muskeln werden ja grÃ¶ÃŸer als meine...\"");
 		}else{
 			output("`n`n`^$master[creaturename]`0  stellt fest, dass du noch mindestens `%".($exprequired-$session['user']['experience'])."`0 Erfahrungspunkte mehr brauchst, bevor du bereit bist, ihn zu einem Kampf herauszufordern.");
 		}
-		if ($session['user']['reputation']>20) output("`nAußerdem ist $master[creaturename] von deinem ausgezeichneten Ruf begeistert.");
-		if ($session['user']['reputation']<-20) output("`n$master[creaturename] zeigt sich sehr enttäuscht von deinem Verhalten als Kämpfer in der Welt.");
+		if ($session['user']['reputation']>20) output("`nAuÃŸerdem ist $master[creaturename] von deinem ausgezeichneten Ruf begeistert.");
+		if ($session['user']['reputation']<-20) output("`n$master[creaturename] zeigt sich sehr enttÃ¤uscht von deinem Verhalten als KÃ¤mpfer in der Welt.");
 		addnav("Warchilds Akademie","academy.php");
 		addnav("Meister befragen","train.php?op=question");
 		addnav("Meister herausfordern","train.php?op=challenge");
 /*
 		if ($session['user']['superuser'] > 2) {
-			addnav("Superuser Level erhöhen","train.php?op=challenge&victory=1");
+			addnav("Superuser Level erhÃ¶hen","train.php?op=challenge&victory=1");
 		}
 */
-		addnav("Zurück zum Dorf","village.php");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else if($_GET['op']=="autochallenge"){
 		addnav("Gegen den Meister antreten","train.php?op=challenge");
-		output("`^{$master['creaturename']}`0 ist deine Tapferkeit als Krieger zu Ohren gekommen und er hat Gerüchte gehört, dass du glaubst, 
-		du bist so viel mächtiger als er, dass du nicht einmal gegen ihn kämpfen müsstest, um irgendetwas zu beweisen. Das hat sein Ego 
-		verständlicherweise verletzt. So hat er sich aufgemacht, dich zu finden.  `^{$master['creaturename']}`0 fordert einen sofortigen 
+		output("`^{$master['creaturename']}`0 ist deine Tapferkeit als Krieger zu Ohren gekommen und er hat GerÃ¼chte gehÃ¶rt, dass du glaubst, 
+		du bist so viel mÃ¤chtiger als er, dass du nicht einmal gegen ihn kÃ¤mpfen mÃ¼sstest, um irgendetwas zu beweisen. Das hat sein Ego 
+		verstÃ¤ndlicherweise verletzt. So hat er sich aufgemacht, dich zu finden.  `^{$master['creaturename']}`0 fordert einen sofortigen 
 		Kampf von dir und dein eigener Stolz hindert dich daran, seine Forderung abzulehnen.");
 		if ($session['user']['hitpoints']<$session['user']['maxhitpoints']){
-			output("`n`nAls fairer Kämpfer gibt dir dein Meister vor dem Kampf einen Heiltrank.");
+			output("`n`nAls fairer KÃ¤mpfer gibt dir dein Meister vor dem Kampf einen Heiltrank.");
 			$session['user']['hitpoints']=$session['user']['maxhitpoints'];
 		}
 		$session['user']['reputation']-=2;
 		if ($session['user']['seenmaster']==1) $session['user']['seenmaster']=2;
-		addnews("`3{$session['user']['name']}`3 wurde von Meister `^{$master['creaturename']}`3 wegen Überheblichkeit gejagt und gestellt.");
+		addnews("`3{$session['user']['name']}`3 wurde von Meister `^{$master['creaturename']}`3 wegen Ãœberheblichkeit gejagt und gestellt.");
 	}
 	if ($HTTP_GET_VARS['op']=="fight"){
 		$battle=true;
@@ -132,7 +136,7 @@ if (db_num_rows($result) > 0){
 			$HTTP_GET_VARS['skill']="";
 			if ($HTTP_GET_VARS['skill']=="") $session['user']['buffbackup']=serialize($session['bufflist']);
 			$session['bufflist']=array();
-			output("`&Dein Stolz verbietet es dir, während des Kampfes Gebrauch von deinen besonderen Fähigkeiten zu machen!`0");
+			output("`&Dein Stolz verbietet es dir, wÃ¤hrend des Kampfes Gebrauch von deinen besonderen FÃ¤higkeiten zu machen!`0");
 		}
 		if (!$victory) include("battle.php");
 		if ($victory){
@@ -172,7 +176,7 @@ if (db_num_rows($result) > 0){
 			if ($session['user']['level']<15){
 				output("Du hast jetzt einen neuen Meister.`n");
 			}else{
-				output("Keiner im Land ist mächtiger als du!`n");
+				output("Keiner im Land ist mÃ¤chtiger als du!`n");
 			}
 			if ($session['user']['referer']>0 && $session['user']['level']>=5 && $session['user']['refererawarded']<1){
 				$sql = "UPDATE accounts SET donation=donation+50 WHERE acctid={$session['user']['referer']}";
@@ -189,10 +193,10 @@ if (db_num_rows($result) > 0){
 			addnav("Meister herausfordern","train.php?op=challenge");
 /*
 			if ($session['user']['superuser'] > 2) {
-				addnav("Superuser Level erhöhen","train.php?op=challenge&victory=1");
+				addnav("Superuser Level erhÃ¶hen","train.php?op=challenge&victory=1");
 			}
 */
-			addnav("Zurück zum Dorf","village.php");
+			addnav("ZurÃ¼ck zum Dorf","village.php");
 			addnews("`%".$session['user']['name']."`3 hat ".($session['user']['sex']?"ihren":"seinen")." Meister `%$badguy[creaturename]`3 an ".($session['user']['sex']?"ihrem":"seinem")." `^".ordinal($session['user']['age'])."`3 Tag besiegt und steigt auf Level `^".$session['user']['level']."`3 auf!!");
 			$badguy=array();
 			$session['user']['hitpoints'] = $session['user']['maxhitpoints'];
@@ -224,7 +228,7 @@ if (db_num_rows($result) > 0){
 				//$session[user][gold]=0;
 				$session['user']['hitpoints']=$session['user']['maxhitpoints'];
 				output("`&`bDu wurdest von `%$badguy[creaturename]`& besiegt!`b`n");
-				output("`%$badguy[creaturename]`\$ hält vor dem vernichtenden Schlag inne und reicht dir stattdessen seine Hand, um dir auf die Beine zu helfen. Er verabreicht dir einen kostenlosen Heiltrank.`n");
+				output("`%$badguy[creaturename]`\$ hÃ¤lt vor dem vernichtenden Schlag inne und reicht dir stattdessen seine Hand, um dir auf die Beine zu helfen. Er verabreicht dir einen kostenlosen Heiltrank.`n");
 				$search=array(	"%s",
 												"%o",
 												"%p",
@@ -248,10 +252,10 @@ if (db_num_rows($result) > 0){
 				addnav("Meister herausfordern","train.php?op=challenge");
 /*
 				if ($session['user']['superuser'] > 2) {
-					addnav("Superuser Level erhöhen","train.php?op=challenge&victory=1");
+					addnav("Superuser Level erhÃ¶hen","train.php?op=challenge&victory=1");
 				}
 */
-				addnav("Zurück zum Dorf","village.php");
+				addnav("ZurÃ¼ck zum Dorf","village.php");
 				//$session[user][seenmaster]=1;
 				if ($session['user']['seenmaster']!=2) $session['user']['seenmaster']=1;
 			}else{
@@ -260,12 +264,12 @@ if (db_num_rows($result) > 0){
 		}
 	}
 }else{
-  output("Du bummelst über den Übungsplatz. Jüngere Krieger drängen sich zusammen und deuten auf dich, als du vorüber läufst.  ");
-	output("Du kennst diesen Platz gut. Bluspring grüßt dich und du gibst ihr einen starken Händedruck. Außer Erinnerungen ");
-	output("gibt es hier nichts mehr für dich. Du bleibst noch eine Weile und siehst den jungen Kriegern beim Training zu, bevor du ");
-	output("zum Dorf zurückkehrst.");
+  output("Du bummelst Ã¼ber den Ãœbungsplatz. JÃ¼ngere Krieger drÃ¤ngen sich zusammen und deuten auf dich, als du vorÃ¼ber lÃ¤ufst.  ");
+	output("Du kennst diesen Platz gut. Bluspring grÃ¼ÃŸt dich und du gibst ihr einen starken HÃ¤ndedruck. AuÃŸer Erinnerungen ");
+	output("gibt es hier nichts mehr fÃ¼r dich. Du bleibst noch eine Weile und siehst den jungen Kriegern beim Training zu, bevor du ");
+	output("zum Dorf zurÃ¼ckkehrst.");
 	addnav("Warchilds Akademie","academy.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }
 page_footer();
 ?>

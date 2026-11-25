@@ -23,7 +23,7 @@ if ($old < $d) {
 	}
 } else {
 	if ($_POST['test']) {
-		echo("Schon gew‰hlt.<br>");
+		echo("Schon gew√§hlt.<br>");
 	}
 }
 ?>

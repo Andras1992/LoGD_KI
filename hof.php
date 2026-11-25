@@ -42,12 +42,12 @@ addnav("Bestenlisten");
 addnav("Drachenkills", "hof.php?op=kills&subop=$subop&page=$page");
 addnav("Reichtum", "hof.php?op=money&subop=$subop&page=$page");
 addnav("Edelsteine", "hof.php?op=gems&subop=$subop&page=$page");
-addnav("Schˆnheit", "hof.php?op=charm&subop=$subop&page=$page");
-addnav("St‰rke", "hof.php?op=tough&subop=$subop&page=$page");
+addnav("Sch√∂nheit", "hof.php?op=charm&subop=$subop&page=$page");
+addnav("St√§rke", "hof.php?op=tough&subop=$subop&page=$page");
 addnav("Schlagkraft","hof.php?op=punch&subop=$subop&page=$page");
 addnav("Tollpatsche", "hof.php?op=resurrects&subop=$subop&page=$page");
 addnav("Geschwindigkeit", "hof.php?op=days&subop=$subop&page=$page");
-addnav("Arenak‰mpfer","hof.php?op=battlepoints&subop=$subop&page=$page");
+addnav("Arenak√§mpfer","hof.php?op=battlepoints&subop=$subop&page=$page");
 if ($session['user']['alive']==0) addnav("Ramius' Lieblinge","hof.php?op=grave&subop=$subop&page=$page");
 addnav("Sortieren nach");
 addnav("Besten", "hof.php?op=$op&subop=most&page=$page");
@@ -62,9 +62,9 @@ for($i = 0; $i < $totalplayers; $i+= $playersperpage) {
 addnav("Sonstiges");
 addnav("Paare dieser Welt","hof.php?op=paare");
 if ($session['user']['alive']){
-	addnav("Zur¸ck zum Dorf","village.php");
+	addnav("Zur√ºck zum Dorf","village.php");
 }else{
-	addnav("Zur¸ck zu den Schatten","shades.php");
+	addnav("Zur√ºck zu den Schatten","shades.php");
 }
 
 function display_table($title, $sql, $none=false, $foot=false, $data_header=false, $tag=false){
@@ -116,10 +116,10 @@ $racesel = "CASE race WHEN 1 THEN '`2Troll`0' WHEN 2 THEN '`^Elf`0' WHEN 3 THEN 
 if ($_GET['op']=="money"){
 	$sql = "SELECT name,(goldinbank+gold+round((((rand()*10)-5)/100)*(goldinbank+gold))) AS data1 FROM accounts WHERE locked=0 ORDER BY data1 $order, level $order, experience $order, acctid $order LIMIT $limit";
 	$adverb = "reichsten";
-	if ($_GET['subop'] == "least") $adverb = "‰rmsten";
+	if ($_GET['subop'] == "least") $adverb = "√§rmsten";
 	$title = "Die $adverb Krieger in diesem Land";
-	$foot = "(Vermˆgen +/- 5%)";
-	$headers = array("Gesch‰tztes Vermˆgen");
+	$foot = "(Verm√∂gen +/- 5%)";
+	$headers = array("Gesch√§tztes Verm√∂gen");
 	$tags = array("Gold");
 	display_table($title, $sql, false, $foot, $headers, $tags);
 } elseif ($_GET['op'] == "gems") {
@@ -130,23 +130,23 @@ if ($_GET['op']=="money"){
 	display_table($title, $sql);
 } elseif ($_GET['op']=="charm"){
 	$sql = "SELECT name,$sexsel AS data1,$racesel AS data2 FROM accounts WHERE locked=0 ORDER BY charm $order, level $order, experience $order, acctid $order LIMIT $limit";
-	$adverb = "schˆnsten";
-	if ($_GET['subop'] == "least") $adverb = "h‰sslichsten";
+	$adverb = "sch√∂nsten";
+	if ($_GET['subop'] == "least") $adverb = "h√§sslichsten";
 	$title = "Die $adverb Krieger in diesem Land.";
 	$headers = array("<img src=\"images/female.gif\">/<img src=\"images/male.gif\">", "Rasse");
 	display_table($title, $sql, false, false, $headers, false);
 } elseif ($_GET['op']=="tough"){
 	$sql = "SELECT name,level AS data2 ,$racesel as data1 FROM accounts WHERE locked=0 ORDER BY maxhitpoints $order, level $order, experience $order, acctid $order LIMIT $limit";
-	$adverb = "st‰rksten";
-	if ($_GET['subop'] == "least") $adverb = "schw‰chsten";
+	$adverb = "st√§rksten";
+	if ($_GET['subop'] == "least") $adverb = "schw√§chsten";
 	$title = "Die $adverb Krieger in diesem Land";
 	$headers = array("Rasse", "Level");
 	display_table($title, $sql, false, false, $headers, false);
 }elseif ($_GET['op']=="punch"){
 	$sql = "SELECT name,punch AS data1,$racesel AS data2 FROM accounts WHERE locked=0 ORDER BY data1 $order, level $order, experience $order, acctid $order LIMIT $limit";
-	$adverb = "h‰rtesten";
+	$adverb = "h√§rtesten";
 	if ($_GET['subop'] == "least") $adverb = "armseligsten";
-	$title = "Die $adverb Schl‰ge aller Zeiten";
+	$title = "Die $adverb Schl√§ge aller Zeiten";
 	$headers = array("Punkte","Rasse");
 	display_table($title, $sql, false, false, $headers, false);
 } elseif ($_GET['op']=="resurrects"){
@@ -201,7 +201,7 @@ if ($_GET['op']=="money"){
 	$sql = "SELECT name,battlepoints AS data1,dragonkills AS data2 FROM accounts WHERE locked=0 ORDER BY battlepoints $order, dragonkills $order, acctid $order LIMIT $limit";
 	$adverb = "besten";
 	if ($_GET['subop'] == "least") $adverb = "schlechtesten";
-	$title = "Die $adverb Arenak‰mpfer in diesem Land";
+	$title = "Die $adverb Arenak√§mpfer in diesem Land";
 	$headers = array("Punkte","Drachenkills");
 	display_table($title, $sql, false, false, $headers, false);
 }else if ($_GET['op']=="paare"){

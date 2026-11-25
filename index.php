@@ -13,7 +13,7 @@ if ($session['loggedin']){
 page_header();
 output("`cWillkommen bei Legend of the Green Dragon, schamlos abgekupfert von Seth Able's Legend of the Red Dragon.`n");
 if (getsetting('activategamedate','0')==1) output("`@Wir schreiben den `%".getgamedate()."`@.`0`n");
-output("`@Die gegenwärtige Zeit im Dorf ist `%".getgametime()."`@.`0`n");
+output("`@Die gegenwÃ¤rtige Zeit im Dorf ist `%".getgametime()."`@.`0`n");
 
 //Next New Day in ... is by JT from logd.dragoncat.net
 $time = gametime();
@@ -22,12 +22,12 @@ $tomorrow = mktime(0,0,0,date('m',$time),date('d',$time)+1,date('Y',$time));
 // $tomorrow = strtotime(date("Y-m-d 00:00:00",$tomorrow));
 $secstotomorrow = $tomorrow-$time;
 $realsecstotomorrow = round($secstotomorrow / (int)getsetting("daysperday",4));
-output("`@Nächster neuer Tag in: `3".date("G \\S\\t\\u\\n\\d\\e\\n, i \\M\\i\\n\\u\\t\\e\\n, s \\S\\e\\k\\u\\n\\d\\e\\n\\ \\(\\E\\c\\h\\t\\z\\e\\i\\t\\)",strtotime("1980-01-01 00:00:00 + $realsecstotomorrow seconds"))."`0`n`n");
+output("`@NÃ¤chster neuer Tag in: `3".date("G \\S\\t\\u\\n\\d\\e\\n, i \\M\\i\\n\\u\\t\\e\\n, s \\S\\e\\k\\u\\n\\d\\e\\n\\ \\(\\E\\c\\h\\t\\z\\e\\i\\t\\)",strtotime("1980-01-01 00:00:00 + $realsecstotomorrow seconds"))."`0`n`n");
 
 $newplayer=stripslashes(getsetting("newplayer",""));
-if ($newplayer!="") output("`@Unser jüngster Spieler ist `^$newplayer`@!`0`n");
+if ($newplayer!="") output("`@Unser jÃ¼ngster Spieler ist `^$newplayer`@!`0`n");
 $newdk=stripslashes(getsetting("newdragonkill","")); 
-if ($newdk!="") output("`@Der letzte Drachentöter war: `&$newdk`@!`0`n`n"); 
+if ($newdk!="") output("`@Der letzte DrachentÃ¶ter war: `&$newdk`@!`0`n`n"); 
 
 // Der Stichtag wird aus der eingestellten Sitzungsdauer berechnet und sicher als Wert uebergeben.
 $onlineCutoff = date("Y-m-d H:i:s",strtotime("-".getsetting("LOGINTIMEOUT",900)." seconds"));
@@ -50,7 +50,7 @@ output("Gib deinen Namen und dein Passwort ein, um diese Welt zu betreten.`n");
 if ($_GET['op']=="timeout"){
 	$session['message'].=" Deine Sessionzeit ist abgelaufen. Bitte neu einloggen.`n";
 	if (!isset($_COOKIE['PHPSESSID'])){
-		$session['message'].=" Es scheint, als ob die Cookies dieser Seite von deinem System blockiert werden.  Zumindest Sessioncookies müssen für diese Seite zugelassen werden.`n";
+		$session['message'].=" Es scheint, als ob die Cookies dieser Seite von deinem System blockiert werden.  Zumindest Sessioncookies mÃ¼ssen fÃ¼r diese Seite zugelassen werden.`n";
 	}
 }
 if ($session['message']>"") output("`b`\$$session[message]`b`n");
@@ -64,7 +64,7 @@ output("`^`bDer Server ist im Moment ausgelastet, die maximale Anzahl an Usern i
 if ($_GET['op']=="timeout"){
 	$session['message'].=" Deine Sessionzeit ist abgelaufen. Bitte neu einloggen.`n";
 	if (!isset($_COOKIE['PHPSESSID'])){
-		$session['message'].=" Es scheint, als ob die Cookies dieser Seite von deinem System blockiert werden.  Zumindest Sessioncookies müssen für diese Seite zugelassen werden.`n";
+		$session['message'].=" Es scheint, als ob die Cookies dieser Seite von deinem System blockiert werden.  Zumindest Sessioncookies mÃ¼ssen fÃ¼r diese Seite zugelassen werden.`n";
 	}
 }
 if ($session['message']>"") output("`b`\$$session[message]`b`n");
@@ -79,12 +79,12 @@ output("`c`2Version auf diesem Gameserver: `@{$logd_version}`0`c");
 
 clearnav();
 addnav("Neu hier?");
-addnav("Über LoGD","about.php");
+addnav("Ãœber LoGD","about.php");
 addnav("F.A.Q.","petition.php?op=faq",false,true);
 addnav("Charakter erstellen","create.php");
 addnav("Das Spiel");
-addnav("Liste der Kämpfer","list.php");
-addnav("Tägliche News", "news.php");
+addnav("Liste der KÃ¤mpfer","list.php");
+addnav("TÃ¤gliche News", "news.php");
 addnav("Spieleinstellungen", "about.php?op=setup");
 addnav("Passwort vergessen?","create.php?op=forgot");
 // addnav("DAS Spielforum","http://www.logd-welt.de/forum/index.php",false,false,true);

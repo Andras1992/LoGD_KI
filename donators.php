@@ -3,12 +3,12 @@ require_once "common.php";
 isnewday(3);
 
 page_header("Spenderseite");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 
 output("<form action='donators.php?op=add1' method='POST'>",true);
 addnav("","donators.php?op=add1");
-output("`bDonationpoints vergeben:`b`nCharakter: <input name='name'> `nPunkte: <input name='amt' size='3'>`n<input type='submit' class='button' value='Donation hinzufügen'>",true);
+output("`bDonationpoints vergeben:`b`nCharakter: <input name='name'> `nPunkte: <input name='amt' size='3'>`n<input type='submit' class='button' value='Donation hinzufÃ¼gen'>",true);
 output("</form>",true);
 
 if ($_GET['op']=="add2"){
@@ -47,7 +47,7 @@ if ($_GET['op']==""){
 	// Die Namenssuche wird als Suchwert gebunden und bleibt ausfuehrbarem SQL fern.
 	$sql = "SELECT name,acctid,donation,donationspent FROM accounts WHERE login LIKE ?";
 	$result = db_query_params($sql, array(db_unquote_legacy_input($search)));
-	output("Bestätige {$_POST['amt']} Punkte an:`n`n");
+	output("BestÃ¤tige {$_POST['amt']} Punkte an:`n`n");
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
 		output("<a href='donators.php?op=add2&id={$row['acctid']}&amt={$_POST['amt']}'>",true);

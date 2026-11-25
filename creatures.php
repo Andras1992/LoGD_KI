@@ -54,8 +54,8 @@ foreach ($creaturestattable as $key => $val) {
 page_header("Creature Editor");
 
 if ($session['user']['superuser'] >= 2){
-	addnav("G?Zurück zur Grotte","superuser.php");
-	addnav("W?Zurück zum Weltlichen","village.php");
+	addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+	addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 	if ($HTTP_POST_VARS['save']<>""){
 		// Ein fehlender Ort wird als Anfangswert gesetzt, damit neue Formulare ohne Ortsauswahl funktionieren.
 		if (!isset($HTTP_POST_VARS['location'])) $HTTP_POST_VARS['location']=0;
@@ -101,16 +101,16 @@ if ($session['user']['superuser'] >= 2){
 $sql="DELETE FROM creatures WHERE creatureid=?"; // Die Kreaturen-ID wird beim Loeschen als Zahl gebunden.
 		db_query_params($sql,array((int)db_unquote_legacy_input($HTTP_GET_VARS['id'])));
 		if (db_affected_rows()>0){
-			output("Kreatur gelöscht`n`n");
+			output("Kreatur gelÃ¶scht`n`n");
 		}else{
-			output("Kreatur nicht gelöscht: ".db_error(LINK));
+			output("Kreatur nicht gelÃ¶scht: ".db_error(LINK));
 		}
 		$HTTP_GET_VARS['op']="";
 	}
 	if ($HTTP_GET_VARS['op']==""){
 		$sql = "SELECT * FROM creatures ORDER BY creaturelevel,creaturename";
 		$result = db_query($sql) or die(db_error(LINK));
-		addnav("Eine Kreatur hinzufügen","creatures.php?op=add");
+		addnav("Eine Kreatur hinzufÃ¼gen","creatures.php?op=add");
 		output("<table><tr><td>Ops</td><td>Kreaturname</td><td>Level</td><td>Waffe</td><td>Nachricht beim Tod</td><td>Autor</td></tr>",true);
 		addnav("","creatures.php");
 		for ($i=0;$i<db_num_rows($result);$i++){
@@ -119,7 +119,7 @@ $sql="DELETE FROM creatures WHERE creatureid=?"; // Die Kreaturen-ID wird beim L
 				output("<tr><td> [Edit|Del] </td><td>",true);
 			}else{
 				output("<tr><td> [<a href='creatures.php?op=edit&id=$row[creatureid]'>Edit</a>|".
-				"<a href='creatures.php?op=del&id=$row[creatureid]' onClick='return confirm(\"Bist du dir sicher, dass du diese Kreatur löschen willst?\");'>Del</a>] </td><td>",true);
+				"<a href='creatures.php?op=del&id=$row[creatureid]' onClick='return confirm(\"Bist du dir sicher, dass du diese Kreatur lÃ¶schen willst?\");'>Del</a>] </td><td>",true);
 				addnav("","creatures.php?op=edit&id=$row[creatureid]");
 				addnav("","creatures.php?op=del&id=$row[creatureid]");
 			}
@@ -165,11 +165,11 @@ $sql = "SELECT * FROM creatures WHERE creatureid=?"; // Die angeforderte Kreatur
 		}else{
 		
 		}
-		addnav("Zurück zum Monster-Editor","creatures.php");
+		addnav("ZurÃ¼ck zum Monster-Editor","creatures.php");
 	}
 }else{
-	output("Weil du versucht hast die Götter zu betrügen, wurdest du niedergeschmettert!");
-	addnews("`&".$session['user']['name']." wurde für den Versuch, die Götter zu betrügen, niedergeschmettert (hat versucht die Superuser-Seiten zu hacken).");
+	output("Weil du versucht hast die GÃ¶tter zu betrÃ¼gen, wurdest du niedergeschmettert!");
+	addnews("`&".$session['user']['name']." wurde fÃ¼r den Versuch, die GÃ¶tter zu betrÃ¼gen, niedergeschmettert (hat versucht die Superuser-Seiten zu hacken).");
 	$session['user']['hitpoints']=0;
 }
 page_footer();

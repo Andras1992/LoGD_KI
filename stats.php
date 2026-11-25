@@ -3,20 +3,20 @@ require_once "common.php";
 isnewday(2);
 
 page_header("Stats");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Aktualisieren","stats.php");
 
 $sql = "SELECT sum(gentimecount) AS c, sum(gentime) AS t, sum(gensize) AS s, count(*) AS a FROM accounts";
 $result = db_query($sql);
 $row = db_fetch_assoc($result);
-output("`b`%Für existierende Accounts:`b`n");
+output("`b`%FÃ¼r existierende Accounts:`b`n");
 output("`@Accounts insgesamt: `^".number_format($row['a'])."`n");
 output("`@Treffer insgesamt: `^".number_format($row['c'])."`n");
 output("`@Seitengenerierungszeit insgesamt: `^".dhms($row['t'])."`n");
-output("`@Seitengenerierungsgröße insgesamt: `^".number_format($row['s'])."b`n");
+output("`@SeitengenerierungsgrÃ¶ÃŸe insgesamt: `^".number_format($row['s'])."b`n");
 output("`@Durchschnittliche Seitengenerierungszeit: `^".dhms($row['t']/$row['c'],true)."`n");
-output("`@Durchschnittliche Seitengröße: `^".number_format($row['s']/$row['c'])."`n");
+output("`@Durchschnittliche SeitengrÃ¶ÃŸe: `^".number_format($row['s']/$row['c'])."`n");
 output("`n`%`bTop Referers:`b`0`n");
 output("<table border='0' cellpadding='2' cellspacing='1' bgcolor='#999999'>",true);
 output("<tr class='trhead'><td><b>Name</b></td><td><b>Referrals</b></td></tr>",true);

@@ -4,13 +4,13 @@ isnewday(2);
 
 page_header("Waffen Editor");
 $weaponlevel = (int)$_GET['level'];
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Waffeneditor","weaponeditor.php?level=$weaponlevel");
 
-addnav("Waffe hinzufügen","weaponeditor.php?op=add&level=$weaponlevel");
+addnav("Waffe hinzufÃ¼gen","weaponeditor.php?op=add&level=$weaponlevel");
 $values = array(1=>48,225,585,990,1575,2250,2790,3420,4230,5040,5850,6840,8010,9000,10350);
-	output("`&<h3>Waffen für $weaponlevel Drachen Kills</h3>`0",true);
+	output("`&<h3>Waffen fÃ¼r $weaponlevel Drachen Kills</h3>`0",true);
 
 $weaponarray=array(
 	"Waffen,title",
@@ -61,7 +61,7 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 	$row = db_fetch_assoc($res);
 	$max = $row['level'];
 	for ($i=0;$i<=$max;$i++){
-		addnav("Waffen für $i DK's","weaponeditor.php?level=$i");
+		addnav("Waffen fÃ¼r $i DK's","weaponeditor.php?level=$i");
 	}
 	output("<table>",true);
 	$sql = "SELECT * FROM weapons WHERE level=? ORDER BY damage"; // Die Waffenstufe wird als Zahl gebunden.
@@ -78,7 +78,7 @@ if($_GET['op']=="edit" || $_GET['op']=="add"){
 			reset($row);
 		}
 		output("<tr>",true);
-		output("<td>[<a href='weaponeditor.php?op=edit&id=$row[weaponid]&level=$weaponlevel'>Edit</a>|<a href='weaponeditor.php?op=del&id=$row[weaponid]&level=$weaponlevel' onClick='return confirm(\"Diese Waffe wirklich löschen?\");'>Löschen</a>]</td>",true);
+		output("<td>[<a href='weaponeditor.php?op=edit&id=$row[weaponid]&level=$weaponlevel'>Edit</a>|<a href='weaponeditor.php?op=del&id=$row[weaponid]&level=$weaponlevel' onClick='return confirm(\"Diese Waffe wirklich lÃ¶schen?\");'>LÃ¶schen</a>]</td>",true);
 		addnav("","weaponeditor.php?op=edit&id=$row[weaponid]&level=$weaponlevel");
 		addnav("","weaponeditor.php?op=del&id=$row[weaponid]&level=$weaponlevel");
 		foreach ($row as $key => $val) {

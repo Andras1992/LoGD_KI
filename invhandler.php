@@ -18,8 +18,8 @@ if (isset($_GET['id'])){
 page_header("Inventar");
 if ($_GET['op']=="fit"){
 	output("`QDu tauschst `q`n");
-	if ($item['class']=="Rüstung"){
-		output($session['user']['armor']."`Q (`q".$session['user']['armordef']."`Q Verteidigung, Wert: `q".$session['user']['armorvalue']."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Verteidigung, Wert: `q$item[gold] `QGold) aus.`n Deine Verteidigung ändert sich damit von `q".$session['user']['defence']."`Q auf `q");
+	if ($item['class']=="RÃ¼stung"){
+		output($session['user']['armor']."`Q (`q".$session['user']['armordef']."`Q Verteidigung, Wert: `q".$session['user']['armorvalue']."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Verteidigung, Wert: `q$item[gold] `QGold) aus.`n Deine Verteidigung Ã¤ndert sich damit von `q".$session['user']['defence']."`Q auf `q");
 		$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES (?,?,?,?,?,?)"; // Alte Ruestung wird mit Zahlen und Namen als gebundene Werte gespeichert.
 		db_query_params($sql,array($session["user"]["armor"],"R".chr(195).chr(188)."stung",(int)$session["user"]["acctid"],(int)$session["user"]["armorvalue"],(int)$session["user"]["armordef"],"Gebrauchte Ruestung mit ".(int)$session["user"]["armordef"]." Verteidigung."));
 		$session['user']['armor']=$item['name'];
@@ -28,7 +28,7 @@ if ($_GET['op']=="fit"){
 		output($session['user']['defence']."`Q.`n`n");
 	}
 	if ($item['class']=="Waffe"){
-		output($session['user']['weapon']."`Q (`q".$session['user']['weapondmg']."`Q Angriff, Wert: `q".$session['user']['weaponvalue']."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Angriff, Wert: `q$item[gold] `QGold) aus.`n Dein Angriffswert ändert sich damit von `q".$session['user']['attack']."`Q auf `q");
+		output($session['user']['weapon']."`Q (`q".$session['user']['weapondmg']."`Q Angriff, Wert: `q".$session['user']['weaponvalue']."`Q Gold)`n gegen`n`q$item[name]`Q (`q$item[value1]`Q Angriff, Wert: `q$item[gold] `QGold) aus.`n Dein Angriffswert Ã¤ndert sich damit von `q".$session['user']['attack']."`Q auf `q");
 		$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES (?,?,?,?,?,?)"; // Alte Waffe wird sicher mit dem Spieler verbunden.
 		db_query_params($sql,array($session["user"]["weapon"],"Waffe",(int)$session["user"]["acctid"],(int)$session["user"]["weaponvalue"],(int)$session["user"]["weapondmg"],"Gebrauchte Waffe mit ".(int)$session["user"]["weapondmg"]." Angriffswert."));
 		$session['user']['weapon']=$item['name'];
@@ -42,20 +42,20 @@ if ($_GET['op']=="fit"){
 	// Gegenstandsname, Moebelklasse und Besitzer sind Daten und werden deshalb gebunden.
 	if (db_num_rows(db_query_params("SELECT id FROM items WHERE name=? AND class=? AND owner=?", array($item['name'], "\x4D\xC3\xB6bel", (int)$item['owner'])))>0){
 		db_query_params("DELETE FROM items WHERE name=? AND class=? AND owner=?", array($item['name'], "\x4D\xC3\xB6bel", (int)$item['owner']));
-		output("Du hast `q$item[name]`Q schon im Haus. Kurzerhand fliegt `q$item[name]`Q raus und wird duch das neuere Stück ersetzt.");
+		output("Du hast `q$item[name]`Q schon im Haus. Kurzerhand fliegt `q$item[name]`Q raus und wird duch das neuere StÃ¼ck ersetzt.");
 	}else{
-		output("`QDu suchst für `q$item[name]`Q einen Ehrenplatz in deinem Haus, an dem `q$item[name]`Q von jetzt an den Staub fangen wird.");
+		output("`QDu suchst fÃ¼r `q$item[name]`Q einen Ehrenplatz in deinem Haus, an dem `q$item[name]`Q von jetzt an den Staub fangen wird.");
 	}
 	// Hausnummer und Gegenstandsnummer werden als Zahlen gebunden, statt in den SQL-Text einzufliessen.
 	db_query_params("UPDATE items SET class=?,gold=1,gems=0,value1=? WHERE id=?", array("\x4D\xC3\xB6bel", (int)$session['user']['house'], $itemid));
 }else if ($_GET['op']=="throw"){
-	output("`QDu wirfst `q$item[name]`Q einem hungrigen Strassenköter vor die Füsse, der `q$item[name]`Q sofort in sein Versteck schleppt.`nWas will ein Hund damit anfangen?");
+	output("`QDu wirfst `q$item[name]`Q einem hungrigen StrassenkÃ¶ter vor die FÃ¼sse, der `q$item[name]`Q sofort in sein Versteck schleppt.`nWas will ein Hund damit anfangen?");
 	db_query_params("DELETE FROM items WHERE id=?", array($itemid));
 }else{
 	output("`QDu drehst `q$item[name] `Qin deiner Hand. Dabei vergisst du, was du eigentlich damit machen wolltest.");
 }
 
-addnav("Zurück zum Inventar","prefs.php?op=inventory&back=$_GET[back]");
+addnav("ZurÃ¼ck zum Inventar","prefs.php?op=inventory&back=$_GET[back]");
 if (isset($_GET['back'])) addnav("Fertig",$_GET['back']);
 page_footer();
 
@@ -111,17 +111,17 @@ page_footer();
 *   - rest unused (keep 0 or empty)
 *   - generated automatically
 *
-* *Möbel
-*   - class: Möbel
+* *MÃ¶bel
+*   - class: MÃ¶bel
 *   - name: itemname
 *   - description: description
 *   - owner: >0
 *   - gold/gems: >0 to enable selling
 *   - rest unused (keep 0 or empty)
-*   - generated automatically from Möbel.Prot
+*   - generated automatically from MÃ¶bel.Prot
 *
-* *Möbel.Prot
-*   - class: Möbel.Prot
+* *MÃ¶bel.Prot
+*   - class: MÃ¶bel.Prot
 *   - name: item name
 *   - description: description
 *   - owner: =0
@@ -129,8 +129,8 @@ page_footer();
 *   - rest unused (keep 0 or empty)
 *   - hidden from players and generated by admin
 *
-* *Rüstung
-*   - class: Rüstung
+* *RÃ¼stung
+*   - class: RÃ¼stung
 *   - name: armor name
 *   - description: description
 *   - owner: >0
@@ -140,8 +140,8 @@ page_footer();
 *   - rest unused (keep 0 or empty)
 *   - generated automatically
 *
-* *Schlüssel
-*   - class: Schlüssel
+* *SchlÃ¼ssel
+*   - class: SchlÃ¼ssel
 *   - name: item name
 *   - description: description
 *   - owner: >=0

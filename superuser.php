@@ -3,7 +3,7 @@ require_once "common.php";
 isnewday(2);
 addcommentary();
 
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 if ($_GET['op']=="newsdelete"){
 	// Die News-ID aus der URL wird als Zahl an die Datenbank gebunden.
 	db_query_params("DELETE FROM news WHERE newsid=?", array((int)db_unquote_legacy_input($_GET['newsid'])));
@@ -61,10 +61,10 @@ if ($_GET['op']=="dbrepair"){
 
 page_header("Admin Grotte");
 if ($_GET['op']=="checkcommentary"){
-	addnav("G?Zurück zur Grotte","superuser.php");
+	addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
 	viewcommentary("' or '1'='1","X",100);
 }else if ($_GET['op'] == "bounties") {
-	addnav("G?Zurück zur Grotte","superuser.php");
+	addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
 	output("`c`bDie Kopfgeldliste`b`c`n");
 	$sql = "SELECT name,alive,sex,level,laston,loggedin,lastip,uniqueid,bounty FROM accounts WHERE bounty>0 ORDER BY bounty DESC";
 	$result = db_query($sql) or die(sql_error($sql));
@@ -83,7 +83,7 @@ if ($_GET['op']=="checkcommentary"){
 	  $loggedin=(date("U") - strtotime($row['laston']) < getsetting("LOGINTIMEOUT",900) && $row['loggedin']);
 	  output($row['location'] ?"`3Kneipe`0" :($loggedin ?"`#Online`0" :"`3Die Felder`0"));
 	  output("</td><td>",true);
-	  output($row['sex']?"`!Weiblich`0":"`!Männlich`0");
+	  output($row['sex']?"`!Weiblich`0":"`!MÃ¤nnlich`0");
 	  output("</td><td>",true);
 	  output($row['alive']?"`1Lebt`0":"`4Tot`0");
 	  output("</td><td>",true);
@@ -99,17 +99,17 @@ if ($_GET['op']=="checkcommentary"){
 	output("</table>",true); 
 }else{
 	if ($session['user']['sex']){
-		output("`^Du tauchst in eine geheime Höhle unter, die nur wenige kennen. Dort wirst du von ");
-		output("einigen muskulösen Männern mit nacktem Oberkörper empfangen, die ");
-		output("dir mit Palmwedeln entgegen winken und dir anbieten, dich mit Trauben zu füttern, während du auf einer ");
-		output("mit Seide bedeckten griechisch-römischen Liege faulenzt.`n`n");
+		output("`^Du tauchst in eine geheime HÃ¶hle unter, die nur wenige kennen. Dort wirst du von ");
+		output("einigen muskulÃ¶sen MÃ¤nnern mit nacktem OberkÃ¶rper empfangen, die ");
+		output("dir mit Palmwedeln entgegen winken und dir anbieten, dich mit Trauben zu fÃ¼ttern, wÃ¤hrend du auf einer ");
+		output("mit Seide bedeckten griechisch-rÃ¶mischen Liege faulenzt.`n`n");
 	}else{
-		output("`^Du tauchst in eine geheime Höhle unter, die nur wenige kennen. Dort wirst du von ");
-		output("einigen spärlich bekleideten Frauen empfangen, die ");
-		output("dir mit Palmwedeln entgegen winken und dir anbieten, dich mit Trauben zu füttern, während du auf einer ");
-		output("mit Seide bedeckten griechisch-römischen Liege faulenzt.`n`n");
+		output("`^Du tauchst in eine geheime HÃ¶hle unter, die nur wenige kennen. Dort wirst du von ");
+		output("einigen spÃ¤rlich bekleideten Frauen empfangen, die ");
+		output("dir mit Palmwedeln entgegen winken und dir anbieten, dich mit Trauben zu fÃ¼ttern, wÃ¤hrend du auf einer ");
+		output("mit Seide bedeckten griechisch-rÃ¶mischen Liege faulenzt.`n`n");
 	}
-	viewcommentary("superuser","Mit anderen Göttern unterhalten:",25,"sagt");
+	viewcommentary("superuser","Mit anderen GÃ¶ttern unterhalten:",25,"sagt");
 	addnav("Aktionen");
 	addnav("Anfragen","viewpetition.php");
 	if ($session['user']['superuser']>=3) addnav("K?Aktuelle Kommentare","superuser.php?op=checkcommentary");
@@ -129,13 +129,13 @@ if ($_GET['op']=="checkcommentary"){
 	if ($session['user']['superuser']>=2) addnav("Item Editor","itemeditor.php");
 	addnav("Spott Editor","taunt.php");
 	addnav("Waffen Editor","weaponeditor.php");
-	addnav("Rüstungs Editor","armoreditor.php");
+	addnav("RÃ¼stungs Editor","armoreditor.php");
 	addnav("Hausmeister","suhouses.php");
 	addnav("Wortfilter","badword.php");
 
 	addnav("Mechanik");
 	if ($session['user']['superuser']>=3) addnav("Spieleinstellungen","configuration.php");
-	addnav("Herführende URLs","referers.php");
+	addnav("HerfÃ¼hrende URLs","referers.php");
 	addnav("Statistiken","stats.php");
 	// if ($session[user][superuser]>=3) addnav("Mass Email","email.php");
 

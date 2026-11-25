@@ -18,13 +18,13 @@ if ($_GET['op']==""){
 			db_query_params($sql, array(soap(db_unquote_legacy_input($_GET['desc'])), date("Y-m-d H:i:s"), (int)$row['serverid']));
 			echo "Ok - upgedated";
 		}else{
-			echo "Ok - noch zu früh für ein Update";
+			echo "Ok - noch zu frÃ¼h fÃ¼r ein Update";
 		}
 	}else{
 		// Serveradresse und Beschreibung werden gebunden, damit sie keine SQL-Syntax werden koennen.
 		$sql = "INSERT INTO logdnet (address,description,lastupdate) VALUES (?,?,NOW())";
 		$result = db_query_params($sql, array(db_unquote_legacy_input($_GET['addy']), soap(db_unquote_legacy_input($_GET['desc']))));
-		echo "Ok - hinzugefügt";
+		echo "Ok - hinzugefÃ¼gt";
 	}
 }elseif ($_GET['op']=="net"){
 	$sql = "SELECT address,description FROM logdnet WHERE lastupdate > '".date("Y-m-d H:i:s",strtotime(date("r")."-7 days"))."' ORDER BY priority DESC";
@@ -38,7 +38,7 @@ if ($_GET['op']==""){
 	page_header("LoGD Netz");
 	//$sql = "SELECT * FROM logdnet ORDER BY priority DESC";
 	//$result=db_query($sql);
-	addnav("Zurück zum Login","index.php");
+	addnav("ZurÃ¼ck zum Login","index.php");
 	output("`@Eine Liste mit anderen LoGD Servern, die im LoGD-Netz registriert sind. (Sortiert nach Logins)`n`n");
 	output("<table>",true);
 	output("<tr><td>`@`bServername und Link`b`0</td><td width='130'>`@`bVersion`b`0</td></tr>",true);

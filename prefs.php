@@ -12,7 +12,7 @@ page_header("Einstellungen & Profil");
 if ($HTTP_GET_VARS['op']=="suicide" && getsetting("selfdelete",0)!=0) {
 	if($session['user']['acctid']==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
 
-	// inventar und haus löschen und partner freigeben
+	// inventar und haus lÃ¶schen und partner freigeben
 // Selbstloeschung betrifft ausschliesslich das angemeldete Konto und ignoriert eine fremde URL-ID.
 $accountId=(int)$session['user']['acctid'];
 	if ($accountId==(int)getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
@@ -26,10 +26,10 @@ $sql = "UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=?"; // Ehepar
 	db_query_params($sql,array($accountId));
 $sql = "DELETE FROM pvp WHERE acctid2=? OR acctid1=?"; // PvP-Verweise auf das eigene Konto werden als Zahlen gebunden.
 	db_query_params($sql,array($accountId,$accountId)) or die(db_error(LINK));
-	// user löschen
+	// user lÃ¶schen
 $sql = "DELETE FROM accounts WHERE acctid=?"; // Geloescht wird ausschliesslich das angemeldete Konto.
 	db_query_params($sql,array($accountId));
-	output("Dein Charakter, sein Inventar und alle seine Kommentare wurden gelöscht!");
+	output("Dein Charakter, sein Inventar und alle seine Kommentare wurden gelÃ¶scht!");
 	addnews("`#{$session['user']['name']} beging Selbstmord.");
 	addnav("Login Seite", "index.php");
 	$session=array();
@@ -41,7 +41,7 @@ $sql = "DELETE FROM accounts WHERE acctid=?"; // Geloescht wird ausschliesslich 
 	$back=$_GET['back'];
 	if ($back=="") $back="village.php";
 	if ($_GET['sorti']=="") $_GET['sorti']="class ASC, name ASC, id";
-	output("`c`bDie Besitztümer von ".$session['user']['name']."`b`c`n`n");
+	output("`c`bDie BesitztÃ¼mer von ".$session['user']['name']."`b`c`n`n");
 	output("<table cellspacing='1' cellpadding='2' align='center'><tr><td>`b<a href='prefs.php?op=inventory&sorti=name&back=$back&limit=$_GET[limit]'>Itemname</a>`b</td><td>`b<a href='prefs.php?op=inventory&sorti=class&back=$back&limit=$_GET[limit]'>Klasse</a>`b</td><td>`bWert 1`b</td><td>`bWert 2`b</td><td>`b<a href='prefs.php?op=inventory&sorti=gems&back=$back&limit=$_GET[limit]'>Verkaufswert</a>`b</td><td>`bAktion`b</td></tr>",true);
 	addnav("","prefs.php?op=inventory&sorti=name&back=$back&limit=$_GET[limit]");
 	addnav("","prefs.php?op=inventory&sorti=class&back=$back&limit=$_GET[limit]");
@@ -57,7 +57,7 @@ $page=max(0,(int)db_unquote_legacy_input($_GET['limit'])); // Die Seitennummer i
 
 $sql = "SELECT * FROM items WHERE owner=? ORDER BY $sortSql LIMIT $limit"; // Kontonummer wird gebunden, Sortierung und Seitenbereich stammen aus sicheren festen Werten.
 $result = db_query_params($sql,array((int)$session['user']['acctid'])) or die(db_error(LINK));
-	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","prefs.php?op=inventory&limit=".($page+1)."&sorti=$_GET[sorti]"."&back=$back");
+	if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Seite","prefs.php?op=inventory&limit=".($page+1)."&sorti=$_GET[sorti]"."&back=$back");
 	if (db_num_rows($result)==0){
   		output("<tr><td colspan=5 align='center'>`&`iDu hast nichts im Inventar`i`0</td></tr>",true);
 	}else{
@@ -66,13 +66,13 @@ $result = db_query_params($sql,array((int)$session['user']['acctid'])) or die(db
 			$bgcolor=($i%2==1?"trlight":"trdark");
 			output("<tr class='$bgcolor'><td>`&$item[name]`0</td><td>`!$item[class]`0</td><td align='right'>$item[value1]</td><td align='right'>$item[value2]</td><td>",true);
 			if ($item['gold']==0 && $item['gems']==0){
-				output("`4Unverkäuflich`0");
+				output("`4UnverkÃ¤uflich`0");
 			}else{
 				output("`^$item[gold]`0 Gold, `#$item[gems]`0 Edelsteine");
 			}
 			output("</td><td>[",true);
-			if ($item['class']=="Waffe" || $item['class']=="Rüstung"){
-				output("<a href='invhandler.php?op=fit&id=$item[id]&back=$back'>Ausrüsten</a>",true);
+			if ($item['class']=="Waffe" || $item['class']=="RÃ¼stung"){
+				output("<a href='invhandler.php?op=fit&id=$item[id]&back=$back'>AusrÃ¼sten</a>",true);
 				addnav("","invhandler.php?op=fit&id=$item[id]&back=$back");
 			}else if ($item['class']=="Geschenk"){
 				output("<a href='invhandler.php?op=throw&id=$item[id]&back=$back'>Wegwerfen</a>",true);
@@ -89,28 +89,28 @@ $result = db_query_params($sql,array((int)$session['user']['acctid'])) or die(db
 	}
 	if (getsetting("hasegg",0)==$session['user']['acctid']){
 			$bgcolor=($i%2==1?"trdark":"trlight");
-			output("<tr class='$bgcolor'><td>`^Das goldene Ei`0</td><td></td><td></td><td></td><td>`4Unverkäuflich`0</td><td></td></tr>",true);
+			output("<tr class='$bgcolor'><td>`^Das goldene Ei`0</td><td></td><td></td><td></td><td>`4UnverkÃ¤uflich`0</td><td></td></tr>",true);
 	}
 	output("</table>",true);
-	addnav("Zurück","$back");
+	addnav("ZurÃ¼ck","$back");
 
 } else {
 
 checkday();
 if ($session['user']['alive']){
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else{
-	addnav("Zurück zu den News","news.php");
+	addnav("ZurÃ¼ck zu den News","news.php");
 }
 if (count($_POST)==0){
 }else{
 	if ($_POST['pass1']!=$_POST['pass2']){
-		output("`#Deine Passwörter stimmen nicht überein.`n");
+		output("`#Deine PasswÃ¶rter stimmen nicht Ã¼berein.`n");
 	}else{
 		if ($_POST['pass1']!=""){
 			if (strlen($_POST['pass1'])>3){
 				$session['user']['password']=md5($_POST['pass1']);
-				output("`#Dein Passwort wurde geändert.`n");
+				output("`#Dein Passwort wurde geÃ¤ndert.`n");
 			}else{
 				output("`#Dein Passwort ist zu kurz. Es muss mindestens 4 Zeichen lang sein.`n");
 			}
@@ -123,7 +123,7 @@ if (count($_POST)==0){
 	}
 	if (closetags(stripslashes($_POST['bio']),'`i`b`c`H')!=$session['user']['bio']){
 		if ($session['user']['biotime']>"9000-01-01"){
-			output("`n`\$Du kannst deine Beschreibung nicht ändern. Der Admin hat diese Funktion blockiert!`0`n");
+			output("`n`\$Du kannst deine Beschreibung nicht Ã¤ndern. Der Admin hat diese Funktion blockiert!`0`n");
 		}else{
 			$session['user']['bio']=closetags(stripslashes($_POST['bio']),'`i`b`c`H');
 			$session['user']['biotime']=date("Y-m-d H:i:s");
@@ -135,23 +135,23 @@ if (count($_POST)==0){
 			$url=$session['user']['avatar'];
 			if ($url>"" && strpos($url,".gif")<1 && strpos($url,".GIF")<1 && strpos($url,".jpg")<1 && strpos($url,".JPG")<1 && strpos($url,".png")<1 && strpos($url,".PNG")<1){
 				$session['user']['avatar']="";
-				$msg.="`\$Ungültiger Avatar! Nur .jpg, .png, oder .gif`0`n";
+				$msg.="`\$UngÃ¼ltiger Avatar! Nur .jpg, .png, oder .gif`0`n";
 			}
 		}
 	}
 	if ($_POST['email']!=$session['user']['emailaddress']){
 		if (is_email($_POST['email'])){
 			if (getsetting("requirevalidemail",0)==1){
-				output("`#Die E-Mail Adresse kann nicht geändert werden, die Systemeinstellungen verbieten es. (E-Mail Adressen können nur geändert werden, wenn der Server mehr als einen Account pro Adresse zulässt.) Sende eine Petition, wenn du deine Adresse ändern willst, weil sie nicht mehr länger gültig ist.`n");
+				output("`#Die E-Mail Adresse kann nicht geÃ¤ndert werden, die Systemeinstellungen verbieten es. (E-Mail Adressen kÃ¶nnen nur geÃ¤ndert werden, wenn der Server mehr als einen Account pro Adresse zulÃ¤sst.) Sende eine Petition, wenn du deine Adresse Ã¤ndern willst, weil sie nicht mehr lÃ¤nger gÃ¼ltig ist.`n");
 			}else{
-				output("`#Deine E-Mail Adresse wurde geändert.`n");
+				output("`#Deine E-Mail Adresse wurde geÃ¤ndert.`n");
 				$session['user']['emailaddress']=$_POST['email'];
 			}
 		}else{
 			if (getsetting("requireemail",0)==1){
-				output("`#Das ist keine gültige E-Mail Adresse.`n");
+				output("`#Das ist keine gÃ¼ltige E-Mail Adresse.`n");
 			}else{
-				output("`#Deine E-Mail Adresse wurde geändert.`n");
+				output("`#Deine E-Mail Adresse wurde geÃ¤ndert.`n");
 				$session['user']['emailaddress']=$_POST['email'];
 			}
 		}
@@ -164,9 +164,9 @@ if (count($_POST)==0){
 		"Einstellungen,title"
 		,"emailonmail"=>"E-Mail senden wenn du eine Ye Olde Mail bekommst?,bool"
 		,"systemmail"=>"E-Mail bei Systemmeldungen senden (z.B. Niederlage im PvP)?,bool"
-		,"dirtyemail"=>"Kein Wortfilter für Ye Olde Mail?,bool"
+		,"dirtyemail"=>"Kein Wortfilter fÃ¼r Ye Olde Mail?,bool"
 		,"nosounds"=>"Die Sounds deaktivieren?,bool"
-//		,"language"=>"Sprache (noch nicht wählbar),enum,en,English,de,Deutsch,dk,Danish,es,Español"
+//		,"language"=>"Sprache (noch nicht wÃ¤hlbar),enum,en,English,de,Deutsch,dk,Danish,es,EspaÃ±ol"
 		,"bio"=>"Kurzbeschreibung des Charakters (Maximal 255 Zeichen)`n"
 		,"avatar"=>"Link auf einen Avatar`n(Bilddatei - maximal 200x200 Pixel)`n"
 	);
@@ -180,7 +180,7 @@ if (count($_POST)==0){
 			}
 		}
 		if (count($skins)==0){
-			output("`b`@Argh, dein Admin hat entschieden, daß du keine Skins benutzen darfst. Beschwer dich bei ihm, nicht bei mir.`n");
+			output("`b`@Argh, dein Admin hat entschieden, daÃŸ du keine Skins benutzen darfst. Beschwer dich bei ihm, nicht bei mir.`n");
 		}else{
 			output("<b>Skin:</b><br>",true);
 			foreach ($skins as $key => $val) {
@@ -192,7 +192,7 @@ if (count($_POST)==0){
 	}
 	
 	output("
-	Neues Passwort: <input name='pass1' type='password'> (lasse das Feld leer, wenn du es nicht ändern willst)`n
+	Neues Passwort: <input name='pass1' type='password'> (lasse das Feld leer, wenn du es nicht Ã¤ndern willst)`n
 	Wiederholen: <input name='pass2' type='password'>`n
 	E-Mail Adresse: <input name='email' value=\"".HTMLEntities($session['user']['emailaddress'])."\">`n
 	",true);
@@ -215,7 +215,7 @@ if (count($_POST)==0){
 	// monster killed them.
 	if ($session['user']['alive'] && getsetting("selfdelete",0)!=0) {
 		output("`n`n`n<form action='prefs.php?op=suicide&userid={$session['user']['acctid']}' method='POST'>",true);
-		output("<input type='submit' class='button' value='Charakter löschen' onClick='return confirm(\"Willst du deinen Charakter wirklich löschen?\");'>", true);
+		output("<input type='submit' class='button' value='Charakter lÃ¶schen' onClick='return confirm(\"Willst du deinen Charakter wirklich lÃ¶schen?\");'>", true);
 		output("</form>",true);
 		addnav("","prefs.php?op=suicide&userid={$session['user']['acctid']}");
 	}

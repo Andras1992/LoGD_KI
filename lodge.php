@@ -10,8 +10,8 @@ by weasel and anpera
 
 require_once "common.php"; 
 addcommentary();
-page_header("Jägerhütte"); 
-addnav("Zurück zum Dorf","village.php"); 
+page_header("JÃ¤gerhÃ¼tte"); 
+addnav("ZurÃ¼ck zum Dorf","village.php"); 
 if ($_GET['op']!="points") addnav("Punkte","lodge.php?op=points");
 if ($_GET['op']=="points") addnav("Empfehlungen","referral.php"); 
 
@@ -21,23 +21,23 @@ if (!isset($config['forestfights']) || !is_array($config['forestfights'])) $conf
 $pointsavailable=$session['user']['donation']-$session['user']['donationspent']; 
 
 if ($_GET['op']==""){
-	output("`b`cDie Jägerhütte`c`b"); 
+	output("`b`cDie JÃ¤gerhÃ¼tte`c`b"); 
     	//output("Moo.  *chuckle*  Yeah, you talk to him, this is what it's like.  Well this can be fun.  Boy, that michele, she is one sexy chick.  And she's so much smarter than Eric.  That's what I like about her most, her sharp intelligence.  Ok, should we start helping him now?  No.  You could be a stenographer, Eric.  Can you even spell Stenagorapher.  I can, cause I'm smart.  SMRT.  We're giving him obliging pauses in our converstaion now.  Allright, text for the hunting lodge.  Well, shouldn't it be similar to the superuser grotto?  AAAAH, CAN EPEE BE IN CHARGE OF THE HUNTING LODGE?  "); 
-    	output("`0Du folgst einem schmalen Pfad, der hinter den Ställen entlang führt. Am Ende dieses Pfades steht die Jägerhütte. Ein Türsteher stoppt dich und möchte deine Mitgliedskarte sehen `n`n "); 
+    	output("`0Du folgst einem schmalen Pfad, der hinter den StÃ¤llen entlang fÃ¼hrt. Am Ende dieses Pfades steht die JÃ¤gerhÃ¼tte. Ein TÃ¼rsteher stoppt dich und mÃ¶chte deine Mitgliedskarte sehen `n`n "); 
          	addnav("Empfehlungen","referral.php"); 
        	if ($session['user']['donation']>=10){ 
-        		output("Nach dem Zeigen deiner Mitgliedskarte sagt er, \"`7Sehr schön, willkommen in der J. C. Petersen Jägerhütte.  Du hast noch `$`b$pointsavailable`b`7 Punkte zur Verfügung,`0\" und lässt dich rein. 
+        		output("Nach dem Zeigen deiner Mitgliedskarte sagt er, \"`7Sehr schÃ¶n, willkommen in der J. C. Petersen JÃ¤gerhÃ¼tte.  Du hast noch `$`b$pointsavailable`b`7 Punkte zur VerfÃ¼gung,`0\" und lÃ¤sst dich rein. 
         		`n`n 
-        		Du betritts einen Raum, der durch einen grossen Kamin am anderen Ende beherrscht wird. Die holzgetäfelten Wände werden mit Waffen, Schilden und angebrachten Jagdtrophäen einschliesslich den Köpfen von einigen Drachen bedeckt, die im flackernden Licht des Kamines zu leben scheinen.
+        		Du betritts einen Raum, der durch einen grossen Kamin am anderen Ende beherrscht wird. Die holzgetÃ¤felten WÃ¤nde werden mit Waffen, Schilden und angebrachten JagdtrophÃ¤en einschliesslich den KÃ¶pfen von einigen Drachen bedeckt, die im flackernden Licht des Kamines zu leben scheinen.
         		`n`n 
-        		Viele hohe Stühle füllen den Raum.  In dem Stuhl der am nächsten beim Feuer ist, sitzt J. C. Petersen und liest
+        		Viele hohe StÃ¼hle fÃ¼llen den Raum.  In dem Stuhl der am nÃ¤chsten beim Feuer ist, sitzt J. C. Petersen und liest
         		\"Alchemie Heute.\" 
         		`n`n 
-        		Während du dich näherst, hebt ein grosser Jagdhund, der zu seinen Füssen liegt, den Kopf und überlegt ob er dich kennt.
-        		Als er dich als vertrauenswürdig einstuft legt er sich wieder hin und schläft weiter. 
+        		WÃ¤hrend du dich nÃ¤herst, hebt ein grosser Jagdhund, der zu seinen FÃ¼ssen liegt, den Kopf und Ã¼berlegt ob er dich kennt.
+        		Als er dich als vertrauenswÃ¼rdig einstuft legt er sich wieder hin und schlÃ¤ft weiter. 
         		`n`n 
-       		In der Nähe ein schroffes Jägergerede:`n"); 
-        		viewcommentary("hunterlodge","Hinzufügen",25); 
+       		In der NÃ¤he ein schroffes JÃ¤gergerede:`n"); 
+        		viewcommentary("hunterlodge","HinzufÃ¼gen",25); 
         		addnav("Punkte einsetzen");
            		addnav("Charmepunkte abfragen (20 Punkte)","lodge.php?op=charm"); 
         		if ($config['namechange']==1){ 
@@ -45,152 +45,152 @@ if ($_GET['op']==""){
         		}else{ 
             			addnav("Farbiger Name (300 Punkte)","lodge.php?op=namechange"); 
         		} 
-        		addnav("10 Nächte in der Kneipe (30 Punkte)","lodge.php?op=innstays"); 
+        		addnav("10 NÃ¤chte in der Kneipe (30 Punkte)","lodge.php?op=innstays"); 
         		addnav("2 Edelsteine (50 Punkte)","lodge.php?op=gems");
-        		addnav("Extra Waldkämpfe für 30 Tage (100 Punkte)","lodge.php?op=forestfights"); 
-        		addnav("Heilerin Golinda für 30 Tage (100 Punkte)","lodge.php?op=golinda");
+        		addnav("Extra WaldkÃ¤mpfe fÃ¼r 30 Tage (100 Punkte)","lodge.php?op=forestfights"); 
+        		addnav("Heilerin Golinda fÃ¼r 30 Tage (100 Punkte)","lodge.php?op=golinda");
 		addnav("Zur Burg reiten (100 Punkte)","lodge.php?op=reiten1");
-		addnav("PvP-Immunität (300 Punkte)","lodge.php?op=immun");
-		if ($session['user']['house']>0 && $session['user']['housekey']==$session['user']['house']) addnav("Hausschlüssel","lodge.php?op=keys1"); 
+		addnav("PvP-ImmunitÃ¤t (300 Punkte)","lodge.php?op=immun");
+		if ($session['user']['house']>0 && $session['user']['housekey']==$session['user']['house']) addnav("HausschlÃ¼ssel","lodge.php?op=keys1"); 
 		if ($session['user']['donation']>=2000) addnav("Sonderbonus");
-		if ($session['user']['donation']>=2000 && $pointsavailable>=50) addnav("Titel ändern (50 Punkte)","lodge.php?op=titeel1");
+		if ($session['user']['donation']>=2000 && $pointsavailable>=50) addnav("Titel Ã¤ndern (50 Punkte)","lodge.php?op=titeel1");
     	}else{ 
         		output("Du ziehst die Karte deines Lieblingsgasthauses heraus, wo 9 von 10 Slots mit dem kleinen Profil von Cederik abgestempelt sind. 
         		`n`n 
-        		Der Türsteher schaut flüchtig auf deine Karte, rät dir nicht soviel zu trinken und weist dir den Weg zurück."); 
+        		Der TÃ¼rsteher schaut flÃ¼chtig auf deine Karte, rÃ¤t dir nicht soviel zu trinken und weist dir den Weg zurÃ¼ck."); 
     	} 
 }else if ($_GET['op']=="points"){ 
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
     	output("`bPunkte:`b`n`n
-   	Legend of the Green Dragon bietet dir die Möglichkeit, spezielle \"Donationpoints\" zu sammeln, mit denen du Sonderfunktionen freischalten kannst.`n
-  	Diese Punkte gibt es für besondere (geheime) Leistungen, sie können gekauft werden und für sogenannte \"Referrals\" (Empfehlungen) als Belohnung gesammelt werden. Erst wenn du mindestens 10 Donationpoints hast, kommst du in die Jagdhütte.`n`n
-	Klicke im Eingangsbereich der Jägerhütte auf \"Empfehlungen\", wenn du wissen willst, wie du auf diesem Weg an Donationpoints kommst.");
-	output("`n`nUm Punkte zu kaufen, überweise `b1 Euro pro 100 Punkte`b auf das Konto des Admins.`n`bSchicke dazu bitte eine Hilfsanfrage  oder eine E-Mail an ".getsetting("gameadminemail","")." ab, um die Bankverbindung zu erfahren");
+   	Legend of the Green Dragon bietet dir die MÃ¶glichkeit, spezielle \"Donationpoints\" zu sammeln, mit denen du Sonderfunktionen freischalten kannst.`n
+  	Diese Punkte gibt es fÃ¼r besondere (geheime) Leistungen, sie kÃ¶nnen gekauft werden und fÃ¼r sogenannte \"Referrals\" (Empfehlungen) als Belohnung gesammelt werden. Erst wenn du mindestens 10 Donationpoints hast, kommst du in die JagdhÃ¼tte.`n`n
+	Klicke im Eingangsbereich der JÃ¤gerhÃ¼tte auf \"Empfehlungen\", wenn du wissen willst, wie du auf diesem Weg an Donationpoints kommst.");
+	output("`n`nUm Punkte zu kaufen, Ã¼berweise `b1 Euro pro 100 Punkte`b auf das Konto des Admins.`n`bSchicke dazu bitte eine Hilfsanfrage  oder eine E-Mail an ".getsetting("gameadminemail","")." ab, um die Bankverbindung zu erfahren");
 	if (getsetting("paypalemail","")) output(", oder benutze den PayPal Link \"ADMIN\" oben rechts");
 	output(".`b`nDas Geld wird ausschliesslich zur Finanzierung des Servers verwendet.`n");
 	output("`nWenn du den Programmierer von LoGD belohnen willst, kannst du pro gespendetem US-\$ ebenfalls 100 Punkte kassieren.
-	Schicke dazu irgendeinen Beweis deiner Spende, z.B. einen Screenshot der PayPal-Bestätigung, an ".getsetting("gameadminemail","").". Für eine Spende an den Programmierer (Eric Stevens a.k.a. MightyE) benutze den PayPal-Link, der auf jeder Seite oben rechts zu finden ist.");
+	Schicke dazu irgendeinen Beweis deiner Spende, z.B. einen Screenshot der PayPal-BestÃ¤tigung, an ".getsetting("gameadminemail","").". FÃ¼r eine Spende an den Programmierer (Eric Stevens a.k.a. MightyE) benutze den PayPal-Link, der auf jeder Seite oben rechts zu finden ist.");
 	output("`n`n
    	`bDas kannst du mit diesen Punkten anstellen:`b`n
-    	- Umsonst in der Kneipe wohnen (10 Nächte für 30 Punkte).`n 
-	- Edelsteine kaufen (2 Stück für 50 Punkte)`n
-    	- Zusätzliche Waldkämpfe kaufen (100 Punkte für 30 Tage lang 1 extra Kampf; maximal 5 mehr pro Tag)!`n
+    	- Umsonst in der Kneipe wohnen (10 NÃ¤chte fÃ¼r 30 Punkte).`n 
+	- Edelsteine kaufen (2 StÃ¼ck fÃ¼r 50 Punkte)`n
+    	- ZusÃ¤tzliche WaldkÃ¤mpfe kaufen (100 Punkte fÃ¼r 30 Tage lang 1 extra Kampf; maximal 5 mehr pro Tag)!`n
 	- 'Zur Burg reiten' im Wald freischalten (100 Punkte),`n
-	- PvP-Immunität kaufen (300 Punkte für permanente Immunität)`n
-    	- Einen farbigen Namen machen (300 Punkte). Umfärben kostet nur noch 25 Punkte. `n
+	- PvP-ImmunitÃ¤t kaufen (300 Punkte fÃ¼r permanente ImmunitÃ¤t)`n
+    	- Einen farbigen Namen machen (300 Punkte). UmfÃ¤rben kostet nur noch 25 Punkte. `n
 	- Anzeige der Charmepunkte (20 Punkte)`n
-	- Ersatzschlüssel (10) und zusätzliche Schlüssel (50) für dein Haus kaufen.`n 
-	- Ab 2000 gesammelten Punkten (ob ausgegeben oder nicht) kannst du dir für 50 Punkte einen eigenen Titel aussuchen.`n
-	`n`n`7Du hast noch `\$`b$pointsavailable`b`7 Punkte von insgesamt `4".$session['user']['donation']." `7gesammelten Punkten übrig. 
+	- ErsatzschlÃ¼ssel (10) und zusÃ¤tzliche SchlÃ¼ssel (50) fÃ¼r dein Haus kaufen.`n 
+	- Ab 2000 gesammelten Punkten (ob ausgegeben oder nicht) kannst du dir fÃ¼r 50 Punkte einen eigenen Titel aussuchen.`n
+	`n`n`7Du hast noch `\$`b$pointsavailable`b`7 Punkte von insgesamt `4".$session['user']['donation']." `7gesammelten Punkten Ã¼brig. 
     	"); 
 }elseif ($_GET['op']=="golinda"){ 
     	output("30 Tage Zugang zu Golinda der Heilerin kosten 100 Punkte. Golinda heilt zum halben Preis.");
 	if($pointsavailable<100){
 		output("`n`n`\$Du hast nicht genug Punkte!`0");
 	} else {
-    		addnav("Betätige Zugang zu Golinda");
+    		addnav("BetÃ¤tige Zugang zu Golinda");
     		addnav("JA","lodge.php?op=golindaconfirm");
 	}
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="golindaconfirm"){ 
     	if ($pointsavailable >= 100) {
       		$config['healer'] += 30;
       		output("J. C. Peterson gibt dir eine Karte und sagt \"Mit dieser Karte kannst du an 30 verschiedenen Tagen bei Golinda vorstellig werden.\"");
      	 	$session['user']['donationspent']+=100; 
     	}
-    	addnav("Zurück zur Lodge","lodge.php");
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 
 }elseif ($_GET['op']=="reiten1"){
 	if ($config['castle']) {
 		output("Du hast diese Option bereits gekauft. Um zur Burg zu kommen, brauchst du ansonsten nur ein `bPferd`b. Ein `iPferd`i ist ein Tier der Kategorie 'Pferde' in Mericks Stall.");
 	} else {
-    		output("Hiermit schaffst du dir die Möglichkeit, mit einem Reittier im Wald auch zur Burg reiten zu können. Du kannst nur auf Pferden reiten, also die Tiere in Merick's Stall, die in der Kategorie 'Pferde' stehen.");
+    		output("Hiermit schaffst du dir die MÃ¶glichkeit, mit einem Reittier im Wald auch zur Burg reiten zu kÃ¶nnen. Du kannst nur auf Pferden reiten, also die Tiere in Merick's Stall, die in der Kategorie 'Pferde' stehen.");
 		if($pointsavailable<100){
 			output("`n`n`\$Du hast nicht genug Punkte!`0");
 		} else {
-    			addnav("Betätige Freischaltung");
+    			addnav("BetÃ¤tige Freischaltung");
     			addnav("JA","lodge.php?op=reiten2");
 		}
  	}
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="reiten2"){ 
     	if ($pointsavailable >= 100) {
       		$config['castle'] = 100;
       		output("J. C. Peterson gibt dir eine Karte und sagt \"Mit dieser Karte findest du den Weg zur Burg, wenn du ein Pferd hast.\"");
       		$session['user']['donationspent']+=100; 
     	}
-    	addnav("Zurück zur Lodge","lodge.php");
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 
 }elseif ($_GET['op']=="forestfights"){ 
     	if (!is_array($config['forestfights'])) $config['forestfights']=array(); 
-    	output("1 Extra Waldkampf pro Tag für 30 Tage kostet 100 Punkte. Du bekommst einen extra Waldkampf an jedem Tag, an dem du spielst.`n"); 
+    	output("1 Extra Waldkampf pro Tag fÃ¼r 30 Tage kostet 100 Punkte. Du bekommst einen extra Waldkampf an jedem Tag, an dem du spielst.`n"); 
 	if($pointsavailable<100){
 		output("`n`n`\$Du hast nicht genug Punkte!`0");
 	} else {
-    		addnav("Bestätige Extra Waldkämpfe"); 
+    		addnav("BestÃ¤tige Extra WaldkÃ¤mpfe"); 
     		addnav("JA","lodge.php?op=fightbuy"); 
 	}
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
     	reset($config['forestfights']); 
     	foreach ($config['forestfights'] as $key => $val) { 
-        		//output("Du hast noch {$val['left']} Tage, an denen zu einen zusätzlichen Waldkampf für deine am {$val['bought]} bekommst.`n");
-		output("Du hast noch {$val['left']} Tage, an denen zu einen zusätzlichen Waldkampf für deine am {$val['bought']} bekommst.`n");
+        		//output("Du hast noch {$val['left']} Tage, an denen zu einen zusÃ¤tzlichen Waldkampf fÃ¼r deine am {$val['bought]} bekommst.`n");
+		output("Du hast noch {$val['left']} Tage, an denen zu einen zusÃ¤tzlichen Waldkampf fÃ¼r deine am {$val['bought']} bekommst.`n");
     	} 
 }elseif ($_GET['op']=="fightbuy"){ 
     	if (count($config['forestfights'])>=5){ 
-        		output("Du Kannst maximal 5 extra Waldkämpfe haben pro Tag.`n"); 
+        		output("Du Kannst maximal 5 extra WaldkÃ¤mpfe haben pro Tag.`n"); 
     	}else{ 
         		if ($pointsavailable>0){ 
             			array_push($config['forestfights'],array("left"=>30,"bought"=>date("M d"))); 
-            			output("Du wirst in den nächsten 30 Tagen, an denen du spielst, einen extra Waldkampf haben."); 
+            			output("Du wirst in den nÃ¤chsten 30 Tagen, an denen du spielst, einen extra Waldkampf haben."); 
             			$session['user']['donationspent']+=100; 
         		}else{ 
-            			output("Extra Waldkämpfe zu kaufen kostet 100 Punkte, aber du hast nicht so viele."); 
+            			output("Extra WaldkÃ¤mpfe zu kaufen kostet 100 Punkte, aber du hast nicht so viele."); 
         		} 
     	} 
-  	addnav("Zurück zur Lodge","lodge.php"); 
+  	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="innstays"){ 
-    	output("10 freie Übernachtungen in der Kneipe kosten 30 Punkte. Bist du dir sicher, dass du das willst?"); 
+    	output("10 freie Ãœbernachtungen in der Kneipe kosten 30 Punkte. Bist du dir sicher, dass du das willst?"); 
 	if($pointsavailable<30){
 		output("`n`n`\$Du hast nicht genug Punkte!`0");
 	} else {
-    		addnav("Bestätige 10 freie Übernachtungen"); 
+    		addnav("BestÃ¤tige 10 freie Ãœbernachtungen"); 
     		addnav("JA","lodge.php?op=innconfirm"); 
 	}
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="innconfirm"){ 
     	if ($pointsavailable>=30){ 
-    	    	output("J. C. Petersen gibt dir eine Karte und sagt \"Coupon: Gut für 10 Übernachtungen in der Boar's Head Kneipe\""); 
+    	    	output("J. C. Petersen gibt dir eine Karte und sagt \"Coupon: Gut fÃ¼r 10 Ãœbernachtungen in der Boar's Head Kneipe\""); 
         		$config['innstays']+=10; 
         		$session['user']['donationspent']+=30; 
     	} 
-	addnav("Zurück zur Lodge","lodge.php"); 
+	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="charm"){
-    	output("Du fragst J. C. Petersen, ob er dein Aussehen beurteilen kann. Er mustert dich kurz und verspricht dir dann, dass er dir für die Kleinigkeit von 20 Punkten eine ehrliche Antwort geben wird.");
+    	output("Du fragst J. C. Petersen, ob er dein Aussehen beurteilen kann. Er mustert dich kurz und verspricht dir dann, dass er dir fÃ¼r die Kleinigkeit von 20 Punkten eine ehrliche Antwort geben wird.");
 	if($pointsavailable<20){
 		output("`n`n`\$Du hast nicht genug Punkte!`0");
 	} else {
-    		addnav("Bestätige Charmepunkt-Anzeige");
+    		addnav("BestÃ¤tige Charmepunkt-Anzeige");
     		addnav("JA","lodge.php?op=charmconfirm");
 	}
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 }elseif ($_GET['op']=="charmconfirm"){
 	if ($pointsavailable>=20){
-		if ($session['user']['charm']<=0) output("J. C. Petersen schaut dich angewidert an und sagt \"Du bist hässlich wie die Nacht, ich kann einfach nichts Schönes an dir finden.\"");
-		elseif ($session['user']['charm']==1) output("J. C. Petersen schaut dich kurz an und sagt \"Du bist genauso häßlich wie jeder gemeine Bürger, mehr als `^1 Punkt`0 wird dir kein Preisrichter geben.\"");
-		else output("J. C. Petersen mustert dich noch einmal ganz genau und sagt \"Du bist `^".$session['user']['charm']."`0mal so schön wie der gemeine Bürger.\"");
+		if ($session['user']['charm']<=0) output("J. C. Petersen schaut dich angewidert an und sagt \"Du bist hÃ¤sslich wie die Nacht, ich kann einfach nichts SchÃ¶nes an dir finden.\"");
+		elseif ($session['user']['charm']==1) output("J. C. Petersen schaut dich kurz an und sagt \"Du bist genauso hÃ¤ÃŸlich wie jeder gemeine BÃ¼rger, mehr als `^1 Punkt`0 wird dir kein Preisrichter geben.\"");
+		else output("J. C. Petersen mustert dich noch einmal ganz genau und sagt \"Du bist `^".$session['user']['charm']."`0mal so schÃ¶n wie der gemeine BÃ¼rger.\"");
 		$session['user']['donationspent']+=20;
 	}
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 }elseif ($_GET['op']=="gems"){ 
-    	output("2 Edelsteine für 50 Punkte. Bist du dir sicher, dass du das willst?"); 
+    	output("2 Edelsteine fÃ¼r 50 Punkte. Bist du dir sicher, dass du das willst?"); 
 	if($pointsavailable<50){
 		output("`n`n`\$Du hast nicht genug Punkte!`0");
 	} else {
-    		addnav("Bestätige 2 Edelsteine"); 
+    		addnav("BestÃ¤tige 2 Edelsteine"); 
     		addnav("JA","lodge.php?op=gemsconfirm"); 
 	}
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="gemsconfirm"){ 
     	if ($pointsavailable>=50){ 
         		output("J. C. Petersen gibt dir 2 Edelsteine und sagt \"Damit, mein Freund, wird dein Leben leichter werden\""); 
@@ -199,36 +199,36 @@ if ($_GET['op']==""){
     	} 
 
 } else if ($_GET['op']=="titeel1"){
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 	$n=$session['user']['name'];
 	if ($session['user']['ctitle']){
 		$teil=$session['user']['ctitle'];
 	} else {
 		$teil=$session['user']['title'];
 	}
-	output("Dein bisheriger Titel lautet: `b$teil`b, dein kompletter Name: `b$n`b`n`nWie soll dein Titel von nun an lauten?`n(Sende ein leeres Feld ab, wenn du deinen regulären Titel wieder haben willst.)`n"); 
+	output("Dein bisheriger Titel lautet: `b$teil`b, dein kompletter Name: `b$n`b`n`nWie soll dein Titel von nun an lauten?`n(Sende ein leeres Feld ab, wenn du deinen regulÃ¤ren Titel wieder haben willst.)`n"); 
 	$output.="<form action='lodge.php?op=titeel2' method='POST'><input name='teil' size='25' maxlength='25' value=\"".HTMLEntities($teil)."\"> <input type='submit' value='Vorschau'></form>";
 	addnav("","lodge.php?op=titeel2"); 
 } else if ($_GET['op']=="titeel2"){
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 	$falsetitle = false;
 	if ($_POST['teil']=="") {
 		$teil=$session['user']['title'];
 	} else {
 		$teil=stripslashes($_POST['teil']);
 		$teil = preg_replace("/`[^123456789!@#\$%^&QqRrVvGgTt]/","",$teil);
-		// Anführungszeichen machen nur Probleme...
+		// AnfÃ¼hrungszeichen machen nur Probleme...
 		$teil = str_replace('\'','',$teil);
 		$teil = str_replace('"','',$teil);
 		
-		// Titel nicht leer, aber auch nix reguläres drin?
+		// Titel nicht leer, aber auch nix regulÃ¤res drin?
 		if(trim(preg_replace('/`./','',$teil))=='') {
 			$teil=$session['user']['title'];
 			$_POST['teil'] = '';
 		}
 		else {
 			// Offene Tags zumachen
-			// nicht mehr nötig, weil die Tags verboten sind
+			// nicht mehr nÃ¶tig, weil die Tags verboten sind
 			//$teil = closetags($teil,'`c`i`b');
 					
 			$cleartitle = strtolower(preg_replace("/`./","",$teil));
@@ -248,7 +248,7 @@ if ($_GET['op']==""){
 		addnav("","lodge.php?op=titeel1"); 
 	}
 	elseif ($falsetitle) {
-		output('Diesen Titel hast du nicht verdient. Bitte wähle einen eigenen.');
+		output('Diesen Titel hast du nicht verdient. Bitte wÃ¤hle einen eigenen.');
 		output("`n`n<a href='lodge.php?op=titeel1'>Lass es mich nochmal probieren</a>",true); 
 		addnav("","lodge.php?op=titeel1"); 		
 	}
@@ -262,33 +262,33 @@ if ($_GET['op']==""){
 	output("Dein neuer Titel soll $teil`0 sein, dein Name also $neu`0 ?");
 	if ($_POST['teil']=="") {
 		// $teil=$session[user][title];
-		 $output.="<form action=\"lodge.php?op=titeel3\" method='POST'><input type='hidden' name='teil' value=\"\"><input type='submit' value='Ja' class='button'>, ändere meinen Titel zurück auf $teil für 50 Punkte.</form>"; 
+		 $output.="<form action=\"lodge.php?op=titeel3\" method='POST'><input type='hidden' name='teil' value=\"\"><input type='submit' value='Ja' class='button'>, Ã¤ndere meinen Titel zurÃ¼ck auf $teil fÃ¼r 50 Punkte.</form>"; 
 	} else {
 	//	$teil=stripslashes($_POST['teil']);
-		 $output.="<form action=\"lodge.php?op=titeel3\" method='POST'><input type='hidden' name='teil' value=\"$teil\"><input type='submit' value='Ja' class='button'>, ändere meinen Titel auf $teil für 50 Punkte.</form>"; 
+		 $output.="<form action=\"lodge.php?op=titeel3\" method='POST'><input type='hidden' name='teil' value=\"$teil\"><input type='submit' value='Ja' class='button'>, Ã¤ndere meinen Titel auf $teil fÃ¼r 50 Punkte.</form>"; 
 	}
         	output("`n`n<a href='lodge.php?op=titeel1'>Nein, lass es mich nochmal probieren</a>",true); 
         	addnav("","lodge.php?op=titeel1"); 
         	addnav("","lodge.php?op=titeel3"); 
 }
 } else if ($_GET['op']=="titeel3"){
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 	if ($pointsavailable>=50){ 
         //		$news = "`&{$session['user']['name']}`^ ist nun bekannt als `^";
 		$teil=stripslashes($_POST['teil']);
 		$teil = preg_replace("/`[^123456789!@#\$%^&QqRrVvGgTt]/","",$teil);
-		// Anführungszeichen machen nur Probleme...
+		// AnfÃ¼hrungszeichen machen nur Probleme...
 		$teil = str_replace('\'','',$teil);
 		$teil = str_replace('"','',$teil);
 		
-		// Titel nicht leer, aber auch nix reguläres drin?
+		// Titel nicht leer, aber auch nix regulÃ¤res drin?
 		if(trim(preg_replace('/`./','',$teil))=='') {
 			$teil=$session['user']['title'];
 			$_POST['teil'] = '';
 		}
 
 		// Offene Tags zumachen
-		// nicht mehr nötig, weil die Tags verboten sind
+		// nicht mehr nÃ¶tig, weil die Tags verboten sind
 		//$teil = closetags($teil,'`c`i`b');
 		
 		// Schauen, ob der neue Titel nich mehr als 25 Zeichen hat
@@ -323,18 +323,18 @@ if ($_GET['op']==""){
         		output("Gratulation, dein neuer Name ist jetzt  {$session['user']['name']}`0!`n`n"); 
 }
     	}else{ 
-        		output("Den Titel zu ändern kostet 50 Punkte, aber du hast nur $pointsavailable Punkte."); 
+        		output("Den Titel zu Ã¤ndern kostet 50 Punkte, aber du hast nur $pointsavailable Punkte."); 
     	} 
 
 }elseif ($_GET['op']=="namechange"){ 
-    	addnav("Zurück zur Lodge","lodge.php"); 
-    	output("`bNamens Farbe ändern`b`n`n"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
+    	output("`bNamens Farbe Ã¤ndern`b`n`n"); 
     	if ($config['namechange']==1){ 
-        		output("Da du schon vorher viele Punkte für die Farbänderung gegeben hast kostet es dich diesmal nur 25 Punkte ."); 
+        		output("Da du schon vorher viele Punkte fÃ¼r die FarbÃ¤nderung gegeben hast kostet es dich diesmal nur 25 Punkte ."); 
     	}else{ 
-        		output("Da es deine erste Farbänderung ist kostet es dich 300 Punkte . Beim nächsten Wechsel fallen nur 25 Punkte Kosten an"); 
+        		output("Da es deine erste FarbÃ¤nderung ist kostet es dich 300 Punkte . Beim nÃ¤chsten Wechsel fallen nur 25 Punkte Kosten an"); 
     	} 
-    	output("`n`nDein geänderter Name muss der selbe Name sein wie vor der Farbänderung, nur dass er jetzt die Farbcodes enthalten darf.`n`n"); 
+    	output("`n`nDein geÃ¤nderter Name muss der selbe Name sein wie vor der FarbÃ¤nderung, nur dass er jetzt die Farbcodes enthalten darf.`n`n"); 
       	$n = $session['user']['name']; 
 	if ($session['user']['ctitle']=="") {
         		//$x = strpos($n,$session[user][title])+1; 
@@ -352,7 +352,7 @@ if ($_GET['op']==""){
     	$output.="<form action='lodge.php?op=namepreview' method='POST'><input name='newname' value=\"".HTMLEntities($regname)."\" size=\"30\" maxlength=\"30\"> <input type='submit' value='Vorschau'></form>"; 
     	addnav("","lodge.php?op=namepreview"); 
 }elseif ($_GET['op']=="namepreview"){ 
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
     	$n = $session['user']['name']; 
 	if ($session['user']['ctitle']=="") {
 		        		//$x = strpos($n,$session[user][title])+1;
@@ -368,8 +368,8 @@ if ($_GET['op']==""){
     	$comp1 = strtolower(preg_replace("/[`][123456789!@#$%^&QqRrVvGgTt]/","",$regname)); // no black, no background colors
     	$comp2 = strtolower(preg_replace("/[`][123456789!@#$%^&QqRrVvGgTt]/","",$_POST['newname'])); 
     	//$output.="[$comp1] compared to [$comp2]"; 
-    	if ($comp1!=$comp2) $msg.="Dein neuer Name muss genau so bleiben, wie dein alter Name. Du kannst die Gross-/Kleinschreibung ändern, Farbcodes entfernen oder hinzufügen, aber ansonsten muss alles so bleiben. Du wählst {$_POST['newname']}`0`n"; 
-    	if (strlen($_POST['newname'])>30) $msg.="Dein neuer name ist zu lang, inklusive Farbcodes darf er nicht länger als 30 Zeichen sein.`n"; 
+    	if ($comp1!=$comp2) $msg.="Dein neuer Name muss genau so bleiben, wie dein alter Name. Du kannst die Gross-/Kleinschreibung Ã¤ndern, Farbcodes entfernen oder hinzufÃ¼gen, aber ansonsten muss alles so bleiben. Du wÃ¤hlst {$_POST['newname']}`0`n"; 
+    	if (strlen($_POST['newname'])>30) $msg.="Dein neuer name ist zu lang, inklusive Farbcodes darf er nicht lÃ¤nger als 30 Zeichen sein.`n"; 
     	$colorcount=0; 
     	for ($x=0;$x<strlen($_POST['newname']);$x++){ 
     		if (substr($_POST['newname'],$x,1)=="`"){ 
@@ -383,7 +383,7 @@ if ($_GET['op']==""){
     	if ($msg==""){ 
         		output("Deine Name wird so aussehen: {$_POST['newname']}`n`n`0Ist es das was du willst?`n`n"); 
         		$p = ($config['namechange']==1?25:300); 
-        		$output.="<form action=\"lodge.php?op=changename\" method='POST'><input type='hidden' name='name' value=\"".HTMLEntities($_POST['newname'])."\"><input type='submit' value='Ja' class='button'>, ändere meinen Namen auf ".appoencode("{$_POST['newname']}`0")." für $p Punkte.</form>"; 
+        		$output.="<form action=\"lodge.php?op=changename\" method='POST'><input type='hidden' name='name' value=\"".HTMLEntities($_POST['newname'])."\"><input type='submit' value='Ja' class='button'>, Ã¤ndere meinen Namen auf ".appoencode("{$_POST['newname']}`0")." fÃ¼r $p Punkte.</form>"; 
         		output("`n`n<a href='lodge.php?op=namechange'>Nein, lass es mich nochmal probieren</a>",true); 
         		addnav("","lodge.php?op=namechange"); 
         		addnav("","lodge.php?op=changename"); 
@@ -400,18 +400,18 @@ if ($_GET['op']==""){
 	if ($session['user']['pvpflag']=="5013-10-06 00:42:00"){
 		output("J. C. Petersen nickt dir zu und gibt dir zu verstehen, dass du noch immer unter seinem Schutz stehst.");
 	} elseif ($session['user']['pvpflag']=="1986-10-06 00:42:00") {
-		output("J. C. Petersen zeigt dir einen Vogel und macht dir sehr schnell klar, dass er vorerst nichts mehr für dich tun kann. Er kann niemanden schützen, der selbst mordend durchs Land zieht.");
+		output("J. C. Petersen zeigt dir einen Vogel und macht dir sehr schnell klar, dass er vorerst nichts mehr fÃ¼r dich tun kann. Er kann niemanden schÃ¼tzen, der selbst mordend durchs Land zieht.");
 	}else{
-	 	output("Du fragst J. C. Petersen, ob er deinen Aufenthaltsort vor herumstreifenden Dieben und Mördern verbergen kann.");
-		output(" Er nickt und verspricht dir, dass dir für die Kleinigkeit von 300 Punkten niemand mehr ein Haar krümmen wird. Er wird auch mit Dag Durnick reden. Allerdings kann er für nichts mehr garantieren, wenn du selbst einen Mord begehst!`n`n");
-		output("300 Punkte für permanente PvP Immunität ausgeben?`n(Die Immunität verfällt, sobald du selbst PvP machst, oder ein Kopfgeld auf jemanden aussetzt und kann dann `bnicht`b mehr so schnell erneuert werden!)");
-    		addnav("Immunität bestätigen?"); 
+	 	output("Du fragst J. C. Petersen, ob er deinen Aufenthaltsort vor herumstreifenden Dieben und MÃ¶rdern verbergen kann.");
+		output(" Er nickt und verspricht dir, dass dir fÃ¼r die Kleinigkeit von 300 Punkten niemand mehr ein Haar krÃ¼mmen wird. Er wird auch mit Dag Durnick reden. Allerdings kann er fÃ¼r nichts mehr garantieren, wenn du selbst einen Mord begehst!`n`n");
+		output("300 Punkte fÃ¼r permanente PvP ImmunitÃ¤t ausgeben?`n(Die ImmunitÃ¤t verfÃ¤llt, sobald du selbst PvP machst, oder ein Kopfgeld auf jemanden aussetzt und kann dann `bnicht`b mehr so schnell erneuert werden!)");
+    		addnav("ImmunitÃ¤t bestÃ¤tigen?"); 
     		addnav("JA","lodge.php?op=immunconfirm");
 	} 
-  	addnav("Zurück zur Lodge","lodge.php"); 
+  	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="immunconfirm"){ 
     	if ($pointsavailable>=300){ 
-        		output("J. C. Petersen nutzt seinen Einfluss, um dich für PvP-Spieler unangreifbar zu machen. Es kann auch kein (weiteres) Kopfgeld auf dich ausgesetzt werden.`nDenke daran, dass du nur so lange geschützt bist, bis du selbst jemanden angreifst, oder jemanden auf Dag's "); 
+        		output("J. C. Petersen nutzt seinen Einfluss, um dich fÃ¼r PvP-Spieler unangreifbar zu machen. Es kann auch kein (weiteres) Kopfgeld auf dich ausgesetzt werden.`nDenke daran, dass du nur so lange geschÃ¼tzt bist, bis du selbst jemanden angreifst, oder jemanden auf Dag's "); 
 		output(" Kopfgeldliste setzt. Tust du das, kann selbst Petersen dir in Zukunft nicht mehr helfen.");
         		$session['user']['pvpflag']="5013-10-06 00:42:00"; 
         		$session['user']['donationspent']+=300; 
@@ -434,14 +434,14 @@ if ($_GET['op']==""){
      		addnews($news); 
      		output("Gratulation, dein neuer Name ist jetzt  {$session['user']['name']}`0!`n`n"); 
     	}else{ 
-        		output("Eine Farbänderung kostet $p Punkte, aber du hast nur $pointsavailable Punkte."); 
+        		output("Eine FarbÃ¤nderung kostet $p Punkte, aber du hast nur $pointsavailable Punkte."); 
     	} 
-    	addnav("Zurück zur Lodge","lodge.php"); 
+    	addnav("ZurÃ¼ck zur Lodge","lodge.php"); 
 }elseif ($_GET['op']=="keys1"){
-	$sql = "SELECT * FROM items WHERE owner=0 AND class='Schlüssel' AND value1=".$session['user']['house']." ORDER BY id ASC";
+	$sql = "SELECT * FROM items WHERE owner=0 AND class='SchlÃ¼ssel' AND value1=".$session['user']['house']." ORDER BY id ASC";
 	$result = db_query($sql) or die(db_error(LINK));
 	if (db_num_rows($result)){
-		output("`b`c`&Verlorene Schlüssel:`c`b<table cellpadding=2 align='center'><tr><td>`bNr.`b</td><td>`bAktion`b</td></tr>",true);
+		output("`b`c`&Verlorene SchlÃ¼ssel:`c`b<table cellpadding=2 align='center'><tr><td>`bNr.`b</td><td>`bAktion`b</td></tr>",true);
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
 			$bgcolor=($i%2==1?"trlight":"trdark");
@@ -450,46 +450,46 @@ if ($_GET['op']==""){
 		}
 		output("</table>",true);
 	}else{
-		output("Der Schlüsselsatz für dein Haus ist komplett. Willst du einen zusätzlichen Schlüssel für 50 Punkte kaufen?");
-		addnav("Zusätzlicher Schlüssel (50 Punkte)","lodge.php?op=keys2&id=new");
+		output("Der SchlÃ¼sselsatz fÃ¼r dein Haus ist komplett. Willst du einen zusÃ¤tzlichen SchlÃ¼ssel fÃ¼r 50 Punkte kaufen?");
+		addnav("ZusÃ¤tzlicher SchlÃ¼ssel (50 Punkte)","lodge.php?op=keys2&id=new");
 	}
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 }elseif ($_GET['op']=="keys2"){
 	if ($_GET['id']=="new"){
 		output("`b50`b ");
 	}else{
 		output("`b10`b ");
 	}
-	output("Punkte für diesen Schlüssel ausgeben?");
-    	addnav("Schlüsselkauf bestätigen?"); 
+	output("Punkte fÃ¼r diesen SchlÃ¼ssel ausgeben?");
+    	addnav("SchlÃ¼sselkauf bestÃ¤tigen?"); 
     	addnav("JA","lodge.php?op=keys3&id=".$_GET['id']."");
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 }elseif ($_GET['op']=="keys3"){
 	if ($_GET['id']=="new"){
 		if ($pointsavailable<50){
-			output("Du hast nicht genug Punkte übrig.");
+			output("Du hast nicht genug Punkte Ã¼brig.");
 		}else{
-			$sql = "SELECT * FROM items WHERE class='Schlüssel' AND value1=".$session['user']['house']." ORDER BY id ASC";
+			$sql = "SELECT * FROM items WHERE class='SchlÃ¼ssel' AND value1=".$session['user']['house']." ORDER BY id ASC";
 			$result = db_query($sql) or die(db_error(LINK));
 			$nummer=db_num_rows($result)+1;
 			db_free_result($result);
-			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description) VALUES ('Hausschlüssel',".$session['user']['acctid'].",'Schlüssel',".$session['user']['house'].",$nummer,0,0,'Schlüssel für Haus Nummer ".$session['user']['house']."')";
+			$sql="INSERT INTO items (name,owner,class,value1,value2,gold,gems,description) VALUES ('HausschlÃ¼ssel',".$session['user']['acctid'].",'SchlÃ¼ssel',".$session['user']['house'].",$nummer,0,0,'SchlÃ¼ssel fÃ¼r Haus Nummer ".$session['user']['house']."')";
 			db_query($sql) or die(db_error(LINK));
 			$session['user']['donationspent']+=50;
-			output("Du hast jetzt `b$nummer`b Schlüssel für dein Haus! Überlege gut, an wen du sie vergibst.");
+			output("Du hast jetzt `b$nummer`b SchlÃ¼ssel fÃ¼r dein Haus! Ãœberlege gut, an wen du sie vergibst.");
 		}
 	}else{
 		if ($pointsavailable<10){
-			output("Du hast nicht genug Punkte übrig.");
+			output("Du hast nicht genug Punkte Ã¼brig.");
 		}else{
 			$nummer=$_GET['id'];
 			$sql="UPDATE items SET owner=".$session['user']['acctid'].",hvalue=0 WHERE id=$nummer";
 			db_query($sql);
 			$session['user']['donationspent']+=10;
-			output("Der Schlüssel wurde ersetzt.");
+			output("Der SchlÃ¼ssel wurde ersetzt.");
 		}
 	}
-	addnav("Zurück zur Lodge","lodge.php");
+	addnav("ZurÃ¼ck zur Lodge","lodge.php");
 }
 
 $session['user']['donationconfig'] = serialize($config); 

@@ -7,6 +7,11 @@
  *
  */
 
+// Manche Kampfaufrufe haben keine Zusatzangabe fuer den Autokampf.
+if (!isset($HTTP_GET_VARS) || !is_array($HTTP_GET_VARS)) $HTTP_GET_VARS = is_array($_GET) ? $_GET : array();
+if (!isset($HTTP_GET_VARS["auto"])) $HTTP_GET_VARS["auto"] = "";
+// Ein normaler Schlag nutzt keine Sonderfaehigkeit und hat deshalb keinen skill-Wert.
+if (!isset($HTTP_GET_VARS["skill"])) $HTTP_GET_VARS["skill"] = "";
 if ($HTTP_GET_VARS['auto']=="full"){
 	$count=100;
 }else if ($HTTP_GET_VARS['auto']=="five"){
@@ -41,7 +46,8 @@ function activate_buffs($tag) {
 		
 		// If this should activate now and it hasn't already activated,
 		// do the round message and mark it.
-		if ($activate && !$buff['used']) {
+		// Alte Effekte haben moeglicherweise kein used-Feld; empty() behandelt sie als noch unbenutzt.
+if ($activate && empty($buff['used'])) {
 			// mark it used.
 			$session['bufflist'][$key]['used'] = 1;
 			// if it has a 'round message', run it.
@@ -109,7 +115,8 @@ function activate_buffs($tag) {
 					$buff['minbadguydamage'] = stripslashes($buff['minbadguydamage']);
 					eval("\$buff['minbadguydamage'] = $buff[minbadguydamage];");
 				}
-				$min = $buff['minbadguydamage'];
+				// Fehlt die Mindestangabe, darf der Schaden zwischen 0 und dem Maximum liegen.
+$min = isset($buff['minbadguydamage']) ? $buff['minbadguydamage'] : 0;
 				$who = 0;
 			} else {
 				$max = $buff['maxgoodguydamage'];
@@ -194,7 +201,8 @@ function expire_buffs() {
 	global $session, $badguy;
 	reset($session['bufflist']);
 	foreach ($session['bufflist'] as $key => $buff) {
-		if ($buff['used']) {
+		// Ein fehlendes used-Feld bedeutet, dass der Effekt in dieser Runde nicht markiert war.
+if (!empty($buff['used'])) {
 			$session['bufflist'][$key]['used'] = 0;
 			$session['bufflist'][$key]['rounds']--;
 			if ($session['bufflist'][$key]['rounds'] <= 0) {
@@ -210,6 +218,8 @@ function expire_buffs() {
 }
 
 $badguy = createarray($session['user']['badguy']);
+// Gewoehnliche Waldkreaturen haben kein PvP-Feld; sie gelten deshalb als normaler Gegner.
+if (!isset($badguy["pvp"])) $badguy["pvp"] = false;
 
 $adjustment = ($session['user']['level']/$badguy['creaturelevel']);
 if ($badguy['pvp']) $adjustment=1;
@@ -243,7 +253,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			"atkmod"=>25,
 			"defmod"=>25,
 			"invulnerable"=>1,
-			"startmsg"=>"`n`&Du fühlst dich gottgleich`n`n",
+			"startmsg"=>"`n`&Du fÃ¼hlst dich gottgleich`n`n",
 			"activate"=>"roundstart"
 		);
 	}
@@ -253,13 +263,13 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			switch($HTTP_GET_VARS['l']){
 			case 1:
 				$session['bufflist']['mp1'] = array(
-					"startmsg"=>"`n`^Du fängst an zu regenerieren!`n`n",
+					"startmsg"=>"`n`^Du fÃ¤ngst an zu regenerieren!`n`n",
 					"name"=>"`%Regeneration",
 					"rounds"=>5,
-					"wearoff"=>"Deine Regeneration hat aufgehört",
+					"wearoff"=>"Deine Regeneration hat aufgehÃ¶rt",
 					"regen"=>$session['user']['level'],
 					"effectmsg"=>"Du regenerierst um {damage} Punkte.",
-					"effectnodmgmsg"=>"Du bist völlig gesund.",
+					"effectnodmgmsg"=>"Du bist vÃ¶llig gesund.",
 					"activate"=>"roundstart");
 				$session['user']['reputation']--;
 				break;
@@ -268,7 +278,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 					"startmsg"=>"`n`^{badguy}`% wird von einer Klaue aus Erde gepackt und auf den Boden geschleudert!`n`n",
 					"name"=>"`%Erdenfaust",
 					"rounds"=>5,
-					"wearoff"=>"Die erdene Faust zerfällt zu staub.",
+					"wearoff"=>"Die erdene Faust zerfÃ¤llt zu staub.",
 					"minioncount"=>1,
 					"effectmsg"=>"Eine gewaltige Faust aus Erde trifft {badguy} mit `^{damage}`) Schadenspunkten.",
 					"minbadguydamage"=>1,
@@ -278,13 +288,13 @@ if ($HTTP_GET_VARS['op']=="fight"){
 				break;
 			case 3:
 				$session['bufflist']['mp3'] = array(
-					"startmsg"=>"`n`^Deine Waffe glüht in einem überirdischen Schein.`n`n",
+					"startmsg"=>"`n`^Deine Waffe glÃ¼ht in einem Ã¼berirdischen Schein.`n`n",
 					"name"=>"`%Leben absaugen",
 					"rounds"=>5,
 					"wearoff"=>"Die Aura deiner Waffe verschwindet.",
 					"lifetap"=>1, //ratio of damage healed to damage dealt
 					"effectmsg"=>"Du wirst um {damage} Punkte geheilt.",
-					"effectnodmgmsg"=>"Du fühlst ein Prickeln, als deine Waffe versucht, deinen vollständig gesunden Körper zu heilen.",
+					"effectnodmgmsg"=>"Du fÃ¼hlst ein Prickeln, als deine Waffe versucht, deinen vollstÃ¤ndig gesunden KÃ¶rper zu heilen.",
 					"effectfailmsg"=>"Deine Waffe scheint zu jammern, als du deinem Gegner keinen Schaden machst.",
 					"activate"=>"offense,defense",
 					);
@@ -296,7 +306,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 					"rounds"=>5,
 					"wearoff"=>"Mit einem Zischen wird deine Haut wieder normal.",
 					"damageshield"=>2,
-					"effectmsg"=>"{badguy}wird von einem Blitzbogen aus deiner Haut mit `^{damage}`) Schadenspunkten zurückgeworfen.",
+					"effectmsg"=>"{badguy}wird von einem Blitzbogen aus deiner Haut mit `^{damage}`) Schadenspunkten zurÃ¼ckgeworfen.",
 					"effectnodmg"=>"{badguy} ist von deinen Blitzen leicht geblendet, ansonsten aber unverletzt.",
 					"effectfailmsg"=>"{badguy} ist von deinen Blitzen leicht geblendet, ansonsten aber unverletzt.",
 					"activate"=>"offense,defense"
@@ -306,7 +316,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			$session['user']['magicuses']-=$HTTP_GET_VARS['l'];
 		}else{
 			$session['bufflist']['mp0'] = array(
-				"startmsg"=>"`nDu legst deine Stirn in Falten und beschwörst die Elemente.  Eine kleine Flamme erscheint. {badguy} zündet sich eine Zigarette daran an, dankt dir und stürzt sich wieder auf dich.`n`n",
+				"startmsg"=>"`nDu legst deine Stirn in Falten und beschwÃ¶rst die Elemente.  Eine kleine Flamme erscheint. {badguy} zÃ¼ndet sich eine Zigarette daran an, dankt dir und stÃ¼rzt sich wieder auf dich.`n`n",
 				"rounds"=>1,
 				"activate"=>"roundstart"
 			);
@@ -319,10 +329,10 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			switch($HTTP_GET_VARS['l']){
 			case 1:
 				$session['bufflist']['da1']=array(
-					"startmsg"=>"`n`\$Du rufst die Geister der Toten und skelettartige Hände zerren an {badguy} aus den Tiefen ihrer Gräber.`n`n",
+					"startmsg"=>"`n`\$Du rufst die Geister der Toten und skelettartige HÃ¤nde zerren an {badguy} aus den Tiefen ihrer GrÃ¤ber.`n`n",
 					"name"=>"`\$Skelettdiener",
 					"rounds"=>5,
-					"wearoff"=>"Deine Skelettdiener zerbröckeln zu staub.",
+					"wearoff"=>"Deine Skelettdiener zerbrÃ¶ckeln zu staub.",
 					"minioncount"=>round($session['user']['level']/3)+1,
 					"maxbadguydamage"=>round($session['user']['level']/2,0)+1,
 					"effectmsg"=>"`)Ein untoter Diener trifft {badguy} mit `^{damage}`) Schadenspunkten.",
@@ -333,7 +343,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			case 2:
 				$session['bufflist']['da2']=array(
 					"startmsg"=>"`n`\$Du holst eine winzige Puppe, die aussieht wie {badguy}, hervor`n`n",
-					"effectmsg"=>"Du stößt eine Nadel in die {badguy}-Puppe und machst damit `^{damage}`) Schadenspunkte!",
+					"effectmsg"=>"Du stÃ¶ÃŸt eine Nadel in die {badguy}-Puppe und machst damit `^{damage}`) Schadenspunkte!",
 					"minioncount"=>1,
 					"maxbadguydamage"=>round($session['user']['attack']*3,0),
 					"minbadguydamage"=>round($session['user']['attack']*1.5,0),
@@ -353,7 +363,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 				break;
 			case 5:
 				$session['bufflist']['da5']=array(
-					"startmsg"=>"`n`\$Du streckst deine Hand aus und {badguy} fängt an aus den Ohren zu bluten.`n`n",
+					"startmsg"=>"`n`\$Du streckst deine Hand aus und {badguy} fÃ¤ngt an aus den Ohren zu bluten.`n`n",
 					"name"=>"`\$Seele verdorren",
 					"rounds"=>5,
 					"wearoff"=>"Die Seele deines Opfers hat sich erholt.",
@@ -368,7 +378,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			$session['user']['darkartuses']-=$HTTP_GET_VARS['l'];
 		}else{
 			$session['bufflist']['da0'] = array(
-				"startmsg"=>"`nErschöpft versuchst du deine dunkelste Magie: einen schlechten Witz.  {badguy} schaut dich nachdenklich eine Minute lang an. Endlich versteht er den Witz und stürzt sich lachend wieder auf dich.`n`n",
+				"startmsg"=>"`nErschÃ¶pft versuchst du deine dunkelste Magie: einen schlechten Witz.  {badguy} schaut dich nachdenklich eine Minute lang an. Endlich versteht er den Witz und stÃ¼rzt sich lachend wieder auf dich.`n`n",
 				"rounds"=>1,
 				"activate"=>"roundstart"
 				);
@@ -384,7 +394,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 					"startmsg"=>"`n`^Du gibst deinem Gegner einen schlimmen Namen und bringst {badguy} zum Weinen.`n`n",
 					"name"=>"`^Beleidigung",
 					"rounds"=>5,
-					"wearoff"=>"Dein Gegner putzt sich die Nase und hört auf zu weinen.",
+					"wearoff"=>"Dein Gegner putzt sich die Nase und hÃ¶rt auf zu weinen.",
 					"roundmsg"=>"{badguy} ist deprimiert und kann nicht so gut angreifen.",
 					"badguyatkmod"=>0.5,
 					"activate"=>"defense"
@@ -404,7 +414,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 				break;
 			case 3:
 				$session['bufflist']['ts3'] = array(
-					"startmsg"=>"`n`^Mit dem Geschick eines erfahrenen Diebs scheinst du zu verschwinden und kannst {badguy} aus einer günstigeren und sichereren Position angreifen.`n`n",
+					"startmsg"=>"`n`^Mit dem Geschick eines erfahrenen Diebs scheinst du zu verschwinden und kannst {badguy} aus einer gÃ¼nstigeren und sichereren Position angreifen.`n`n",
 					"name"=>"`^Versteckter Angriff",
 					"rounds"=>5,
 					"wearoff"=>"Dein Opfer hat dich gefunden.",
@@ -415,7 +425,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 				break;
 			case 5:
 				$session['bufflist']['ts5']=array(
-					"startmsg"=>"`n`^Mit deinen Fähigkeiten als Dieb verschwindest du und schiebst {badguy} von hinten eine dünne Klinge zwischen die Rückenwirbel!`n`n",
+					"startmsg"=>"`n`^Mit deinen FÃ¤higkeiten als Dieb verschwindest du und schiebst {badguy} von hinten eine dÃ¼nne Klinge zwischen die RÃ¼ckenwirbel!`n`n",
 					"name"=>"`^Angriff von hinten",
 					"rounds"=>5,
 					"wearoff"=>"Dein Opfer ist nicht mehr so nett, dich hinter sich zu lassen!",
@@ -429,7 +439,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 			$session['user']['thieveryuses']-=$HTTP_GET_VARS['l'];
 		}else{
 			$session['bufflist']['ts0'] = array(
-				"startmsg"=>"`nDu versuchst, {badguy} anzugreifen, indem du deine besten Diebeskünste in die Praxis umsetzt - aber du stolperst über deine eigenen Füsse.`n`n",
+				"startmsg"=>"`nDu versuchst, {badguy} anzugreifen, indem du deine besten DiebeskÃ¼nste in die Praxis umsetzt - aber du stolperst Ã¼ber deine eigenen FÃ¼sse.`n`n",
 				"rounds"=>1,
 				"activate"=>"roundstart"
 				);
@@ -442,7 +452,7 @@ if ($HTTP_GET_VARS['op']=="fight"){
 if ($badguy['creaturehealth']>0 && $session['user']['hitpoints']>0) {
 	output ("`\$`c`b~ ~ ~ Kampf ~ ~ ~`b`c`0");
 
-	output("`@Du hast den Gegner `^$badguy[creaturename]`@ entdeckt, der sich mit seiner Waffe `%$badguy[creatureweapon]`@ auf dich stürzt!`0`n`n");
+	output("`@Du hast den Gegner `^$badguy[creaturename]`@ entdeckt, der sich mit seiner Waffe `%$badguy[creatureweapon]`@ auf dich stÃ¼rzt!`0`n`n");
 
 	if ($session['user']['alive']){
 		output("`2Level: `6$badguy[creaturelevel]`0`n");
@@ -467,19 +477,19 @@ if ($badguy['pvp'] &&
 	if ($session['user']['buffbackup']>""){
 		
 	}else{
-		output("`&Die Götter verbieten den Einsatz jeder Spezialfähigkeit!`n");
+		output("`&Die GÃ¶tter verbieten den Einsatz jeder SpezialfÃ¤higkeit!`n");
 		$session['user']['buffbackup']=serialize($session['bufflist']);
 		$session['bufflist']=array();
 		if ($_GET['bg']==1){
 			$session['bufflist']['bodyguard'] = array(
-				"startmsg"=>"`n`\${$badguy['creaturename']} ist durch einen Leibwächter geschützt!`n`n",
-				"name"=>"`&Leibwächter",
+				"startmsg"=>"`n`\${$badguy['creaturename']} ist durch einen LeibwÃ¤chter geschÃ¼tzt!`n`n",
+				"name"=>"`&LeibwÃ¤chter",
 				"rounds"=>5,
-				"wearoff"=>"Der Leibwächter scheint eingeschlafen zu sein.",
+				"wearoff"=>"Der LeibwÃ¤chter scheint eingeschlafen zu sein.",
 				"minioncount"=>1,
 				"maxgoodguydamage"=> round($session['user']['level']/2,0) +1,
-				"effectmsg"=>"`7{badguy}'s Leibwächter trifft dich mit `\${damage}`7 Schadenspunkten.",
-				"effectnodmgmsg"=>"`7{badguy}'s Leibwächter versucht dich zu treffen, aber `\$TRIFFT NICHT`7!",
+				"effectmsg"=>"`7{badguy}'s LeibwÃ¤chter trifft dich mit `\${damage}`7 Schadenspunkten.",
+				"effectnodmgmsg"=>"`7{badguy}'s LeibwÃ¤chter versucht dich zu treffen, aber `\$TRIFFT NICHT`7!",
 				"activate"=>"roundstart"
 				);
 		}
@@ -491,7 +501,7 @@ if ($badguy['pvp'] &&
 				"wearoff"=>"Der Heimvorteil ist deinem Gegner nicht mehr von Vorteil.",
 				"minioncount"=>1,
 				"maxgoodguydamage"=> round($session['user']['level']+5),
-				"effectmsg"=>"`7Durch {badguy}`7's Heimvorteil bekommst du zusätzlich `\${damage}`7 Schadenspunkte.",
+				"effectmsg"=>"`7Durch {badguy}`7's Heimvorteil bekommst du zusÃ¤tzlich `\${damage}`7 Schadenspunkte.",
 				"effectnodmgmsg"=>"",
 				"activate"=>"roundstart"
 				);
@@ -510,7 +520,7 @@ if ($session['user']['alive'] && $session['user']['buffbackup']==""){
 		$wetter=getsetting("weather","0");
 		if ($wetter=="Starker Wind mit vereinzelten Regenschauern"){
 			if (e_rand(1,2)==1){
-				$session['bufflist']['weather'] = array("name"=>"`6Wetter","rounds"=>1,"wearoff"=>"","atkmod"=>0,"roundmsg"=>"`6Ein starker Windstoss läßt dich dein Ziel verfehlen.","activate"=>"offense");
+				$session['bufflist']['weather'] = array("name"=>"`6Wetter","rounds"=>1,"wearoff"=>"","atkmod"=>0,"roundmsg"=>"`6Ein starker Windstoss lÃ¤ÃŸt dich dein Ziel verfehlen.","activate"=>"offense");
 			}else{
 				$session['bufflist']['weather'] = array("name"=>"`6Wetter","rounds"=>1,"wearoff"=>"","badguyatkmod"=>0,"roundmsg"=>"`6Ein starker Windstoss hindert {badguy} daran, dich zu treffen.","activate"=>"defense");
 			}
@@ -546,6 +556,9 @@ if ($badguy['creaturehealth']>0 && $session['user']['hitpoints']>0){
 	$creatureattack = $badguy['creatureattack']*$creatureatkmod;
 	$adjustedselfdefense = ($session['user']['defence'] * $adjustment * $defmod);
 	
+	// Vor dem ersten Schlag ist noch kein Schaden berechnet; beide Werte beginnen bei null.
+	$creaturedmg = 0;
+	$selfdmg = 0;
 	while($creaturedmg==0 && $selfdmg==0){//---------------------------------
 		$atk = $session['user']['attack']*$atkmod;
 		if (e_rand(1,20)==1) $atk*=3;
@@ -606,15 +619,15 @@ if (e_rand(1,3)==1 &&
 	($HTTP_GET_VARS['op']=="search" ||
 	 ($badguy['pvp'] && $HTTP_GET_VARS['act']=="attack"))) {
 	if ($badguy['pvp']){
-		output("`b`^$badguy[creaturename]`\$'s Fähigkeiten erlauben deinem Gegner den ersten Schlag!`0`b`n`n");
+		output("`b`^$badguy[creaturename]`\$'s FÃ¤higkeiten erlauben deinem Gegner den ersten Schlag!`0`b`n`n");
 	}else{
-		output("`b`^$badguy[creaturename]`\$ überrascht dich und hat den ersten Schlag!`0`b`n`n");
+		output("`b`^$badguy[creaturename]`\$ Ã¼berrascht dich und hat den ersten Schlag!`0`b`n`n");
 	}
 	$HTTP_GET_VARS['op']="run";
 	$surprised=true;
 }else{
 	if ($HTTP_GET_VARS['op']=="search")
-		output("`b`\$Dein Können erlaubt dir den ersten Angriff!`0`b`n`n");
+		output("`b`\$Dein KÃ¶nnen erlaubt dir den ersten Angriff!`0`b`n`n");
 	$surprised=false;
 }
 
@@ -655,11 +668,11 @@ if ($HTTP_GET_VARS['op']=="fight" || $HTTP_GET_VARS['op']=="run"){
 			}
 			if ($creaturedmg>$session['user']['punch']){
 				$session['user']['punch']=$creaturedmg;
-				output("`@`b`c--- DAS WAR DEIN BISHER HÄRTESTER SCHLAG! ---`c`b`n");
+				output("`@`b`c--- DAS WAR DEIN BISHER HÃ„RTESTER SCHLAG! ---`c`b`n");
 			}
 		}
 	}else if($HTTP_GET_VARS['op']=="run" && !$surprised){
-		output("`4Du bist zu beschäftigt damit wegzulaufen wie ein feiger Hund und kannst nicht gegen `^$badguy[creaturename]`4 kämpfen.`n");
+		output("`4Du bist zu beschÃ¤ftigt damit wegzulaufen wie ein feiger Hund und kannst nicht gegen `^$badguy[creaturename]`4 kÃ¤mpfen.`n");
 	}
 	// We need to check both user health and creature health. Otherwise the user
 	 // can win a battle by a RIPOSTE after he has gone <= 0 HP.
@@ -689,7 +702,7 @@ expire_buffs();
 
 $creaturedmg=0;
 $selfdmg=0;
-if ($count>1 && $session['user']['hitpoints']>0 && $badguy['creaturehealth']>0) output("`2`bNächste Runde:`b`n");
+if ($count>1 && $session['user']['hitpoints']>0 && $badguy['creaturehealth']>0) output("`2`bNÃ¤chste Runde:`b`n");
 if ($session['user']['hitpoints']<=0 || $badguy['creaturehealth']<=0) $count=-1;
 
 if ($badguy['creaturehealth']<=0 && $session['user']['hitpoints']>0){
@@ -727,7 +740,7 @@ if ($victory || $defeat){
 		$session['bufflist'] = unserialize($session['user']['buffbackup']);
 		if (is_array($session['bufflist'])) {
 			if (count($session['bufflist'])>0 && $badguy['pvp'])
-				output("`&Die Götter gewähren dir wieder alle deine speziellen Fähigkeiten.`n`n");
+				output("`&Die GÃ¶tter gewÃ¤hren dir wieder alle deine speziellen FÃ¤higkeiten.`n`n");
 		} else {
 			$session['bufflist'] = array();
 		}

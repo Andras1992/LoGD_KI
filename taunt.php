@@ -3,8 +3,8 @@ require_once "common.php";
 isnewday(2);
 
 page_header("Spott Editor");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 if ($_GET['op']=="edit"){
 	addnav("Spotteditor","taunt.php");
 	output("<form action='taunt.php?op=save&tauntid=$_GET[tauntid]' method='POST'>",true);
@@ -19,13 +19,13 @@ if ($_GET['op']=="edit"){
 		$taunt = str_replace("%o","er",$taunt);
 		$taunt = str_replace("%p","sein",$taunt);
 		$taunt = str_replace("%x","Zahnstocher",$taunt);
-		$taunt = str_replace("%X","Scharfe Zähne",$taunt);
-		$taunt = str_replace("%W","Grosse grüne Ratte",$taunt);
+		$taunt = str_replace("%X","Scharfe ZÃ¤hne",$taunt);
+		$taunt = str_replace("%W","Grosse grÃ¼ne Ratte",$taunt);
 		$taunt = str_replace("%w","JoeBloe",$taunt);
 		output("Vorschau: $taunt`0`n`n");
 	}
 	$output.="Taunt: <input name='taunt' value=\"".HTMLEntities($row['taunt'])."\" size='70'><br>";
-	output("`nDie folgenden Codes werden unterstützt (Groß- und Kleinschriebung wird unterschieden):`n");
+	output("`nDie folgenden Codes werden unterstÃ¼tzt (GroÃŸ- und Kleinschriebung wird unterschieden):`n");
 	output("%w = Name des Verlierers`n");
 	output("%x = Waffe des Verlierers`n");
 	output("%s = Geschlecht des Verlierers (ihn/sie)`n");
@@ -59,7 +59,7 @@ if ($_GET['op']=="edit"){
 		$row=db_fetch_assoc($result);
 		output("<tr>",true);
 		output("<td>",true);
-		output("[<a href='taunt.php?op=edit&tauntid=$row[tauntid]'>Edit</a>|<a href='taunt.php?op=del&tauntid=$row[tauntid]' onClick='return confirm(\"Diesen Eintrag wirklich löschen?\");'>Löschen</a>]",true);
+		output("[<a href='taunt.php?op=edit&tauntid=$row[tauntid]'>Edit</a>|<a href='taunt.php?op=del&tauntid=$row[tauntid]' onClick='return confirm(\"Diesen Eintrag wirklich lÃ¶schen?\");'>LÃ¶schen</a>]",true);
 		addnav("","taunt.php?op=edit&tauntid=$row[tauntid]");
 		addnav("","taunt.php?op=del&tauntid=$row[tauntid]");
 		output("</td>",true);
@@ -73,7 +73,7 @@ if ($_GET['op']=="edit"){
 	}
 	addnav("","taunt.php?c=$_GET[c]");
 	output("</table>",true);
-	addnav("Spott hinzufügen","taunt.php?op=edit");
+	addnav("Spott hinzufÃ¼gen","taunt.php?op=edit");
 }
 page_footer();
 ?>

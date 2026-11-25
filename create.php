@@ -24,14 +24,14 @@ $result = db_query_params($sql, array(db_unquote_legacy_input($_GET["id"]), ""))
 			$form = true;
 			if (!empty($_POST['pass1'])) {
 				if ($_POST['pass1']!=$_POST['pass2']){
-					output("`#Deine Passwˆrter stimmen nicht ¸berein.`n");
+					output("`#Deine Passw√∂rter stimmen nicht √ºberein.`n");
 				}else{
 					if (strlen($_POST['pass1'])>3){
 						$sql = "UPDATE accounts SET emailvalidation=?,password=MD5(?) WHERE emailvalidation=? AND emailvalidation<>?";
 db_query_params($sql, array("", db_unquote_legacy_input($_POST["pass1"]), db_unquote_legacy_input($_GET["id"]), ""));
-						output("`#`cDein Passwort wurde ge‰ndert. Du kannst jetzt einloggen.`c`0");
+						output("`#`cDein Passwort wurde ge√§ndert. Du kannst jetzt einloggen.`c`0");
 						output("<form action='login.php' method='POST'><input name='name' value=\"$row[login]\" type='hidden'><input name='password' value=\"$_POST[pass1]\" type='hidden'>
-						Dein Passwort wurde ge‰ndert. Dein Login Name ist `^$row[login]`0.  `n`n<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n",true);
+						Dein Passwort wurde ge√§ndert. Dein Login Name ist `^$row[login]`0.  `n`n<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n",true);
 						$form = false;
 					}else{
 						output("`#Dein Passwort ist zu kurz. Es muss mindestens 4 Zeichen lang sein.`n");
@@ -40,28 +40,28 @@ db_query_params($sql, array("", db_unquote_legacy_input($_POST["pass1"]), db_unq
 			}
 			
 			if ($form) {
-				output("`&`c`bNeues Passwort w‰hlen`b`c`n");
+				output("`&`c`bNeues Passwort w√§hlen`b`c`n");
 				output("`0<form action=\"create.php?op=val&id=$_GET[id]\" method='POST'>",true);
 				output("`nDein neues Passwort: <input type='password' name='pass1'>`n",true);
-				output("`nPasswort best‰tigen: <input type='password' name='pass2'>`n",true);
+				output("`nPasswort best√§tigen: <input type='password' name='pass2'>`n",true);
 				output("<input type='submit' class='button' value='Neues Passwort speichern!'>",true);
 				output("</form>",true);				
 			}
 		}else {
 			$sql = "UPDATE accounts SET emailvalidation=? WHERE emailvalidation=? AND emailvalidation<>?";
 db_query_params($sql, array("", db_unquote_legacy_input($_GET["id"]), ""));
-			output("`#`cDeine E-Mail Adresse wurde best‰tigt. Du kannst jetzt einloggen.`c`0");
+			output("`#`cDeine E-Mail Adresse wurde best√§tigt. Du kannst jetzt einloggen.`c`0");
 			output("<form action='login.php' method='POST'><input name='name' value=\"$row[login]\" type='hidden'><input name='password' value=\"$row[password]\" type='hidden'>
-			Deine E-Mail Adresse wurde best‰tigt. Dein Login Name ist `^$row[login]`0.  `n`n<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n"
-			.($trash>0?"Charaktere die nie einloggen werden nach $trash Tag(en) Inaktivit‰t gelˆscht.`n":"")
-			.($new>0?"Charaktere die nie Level 2 erreichen werden nach $new Tag(en) Inaktivit‰t gelˆscht.`n":"")
-			.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivit‰t gelˆscht.":"")
+			Deine E-Mail Adresse wurde best√§tigt. Dein Login Name ist `^$row[login]`0.  `n`n<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n"
+			.($trash>0?"Charaktere die nie einloggen werden nach $trash Tag(en) Inaktivit√§t gel√∂scht.`n":"")
+			.($new>0?"Charaktere die nie Level 2 erreichen werden nach $new Tag(en) Inaktivit√§t gel√∂scht.`n":"")
+			.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivit√§t gel√∂scht.":"")
 			."",true);
-			output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und tr‰gst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauensw¸rdige Sites\" - Sites`i und tr‰gst dort die Adressen ein. Bei anderen Browsern gibt es ‰hnliche Einstellungen."); 
+			output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und tr√§gst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauensw√ºrdige Sites\" - Sites`i und tr√§gst dort die Adressen ein. Bei anderen Browsern gibt es √§hnliche Einstellungen."); 
 
 		}
 	}else{
-		output("`#Deine E-Mail Adresse konnte nicht best‰tigt werden. Mˆglicherweise wurde sie schon best‰tigt. Versuch mal dich einzuloggen und informiere den Webmaster, wenn es nicht klappt.");
+		output("`#Deine E-Mail Adresse konnte nicht best√§tigt werden. M√∂glicherweise wurde sie schon best√§tigt. Versuch mal dich einzuloggen und informiere den Webmaster, wenn es nicht klappt.");
 	}
 }
 if ($_GET['op']=="forgot"){
@@ -82,15 +82,15 @@ db_query_params($sql, array($row["emailvalidation"], $row["login"]));
 					"Jemand von ".$_SERVER['REMOTE_ADDR']." hat ein vergessenes Passwort von deinem Accoount angefordert.  Wenn du das warst, ist hier dein"
 					." Link. Du kannst damit einloggen und dein Passwort im Profil vom Dorfplatz aus einstellen.\n\n"
 					."Wenn du diese E-Mail nicht angefordert hast, keine Panik! Du hast sie bekommen, sonst niemand."
-					."\n\n  http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?op=val&id=$row[emailvalidation]\n\nDanke f¸r's Spielen!",
+					."\n\n  http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?op=val&id=$row[emailvalidation]\n\nDanke f√ºr's Spielen!",
 					"From: ".getsetting("gameadminemail","postmaster@localhost.com")
 				);
-				output("`#Eine neue Best‰tigungsmail wurde an die mit diesem Account gespeicherte Adresse verschickt. Du kannst sie zum Einloggen und zum ‰ndern des Passworts verwenden. Solltest du innerhalb der n‰chsten paar Minuten keine Mail bekommen, schicke bitte eine Anfrage nach Hilfe ab!");
+				output("`#Eine neue Best√§tigungsmail wurde an die mit diesem Account gespeicherte Adresse verschickt. Du kannst sie zum Einloggen und zum √§ndern des Passworts verwenden. Solltest du innerhalb der n√§chsten paar Minuten keine Mail bekommen, schicke bitte eine Anfrage nach Hilfe ab!");
 			}else{
-				output("`#Bei diesem Account wurde keine E-Mail Adresse angegeben. Wir kˆnnen mit dem vergessenen Passwort nicht helfen.");
+				output("`#Bei diesem Account wurde keine E-Mail Adresse angegeben. Wir k√∂nnen mit dem vergessenen Passwort nicht helfen.");
 			}
 		}else{
-			output("`#Dieser Charakter kann nicht gefunden werden. Suche mal in der Kriegerliste danach, vielleicht wurde der Charakter gelˆscht.");
+			output("`#Dieser Charakter kann nicht gefunden werden. Suche mal in der Kriegerliste danach, vielleicht wurde der Charakter gel√∂scht.");
 		}
 	}else{
 		output("<form action='create.php?op=forgot' method='POST'>
@@ -109,7 +109,7 @@ if ($HTTP_GET_VARS['op']=="create"){
 	}
 
 	if (soap($shortname)!=$shortname){
-		output("`\$Fehler`^: Unzul‰ssiger Name. Bitte ¸berdenke deinen Namen nochmal.");
+		output("`\$Fehler`^: Unzul√§ssiger Name. Bitte √ºberdenke deinen Namen nochmal.");
 		$HTTP_GET_VARS['op']="";
 	}else{
 		$blockaccount=false;
@@ -126,7 +126,7 @@ $result = db_query_params($sql, array(db_unquote_legacy_input($_POST["email"])))
 			$blockaccount=true;
 		}
 		if ($_POST['pass1']!=$_POST['pass2']){
-			$msg.="Die Passwˆrter stimmen nicht ¸berein.`n";
+			$msg.="Die Passw√∂rter stimmen nicht √ºberein.`n";
 			$blockaccount=true;
 		}
 		if (strlen($shortname)<3){
@@ -139,7 +139,7 @@ $result = db_query_params($sql, array(db_unquote_legacy_input($_POST["email"])))
 		}
 		if (getsetting("requireemail",0)==1 && is_email($_POST['email']) || getsetting("requireemail",0)==0){
 		}else{
-			$msg.="Du musst eine g¸ltige E-Mail Adresse eingeben.`n";
+			$msg.="Du musst eine g√ºltige E-Mail Adresse eingeben.`n";
 			$blockaccount=true;
 		}
 		/*
@@ -160,7 +160,7 @@ $result = db_query_params($sql, array($shortname));
 				output("`\$Fehler`^: Diesen Namen gibt es schon. Bitte versuchs nochmal.");
 				$HTTP_GET_VARS['op']="";
 			}else{
-				$title = ($HTTP_POST_VARS['sex']?"Bauernm‰dchen":"Bauernjunge");
+				$title = ($HTTP_POST_VARS['sex']?"Bauernm√§dchen":"Bauernjunge");
 				$emailverification = "";
 				if (getsetting("requirevalidemail",0)){
 					$emailverification=md5(date("Y-m-d H:i:s").$_POST['email']);
@@ -176,26 +176,26 @@ if (isset($_GET["r"]) && $_GET["r"] !== ""){
 				$sql = "INSERT INTO accounts (name,title,password,sex,login,laston,uniqueid,lastip,superuser,gold,emailaddress,emailvalidation,referer,birthday) VALUES (?, ?, MD5(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				db_query_params($sql, array($title . " " . $shortname, $title, db_unquote_legacy_input($HTTP_POST_VARS["pass1"]), (int)db_unquote_legacy_input($HTTP_POST_VARS["sex"]), $shortname, date("Y-m-d H:i:s",strtotime(date("r")."-1 day")), db_unquote_legacy_input($HTTP_COOKIE_VARS["lgi"]), $_SERVER["REMOTE_ADDR"], (int)getsetting("superuser",0), (int)getsetting("newplayerstartgold",50), db_unquote_legacy_input($_POST["email"]), isset($emailverification) ? $emailverification : "", (int)$referer, getsetting("activategamedate","0") ? getgamedate() : "")) or die(db_error(LINK));
 				if (db_affected_rows(LINK)<=0){
-					output("`\$Fehler`^: Dein Account konnte aus unbekannten Gr¸nden nicht erstellt werden. Versuchs bitte einfach nochmal. ");
+					output("`\$Fehler`^: Dein Account konnte aus unbekannten Gr√ºnden nicht erstellt werden. Versuchs bitte einfach nochmal. ");
 				}else{
 					if ($emailverification!=""){
 						mail(
 							$_POST['email'],
 							"LoGD Account Verification",
-							"Um deinen LoGD-Account freizuschalten, musst du nur noch auf den folgenden Link klicken.\n\n  http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?op=val&id=$emailverification\n\nDanke f¸r's Spielen!",
+							"Um deinen LoGD-Account freizuschalten, musst du nur noch auf den folgenden Link klicken.\n\n  http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?op=val&id=$emailverification\n\nDanke f√ºr's Spielen!",
 							"From: ".getsetting("gameadminemail","postmaster@localhost.com")
 						);
-						output("`4Eine E-Mail wurde an `\$$_POST[email]`4 geschickt, um die Adresse zu best‰tigen. Klicke auf den Link darin, um den Account zu aktivieren.`0`n`n");
+						output("`4Eine E-Mail wurde an `\$$_POST[email]`4 geschickt, um die Adresse zu best√§tigen. Klicke auf den Link darin, um den Account zu aktivieren.`0`n`n");
 					}else{
 						output("<form action='login.php' method='POST'><input name='name' value=\"$shortname\" type='hidden'><input name='password' value=\"$HTTP_POST_VARS[pass1]\" type='hidden'>
 						Dein Charaker wurde erstellt. Dein Login Name ist `^$shortname`0.  `n`n",true);
 						output("<input type='submit' class='button' value='Hier klicken zum Einloggen'></form>`n`n"
-						.($trash>0?"Charaktere die nie einloggen werden nach $trash Tag(en) Inaktivit‰t gelˆscht.`n":"")
-						.($new>0?"Charaktere die nie Level 2 erreichen werden nach $new Tag(en) Inaktivit‰t gelˆscht.`n":"")
-						.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivit‰t gelˆscht.":"")
+						.($trash>0?"Charaktere die nie einloggen werden nach $trash Tag(en) Inaktivit√§t gel√∂scht.`n":"")
+						.($new>0?"Charaktere die nie Level 2 erreichen werden nach $new Tag(en) Inaktivit√§t gel√∂scht.`n":"")
+						.($old>0?"Charaktere die Level 2 erreicht haben werden nach $old Tag(en) Inaktivit√§t gel√∂scht.":"")
 						."",true);
 
-						output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und tr‰gst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauensw¸rdige Sites\" - Sites`i und tr‰gst dort die Adressen ein. Bei anderen Browsern gibt es ‰hnliche Einstellungen."); 
+						output("`n`n`n`b`^Hinweis:`b`0`nSolltest du Probleme mit dem Login haben, musst du vermutlich erst Cookies zulassen! Im Internet Explorer 6 klickst du dazu `iExtras - Internetoptionen - Datenschutz - Bearbeiten`i und tr√§gst dort die URL dieses Servers (".getsetting("serverurl","www.anpera.net").") als `iZugelassen`i ein. Beim Internet Explorer 5 klickst du `iExtras - Internetoptionen - Sicherheit - \"Vertrauensw√ºrdige Sites\" - Sites`i und tr√§gst dort die Adressen ein. Bei anderen Browsern gibt es √§hnliche Einstellungen."); 
 					}
 				}
 			}
@@ -210,9 +210,9 @@ if ($HTTP_GET_VARS['op']==""){
 	output("`0<form action=\"create.php?op=create".($_GET['r']>""?"&r=".$_GET['r']:"")."\" method='POST'>",true);
 	output("`nWie willst du in dieser Welt heissen? <input name='name'>`n",true);
 	output("`nDein Passwort: <input type='password' name='pass1'>`n",true);
-	output("`nPasswort best‰tigen: <input type='password' name='pass2'>`n",true);
-	output("`nDeine Email Adresse: <input name='email'> ".(getsetting("requireemail",0)==0?"(freiwillige Angabe -- aber wenn du keine eingibst, kann dein Account nicht gerettet werden, wenn du dein Passwort vergisst!)":"(benˆtigt".(getsetting("requirevalidemail",0)==0?"":", eine E-Mail wird zur Best‰tigung an diese Adresse geschickt, bevor du einloggen kannst").")")."`n",true);
-	output("`nDu bist <input type='radio' name='sex' value='1'>Weiblich oder <input type='radio' name='sex' value='0' checked>M‰nnlich?`n`n",true);
+	output("`nPasswort best√§tigen: <input type='password' name='pass2'>`n",true);
+	output("`nDeine Email Adresse: <input name='email'> ".(getsetting("requireemail",0)==0?"(freiwillige Angabe -- aber wenn du keine eingibst, kann dein Account nicht gerettet werden, wenn du dein Passwort vergisst!)":"(ben√∂tigt".(getsetting("requirevalidemail",0)==0?"":", eine E-Mail wird zur Best√§tigung an diese Adresse geschickt, bevor du einloggen kannst").")")."`n",true);
+	output("`nDu bist <input type='radio' name='sex' value='1'>Weiblich oder <input type='radio' name='sex' value='0' checked>M√§nnlich?`n`n",true);
 	output("`^Mit dem Erstellen deines Charakters stimmst du den hier geltenden ><a href='petition.php?op=rules' target='_blank'>Regeln</a>< zu!`n`n",true);
 	output("<input type='submit' class='button' value='Charakter erstellen'>",true);
 }

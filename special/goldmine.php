@@ -25,11 +25,11 @@ if ($hashorse) {
 if ($HTTP_GET_VARS['op']==""){ 
 	$session['user']['specialinc']="goldmine.php"; 
 	$config = unserialize($session['user']['donationconfig']);
-	output("`2In den tiefen des Waldes hast du eine alte verlassene Mine gefunden. Es liegt sogar noch Goldgräberausrüstung in der Nähe herum.`n`n");
-	output("`^Als du dich etwas umsiehst, bemerkst du, dass das hier eine Menge Arbeit wäre. So viel, dass du auf jeden Fall einen Waldkampf verlieren wirst, wenn du dein Glück versuchen willst.`n`n");
-	output("`^Ausserdem stellst du fest, dass durchaus die Gefahr von gelegentlichen Einstürzen in der Mine besteht.`n`n");
+	output("`2In den tiefen des Waldes hast du eine alte verlassene Mine gefunden. Es liegt sogar noch GoldgrÃ¤berausrÃ¼stung in der NÃ¤he herum.`n`n");
+	output("`^Als du dich etwas umsiehst, bemerkst du, dass das hier eine Menge Arbeit wÃ¤re. So viel, dass du auf jeden Fall einen Waldkampf verlieren wirst, wenn du dein GlÃ¼ck versuchen willst.`n`n");
+	output("`^Ausserdem stellst du fest, dass durchaus die Gefahr von gelegentlichen EinstÃ¼rzen in der Mine besteht.`n`n");
 	addnav("Nach Gold und Edelsteinen suchen","forest.php?op=mine"); 
-	addnav("Zurück in den Wald","forest.php?op=no");
+	addnav("ZurÃ¼ck in den Wald","forest.php?op=no");
 	addnav("","forest.php?op=mine"); 
 	addnav("","forest.php?op=no");
 	if ($config['goldmine']>0 && $_GET['pass']=="conf"){
@@ -38,12 +38,12 @@ if ($HTTP_GET_VARS['op']==""){
 	}
 	$session['user']['donationconfig'] = serialize($config);
 }else if ($HTTP_GET_VARS['op']=="no"){ 
-	output("`2Nop, für so einen langsamen Weg an Gold und Edelsteine zu kommen hast du keine Zeit. Also verlässt du die alte Mine...`n"); 
+	output("`2Nop, fÃ¼r so einen langsamen Weg an Gold und Edelsteine zu kommen hast du keine Zeit. Also verlÃ¤sst du die alte Mine...`n"); 
 	$session['user']['specialinc']="";
  } elseif ($HTTP_GET_VARS['op']=="mine") {
 	$session['user']['specialinc']="goldmine.php"; 
 	if ($session['user']['turns']<=0) {
-		output("`2Du bist zu müde um weiter zu buddeln...`n");
+		output("`2Du bist zu mÃ¼de um weiter zu buddeln...`n");
 		$session['user']['specialinc']="";
 	} else {
 		if ($session['user']['hashorse']>0){
@@ -53,15 +53,15 @@ if ($HTTP_GET_VARS['op']==""){
 			if ($playermount['mine_tethermsg']) {
 				output($playermount['mine_tethermsg']);
 			} else {
-				output("`&Du siehst, dass der Eingang zu Mine zu klein für dein {$playermount['mountname']}`&, ist und du bindest das Tier am Eingang fest.`n");
+				output("`&Du siehst, dass der Eingang zu Mine zu klein fÃ¼r dein {$playermount['mountname']}`&, ist und du bindest das Tier am Eingang fest.`n");
 			}
 		}}
-		output("`2Du hebst die Ausrüstung auf und fängst an nach Gold und Edelsteinen zu graben...`n`n");
+		output("`2Du hebst die AusrÃ¼stung auf und fÃ¤ngst an nach Gold und Edelsteinen zu graben...`n`n");
 		$rand = e_rand(1,20);
 		switch ($rand){
 
 		  case 1:case 2:case 3:case 4: case 5:
-			output("`2Nach einigen Stunden harter Arbeit hast du nur ein paar wertlose Steine und einen Schädel gefunden...`n`n");
+			output("`2Nach einigen Stunden harter Arbeit hast du nur ein paar wertlose Steine und einen SchÃ¤del gefunden...`n`n");
 			output("`^Beim Graben verlierst du einen Waldkampf.`n`n");
 			if ($session['user']['turns']>0) $session['user']['turns']--;
 			$session['user']['specialinc']="";
@@ -98,9 +98,9 @@ if ($HTTP_GET_VARS['op']==""){
 			break;
 		  case 19: case 20:
 		  	output("`2Nach einer Menge harter Arbeit glaubst du, einen `&riesigen`2 Edelstein und etwas `6Gold`2 gesehen zu haben`2.`n");
-			output("`2Begierig auf Reichtum lehnst du dich zurück und schmetterst mit der  Spitzhacke darauf ein. `2Denn je fester du zuschlägst, umso schneller wird es erledigt sein....`n");
-			output("`7Unglücklicherweise bist `bdu`b erledigt.`n");
-			output("Dein übereifriges Schlagen verursacht einen schweren Höhleneinsturz.`n");
+			output("`2Begierig auf Reichtum lehnst du dich zurÃ¼ck und schmetterst mit der  Spitzhacke darauf ein. `2Denn je fester du zuschlÃ¤gst, umso schneller wird es erledigt sein....`n");
+			output("`7UnglÃ¼cklicherweise bist `bdu`b erledigt.`n");
+			output("Dein Ã¼bereifriges Schlagen verursacht einen schweren HÃ¶hleneinsturz.`n");
 			// Dwarves are very wiley so will only ever die in the mines
 			// infrequently.
 			if ($session['user']['race'] != 4) {
@@ -126,7 +126,7 @@ if ($session['user']['hashorse']>0){
 }
 			$session['user']['specialinc']="";
 			if ($dead == 1) {
-				output("Du wurdest unter einer Tonne Felsen zerquetscht.`n`nVielleicht wird der nächste Abenteurer deine Knochen bergen und ordentlich begraben.`n");
+				output("Du wurdest unter einer Tonne Felsen zerquetscht.`n`nVielleicht wird der nÃ¤chste Abenteurer deine Knochen bergen und ordentlich begraben.`n");
 if ($session['user']['hashorse']>0){
 				if ($horsedead) {
 					if ($playermount['mine_deathmessage'])
@@ -138,15 +138,15 @@ if ($session['user']['hashorse']>0){
 						unset($session['bufflist']['mount']);
 				} else {
 					if ($horsecanenter) {
-						output("Dein {$playermount['mountname']} hat es geschafft zu entkommen. Du weisst, dass das Tier darauf trainiert ist, zum Dorf zurückzukehren.`n");
+						output("Dein {$playermount['mountname']} hat es geschafft zu entkommen. Du weisst, dass das Tier darauf trainiert ist, zum Dorf zurÃ¼ckzukehren.`n");
 					} else {
-						output("Zum Glück hast du dein(e/n) {$playermount['mountname']} draussen angebunden. Du weisst, dass das Tier darauf trainiert ist, zum Dorf zurückzukehren.`n");
+						output("Zum GlÃ¼ck hast du dein(e/n) {$playermount['mountname']} draussen angebunden. Du weisst, dass das Tier darauf trainiert ist, zum Dorf zurÃ¼ckzukehren.`n");
 					}
 				}
 }
 				$exp=$session['user']['experience']*0.1;	// Originalwert 0.6
-				output("Wenigstens hast du dabei etwas über Bergbau gelernt. Du bekommst $exp Erfahrungspunkte.`n");
-				output("Du verlierst all dein Gold und die Hälfte deiner Edelsteine.`n`n");
+				output("Wenigstens hast du dabei etwas Ã¼ber Bergbau gelernt. Du bekommst $exp Erfahrungspunkte.`n");
+				output("Du verlierst all dein Gold und die HÃ¤lfte deiner Edelsteine.`n`n");
 				output("`3Du kannst morgen weiterspielen`n");
 				$session['user']['experience']+=$exp;
 				$session['user']['alive']=false;
@@ -155,18 +155,18 @@ if ($session['user']['hashorse']>0){
 				$session['user']['gold']=0;
 				$session['user']['donation']+=(round($session['user']['gems']/2));
 				$session['user']['gems']-=(round($session['user']['gems']/2));
-				addnav("Tägliche News","news.php");
+				addnav("TÃ¤gliche News","news.php");
 				addnews($session['user']['name']." wurde komplett begraben, als ".($session['user']['sex']?"sie":"er")." in der Mine zu gierig wurde.");
 			} else {
 				if ($session['user']['race'] == 4) {
-					output("Glücklicherweise lassen dich deine Zwergenfähigkeiten unverletzt entkommen.`n");
+					output("GlÃ¼cklicherweise lassen dich deine ZwergenfÃ¤higkeiten unverletzt entkommen.`n");
 				} elseif ($horsesave) {
 					if ($playermount['mine_savemsg'])
 						output($playermount['mine_savemsg']);
 					else
 						output("Dein {$playermount['mountname']} hat es geschafft, dich gerade noch rechtzeitig in Sicherheit zu zerren!`n");
 				} else {
-					output("Durch pures Glück kannst du der Mine unverletzt entkommen!`n");
+					output("Durch pures GlÃ¼ck kannst du der Mine unverletzt entkommen!`n");
 				}
 				output("Dein knappes Entkommen vor dem Tod hat dich so erschreckt, dass du heute keinen weiteren Gegner mehr zur Strecken bringen wirst.`n");
 				$session['user']['donation']+=1;

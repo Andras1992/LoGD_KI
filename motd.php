@@ -82,7 +82,7 @@ if ($_GET['op']=="addpoll"){
 			output("Opt <input name='opt[]'>`n",true);
 			output("Opt <input name='opt[]'>`n",true);
 			output("Opt <input name='opt[]'>`n",true);
-			output("<input type='submit' class='button' value='Hinzufügen'></form>",true);
+			output("<input type='submit' class='button' value='HinzufÃ¼gen'></form>",true);
 		}else{
 			$body = array("body"=>$_POST['body'],"opt"=>$_POST['opt']);
 $sql = "INSERT INTO motd (motdtitle,motdbody,motddate,motdtype) VALUES (?,?,NOW(),1)"; // Betreff und Nachricht werden sicher als Werte gespeichert.
@@ -95,8 +95,8 @@ db_query_params($sql,array(db_unquote_legacy_input($_POST['subject']),serialize(
 			//$session[user][hitpoints]=0;
 			//$session[user][alive]=0;
 			$session['user']['experience']=round($session['user']['experience']*0.9,0);
-			addnews($session['user']['name']." wurde für den Versuch, die Götter zu betrügen, bestraft.");
-			output("Du hast versucht die Götter zu betrügen. Du wurdest mit Vergessen bestraft. Einiges von dem, was du einmal gewusst hast, weisst du nicht mehr.");
+			addnews($session['user']['name']." wurde fÃ¼r den Versuch, die GÃ¶tter zu betrÃ¼gen, bestraft.");
+			output("Du hast versucht die GÃ¶tter zu betrÃ¼gen. Du wurdest mit Vergessen bestraft. Einiges von dem, was du einmal gewusst hast, weisst du nicht mehr.");
 			saveuser();
 		}	
 	}
@@ -108,7 +108,7 @@ if ($_GET['op']=="add"){
 			addnav("","motd.php?op=add");
 			output("<input type='text' size='50' name='subject' value=\"".HTMLEntities(stripslashes($_POST['subject']))."\">`n",true);
 			output("<textarea class='input' name='body' cols='37' rows='5'>".HTMLEntities(stripslashes($_POST['body']))."</textarea>`n",true);
-			output("<input type='submit' class='button' value='Hinzufügen'></form>",true);
+			output("<input type='submit' class='button' value='HinzufÃ¼gen'></form>",true);
 		}else{
 $sql = "INSERT INTO motd (motdtitle,motdbody,motddate) VALUES (?,?,NOW())"; // Betreff und Nachricht werden getrennt vom SQL-Befehl gebunden.
 db_query_params($sql,array(db_unquote_legacy_input($_POST['subject']),db_unquote_legacy_input($_POST['body'])));
@@ -120,8 +120,8 @@ db_query_params($sql,array(db_unquote_legacy_input($_POST['subject']),db_unquote
 			//$session[user][hitpoints]=0;
 			//$session[user][alive]=0;
 			$session['user']['experience']=round($session['user']['experience']*0.9,0);
-			addnews($session['user']['name']." wurde für den Versuch, die Götter zu betrügen, bestraft.");
-			output("Du hast versucht die Götter zu betrügen. Du wurdest mit Vergessen bestraft. Einiges von dem, was du einmal gewusst hast, weisst du nicht mehr.");
+			addnews($session['user']['name']." wurde fÃ¼r den Versuch, die GÃ¶tter zu betrÃ¼gen, bestraft.");
+			output("Du hast versucht die GÃ¶tter zu betrÃ¼gen. Du wurdest mit Vergessen bestraft. Einiges von dem, was du einmal gewusst hast, weisst du nicht mehr.");
 			saveuser();
 		}
 	}
@@ -137,8 +137,8 @@ db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 			//$session[user][hitpoints]=0;
 			//$session[user][alive]=0;
 			$session['user']['experience']=round($session['user']['experience']*0.9,0);
-			addnews($session['user']['name']." wurde für den Versuch, die Götter zu betrügen, bestraft.");
-			output("Du hast versucht die Götter zu betrügen. Du wurdest mit Vergessen bestraft. Einiges von dem, was du einmal gewusst hast, weisst du nicht mehr.");
+			addnews($session['user']['name']." wurde fÃ¼r den Versuch, die GÃ¶tter zu betrÃ¼gen, bestraft.");
+			output("Du hast versucht die GÃ¶tter zu betrÃ¼gen. Du wurdest mit Vergessen bestraft. Einiges von dem, was du einmal gewusst hast, weisst du nicht mehr.");
 			saveuser();
 		}
 	}
@@ -156,14 +156,14 @@ if ($_GET['op']==""){
 		$row = db_fetch_assoc($result);
 		if ($row['motddate']>$session['user']['lastmotd'] || $i<5){
 			if ($row['motdtype']==0){
-				motditem($row['motdtitle'].($session['user']['superuser']>=3?"[<a href='motd.php?op=del&id=$row[motditem]' onClick=\"return confirm('Bist du sicher, dass dieser Eintrag gelöscht werden soll?');\">Del</a>]":""),$row['motdbody']);
+				motditem($row['motdtitle'].($session['user']['superuser']>=3?"[<a href='motd.php?op=del&id=$row[motditem]' onClick=\"return confirm('Bist du sicher, dass dieser Eintrag gelÃ¶scht werden soll?');\">Del</a>]":""),$row['motdbody']);
 			}else{
-				pollitem($row['motditem'],$row['motdtitle'].($session['user']['superuser']>=3?"[<a href='motd.php?op=del&id=$row[motditem]' onClick=\"return confirm('Bist du sicher, dass dieser Eintrag gelöscht werden soll?');\">Del</a>]":""),$row['motdbody']);
+				pollitem($row['motditem'],$row['motdtitle'].($session['user']['superuser']>=3?"[<a href='motd.php?op=del&id=$row[motditem]' onClick=\"return confirm('Bist du sicher, dass dieser Eintrag gelÃ¶scht werden soll?');\">Del</a>]":""),$row['motdbody']);
 			}
 		}
 	}
 	output("`&");
-	motditem("Beta!","Diese Seite ist im BETA Status! Ich bastel daran herum, wenn ich Zeit habe. Auch Änderungen von offizieller Seite (MightyE) werden hier übernommen. Das ist KEIN Freibrief zum Ausnutzen von Bugs, sondern alle Spieler (Teilnehmer am Beta-Test) sind verpflichtet, gefundene Fehler zu melden! Wünsche und Anregungen werden ebenfalls jederzeit gern angenommen. :-)");
+	motditem("Beta!","Diese Seite ist im BETA Status! Ich bastel daran herum, wenn ich Zeit habe. Auch Ã„nderungen von offizieller Seite (MightyE) werden hier Ã¼bernommen. Das ist KEIN Freibrief zum Ausnutzen von Bugs, sondern alle Spieler (Teilnehmer am Beta-Test) sind verpflichtet, gefundene Fehler zu melden! WÃ¼nsche und Anregungen werden ebenfalls jederzeit gern angenommen. :-)");
 	output("`@Kommentare und Fehler:`0`n");
 	viewcommentary("motd");
 }

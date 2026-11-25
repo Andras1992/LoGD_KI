@@ -29,11 +29,11 @@ ToDo:
 *****************************************************/
 
 require_once "common.php";
-page_header("Kämpferarena!");
+page_header("KÃ¤mpferarena!");
 
 function stats($row){  // Shows player stats
 	global $session;
-	output("<table align='center' border='0' cellpadding='2' cellspacing='0' class='vitalinfo'><tr><td class='charhead' colspan='4'>`^`bVital Info`b für diesen Kampf</td><tr><td class='charinfo'>`&Level: `^`b",true);
+	output("<table align='center' border='0' cellpadding='2' cellspacing='0' class='vitalinfo'><tr><td class='charhead' colspan='4'>`^`bVital Info`b fÃ¼r diesen Kampf</td><tr><td class='charinfo'>`&Level: `^`b",true);
 	if ($row['bufflist1']) $row['bufflist1']=unserialize($row['bufflist1']);
 	if ($row['bufflist2']) $row['bufflist2']=unserialize($row['bufflist2']);
 	if (!is_array($row['bufflist1'])) $row['bufflist1']=array();
@@ -45,7 +45,7 @@ function stats($row){  // Shows player stats
 		$def=$row['def1'];
 		foreach ($row['bufflist1'] as $key => $val) {
 			//output(" $val[name]/$val[badguyatkmod]/$val[atkmod]/$val[badguydefmod]/$val[defmod]`n");
-			$buffs.=appoencode("`#$val[name] `7($val[rounds] Runden übrig)`n",true);
+			$buffs.=appoencode("`#$val[name] `7($val[rounds] Runden Ã¼brig)`n",true);
 			if (isset($val['atkmod'])) $atk *= $val['atkmod'];
 			if (isset($val['defmod'])) $def *= $val['defmod'];
 		}
@@ -64,7 +64,7 @@ function stats($row){  // Shows player stats
 			$buffs.=appoencode("`^Keine`0",true);
 		}
 		output("$row[lvl1]`b</td><td class='charinfo'>`&Lebenspunkte: `^$row[hp1]/`0$row[maxhp1]</td><td class='charinfo'>`&Angriff: `^`b$atk`b</td><td class='charinfo'>`&Verteidigung: `^`b$def`b</td>",true);
-		output("</tr><tr><td class='charinfo' colspan='2'>`&Waffe: `^$row[weapon1]</td><td class='charinfo' colspan='2'>`&Rüstung: `^$row[armor1]</td>",true);
+		output("</tr><tr><td class='charinfo' colspan='2'>`&Waffe: `^$row[weapon1]</td><td class='charinfo' colspan='2'>`&RÃ¼stung: `^$row[armor1]</td>",true);
 		output("</tr><tr><td colspan='4' class='charinfo'>`&Aktionen:`n$buffs",true);
 		output("</td>",true);
 	}
@@ -72,7 +72,7 @@ function stats($row){  // Shows player stats
 		$atk=$row['att2'];
 		$def=$row['def2'];
 		foreach ($row['bufflist2'] as $key => $val) {
-			$buffs.=appoencode("`#$val[name] `7($val[rounds] Runden übrig)`n",true);
+			$buffs.=appoencode("`#$val[name] `7($val[rounds] Runden Ã¼brig)`n",true);
 			if (isset($val['atkmod'])) $atk *= $val['atkmod'];
 			if (isset($val['defmod'])) $def *= $val['defmod'];
 		}
@@ -90,7 +90,7 @@ function stats($row){  // Shows player stats
 			$buffs.=appoencode("`^Keine`0",true);
 		}
 		output("$row[lvl2]`b</td><td class='charinfo'>`&Lebenspunkte: `^$row[hp2]/`0$row[maxhp2]</td><td class='charinfo'>`&Angriff: `^`b$atk`b</td><td class='charinfo'>`&Verteidigung: `^`b$def`b</td>",true);
-		output("</tr><tr><td class='charinfo' colspan='2'>`&Waffe: `^$row[weapon2]</td><td class='charinfo' colspan='2'>`&Rüstung: `^$row[armor2]</td>",true);
+		output("</tr><tr><td class='charinfo' colspan='2'>`&Waffe: `^$row[weapon2]</td><td class='charinfo' colspan='2'>`&RÃ¼stung: `^$row[armor2]</td>",true);
 		output("</tr><tr><td class='charinfo' colspan='4'>`&Aktionen:`n$buffs",true);
 		output("</td>",true);
 	}
@@ -122,7 +122,7 @@ function arenanav($row){ // Navigation during fight
 			$buffs.=appoencode("",true);
 		}
 		output("$buffs");
-		output(" `@auf dich stürzt!`0`n`n");
+		output(" `@auf dich stÃ¼rzt!`0`n`n");
 		output("`2Level: `6$badguy[level]`0`n");
 		output("`2`bErgebnis der letzten Runde:`b`n");
 		output("`2$badguy[name]`2's Lebenspunkte: `6$badguy[hitpoints]`0`n");
@@ -130,10 +130,10 @@ function arenanav($row){ // Navigation during fight
 		output("$row[lastmsg]");
 	}
 	addnav("Kampf");
-	addnav("Kämpfen","pvparena.php?op=fight&act=fight");
-	addnav("`bBesondere Fähigkeiten`b");
+	addnav("KÃ¤mpfen","pvparena.php?op=fight&act=fight");
+	addnav("`bBesondere FÃ¤higkeiten`b");
 	if ($goodguy['darkartuses']>0) {
-		addnav("`\$Dunkle Künste`0", "");
+		addnav("`\$Dunkle KÃ¼nste`0", "");
 		addnav("`\$&#149; Skelette herbeirufen`7 (1/".$goodguy['darkartuses'].")`0","pvparena.php?op=fight&skill=DA&l=1",true);
 	}
 	if ($goodguy['darkartuses']>1)
@@ -143,7 +143,7 @@ function arenanav($row){ // Navigation during fight
 	if ($goodguy['darkartuses']>4)
 		addnav("`\$&#149; Seele verdorren`7 (5/".$goodguy['darkartuses'].")`0","pvparena.php?op=fight&skill=DA&l=5",true);
 	if ($goodguy['thieveryuses']>0) {
-		addnav("`^Diebeskünste`0","");
+		addnav("`^DiebeskÃ¼nste`0","");
 		addnav("`^&#149; Beleidigen`7 (1/".$goodguy['thieveryuses'].")`0","pvparena.php?op=fight&skill=TS&l=1",true);
 	}
 	if ($goodguy['thieveryuses']>1)
@@ -153,7 +153,7 @@ function arenanav($row){ // Navigation during fight
 	if ($goodguy['thieveryuses']>4)
 		addnav("`^&#149; Angriff von hinten`7 (5/".$goodguy['thieveryuses'].")`0","pvparena.php?op=fight&skill=TS&l=5",true);
 	if ($goodguy['magicuses']>0) {
-		addnav("`%Mystische Kräfte`0","");
+		addnav("`%Mystische KrÃ¤fte`0","");
 		//disagree with making this 'n', players shouldn't have their behavior dictated by convenience of god mode, hehe
 		addnav("g?`%&#149; Regeneration`7 (1/".$goodguy['magicuses'].")`0","pvparena.php?op=fight&skill=MP&l=1",true);
 	}
@@ -428,15 +428,15 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 		pvpwarning();
 		$days = getsetting("pvpimmunity", 5);
 		$exp = getsetting("pvpminexp", 1500);
-		output("`6Wen willst du zu einem Duell mit allen Fähigkeiten herausfordern? Die Arenagebühr kostet dich `^$cost `6Gold. Dein Gegner wird nicht unvorbereitet zustimmen.`nDu kannst heute noch `4".$session['user']['playerfights']."`6 mal gegen einen anderen Krieger antreten.`n`n");
+		output("`6Wen willst du zu einem Duell mit allen FÃ¤higkeiten herausfordern? Die ArenagebÃ¼hr kostet dich `^$cost `6Gold. Dein Gegner wird nicht unvorbereitet zustimmen.`nDu kannst heute noch `4".$session['user']['playerfights']."`6 mal gegen einen anderen Krieger antreten.`n`n");
 		output("<form action='pvparena.php?op=challenge' method='POST'>Nach Name suchen: <input name='search' value='$_POST[search]'><input type='submit' class='button' value='Suchen'></form>",true);
 		addnav("","pvparena.php?op=challenge");
 		$sql="SELECT name,alive,location,sex,level,laston,loggedin,login,pvpflag FROM accounts WHERE ".$search." (locked=0) AND (age>? OR dragonkills>0 OR pk>0 OR experience>?) AND (level>=? AND level<=?) AND acctid<>? ORDER BY level DESC LIMIT ?,?"; // Spielerfilter, Erfahrungsgrenzen und Seitenzahl werden sicher gebunden.
 		$result=db_query_params($sql,array_merge($searchParams,array((int)$days,(int)$exp,(int)$session["user"]["level"]-1,(int)$session["user"]["level"]+2,(int)$session["user"]["acctid"],(int)($page*$ppp),(int)($ppp+1)))) or die(db_error(LINK));
 		if ($session['user']['pvpflag']=="5013-10-06 00:42:00"){
-			output("`n`&Du hast PvP-Immunität gekauft. Diese verfällt, wenn du jetzt angreifst!`0`n`n");
+			output("`n`&Du hast PvP-ImmunitÃ¤t gekauft. Diese verfÃ¤llt, wenn du jetzt angreifst!`0`n`n");
 		}
-		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","pvparena.php?op=challenge&limit=".($page+1)."&search=$_POST[search]");
+		if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Seite","pvparena.php?op=challenge&limit=".($page+1)."&search=$_POST[search]");
 		output("<table border='0' cellpadding='3' cellspacing='0'><tr><td>Name</td><td>Level</td><td>Status</td><td>Ops</td></tr>",true);
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
@@ -449,14 +449,14 @@ if ($HTTP_GET_VARS['op']=="challenge"){
 			}
 		}
 		output("</table>",true);
-  		addnav("Zurück zur Arena","pvparena.php");
+  		addnav("ZurÃ¼ck zur Arena","pvparena.php");
 	}else if ($session['user']['playerfights']<=0){
 		output("`6Du kannst heute keinen weiteren Krieger mehr herausfordern.");
-		addnav("Zurück zur Arena","pvparena.php");
+		addnav("ZurÃ¼ck zur Arena","pvparena.php");
 	}else if ($session['user']['level']<=4 && $session['user']['dragonkills']==0){
-		output("`6Der Arenawärter lacht sich darüber kaputt, dass ein so kleiner Schwächling wie du in der Arena kämpfen will. Vielleicht solltest du wirklich erst etwas mehr Kampferfahrung sammeln.");
-		addnav("Zurück zur Arena","pvparena.php");
-		//addnav("Zurück zum Dorf","village.php");
+		output("`6Der ArenawÃ¤rter lacht sich darÃ¼ber kaputt, dass ein so kleiner SchwÃ¤chling wie du in der Arena kÃ¤mpfen will. Vielleicht solltest du wirklich erst etwas mehr Kampferfahrung sammeln.");
+		addnav("ZurÃ¼ck zur Arena","pvparena.php");
+		//addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else{
 		if ($session['user']['gold']>=$cost){
 $sql = "SELECT acctid,name,level,sex,hitpoints,maxhitpoints,lastip,emailaddress,uniqueid FROM accounts WHERE login=?"; // Der Gegnername wird sicher als Suchwert gebunden.
@@ -474,21 +474,21 @@ $result=db_query_params($sql,array(db_unquote_legacy_input($_GET['name'])));
 					$sql="INSERT INTO pvp (acctid1,acctid2,name1,name2,lvl1,lvl2,hp1,maxhp1,att1,def1,weapon1,armor1,darkartuses1,magicuses1,thieveryuses1,bufflist1,turn) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; // Namen, Kampfdaten und Gegenstaende werden als einzelne Werte gespeichert.
 					$params=array((int)$session["user"]["acctid"],(int)$row["acctid"],$session["user"]["name"],$row["name"],(int)$session["user"]["level"],(int)$row["level"],(int)$session["user"]["hitpoints"],(int)$session["user"]["maxhitpoints"],(int)$session["user"]["attack"],(int)$session["user"]["defence"],$session["user"]["weapon"],$session["user"]["armor"],(int)$session["user"]["darkartuses"],(int)$session["user"]["magicuses"],(int)$session["user"]["thieveryuses"],serialize($session["user"]["bufflist"]),0);
 					 db_query_params($sql,$params) or die(db_error(LINK));
-					output("`6Du hast`4 $row[name] `6zu einem Duell herausgefordert und wartest nun auf ".($row['sex']?"ihre":"seine")." Antwort. Du könntest $row[name]`6 den Kampf ");
-					output(" schmackhafter machen, indem du ".($row['sex']?"ihr":"ihm")." die Arenagebühr von  `^".($row['level']*20)."`6 Gold überweist.`n");
+					output("`6Du hast`4 $row[name] `6zu einem Duell herausgefordert und wartest nun auf ".($row['sex']?"ihre":"seine")." Antwort. Du kÃ¶nntest $row[name]`6 den Kampf ");
+					output(" schmackhafter machen, indem du ".($row['sex']?"ihr":"ihm")." die ArenagebÃ¼hr von  `^".($row['level']*20)."`6 Gold Ã¼berweist.`n");
 					if ($session['user']['dragonkills']<2) output("`n`n`i(Du kannst jetzt ganz normal weiterspielen. Wenn $row[name]`6 sich meldet, bekommst du eine Nachricht.)`i");
- 					systemmail($row['acctid'],"`2Du wurdest herausgefordert!","`2".$session['user']['name']."`2 (Level ".$session['user']['level'].") hat dich zu einem Duell in der Arena herausgefordert. Du kannst diese Herausforderung in der Arena annehmen oder ablehnen, solange sich dein Level nicht ändert.`nBereite dich gut vor und betrete die Arena erst dann!"); 
+ 					systemmail($row['acctid'],"`2Du wurdest herausgefordert!","`2".$session['user']['name']."`2 (Level ".$session['user']['level'].") hat dich zu einem Duell in der Arena herausgefordert. Du kannst diese Herausforderung in der Arena annehmen oder ablehnen, solange sich dein Level nicht Ã¤ndert.`nBereite dich gut vor und betrete die Arena erst dann!"); 
 					$session['user']['gold']-=$cost;
 					$session['user']['reputation']++;
 				} 
 			}
-  			addnav("Zurück zur Arena","pvparena.php");
+  			addnav("ZurÃ¼ck zur Arena","pvparena.php");
 		}else{
-			output("`4Du hast nicht genug Gold dabei, um die Arenagebühr zu bezahlen. Mit rotem Kopf ziehst du ab.");
-			addnav("Zurück zur Arena","pvparena.php");
+			output("`4Du hast nicht genug Gold dabei, um die ArenagebÃ¼hr zu bezahlen. Mit rotem Kopf ziehst du ab.");
+			addnav("ZurÃ¼ck zur Arena","pvparena.php");
 		}
 	}
-  	addnav("Zurück zum Dorf","village.php");
+  	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="deny"){
 	$sql = "DELETE FROM pvp WHERE acctid2=".$session['user']['acctid'];
 	db_query($sql) or die(db_error(LINK));
@@ -496,16 +496,16 @@ $sql="SELECT acctid,name FROM accounts WHERE acctid=?"; // Die Konto-ID wird als
 $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$row = db_fetch_assoc($result);
 	$session['user']['reputation']--;
-	output("`6Beim Anblick deines Gegners $row[name] `6wird dir Angst und Bang. Mit ein paar sehr dürftigen Ausreden wie \"nicht genug Gold\" lehnst du die Herausforderung ab und verlässt schnell die Arena.");
-	systemmail($row['acctid'],"`2Herausforderung abgelehnt","`2".$session['user']['name']."`2 hat deine Herausforderung abgelehnt. Vielleicht solltest du ".($session['user']['sex']?"ihr":"ihm")." etwas für den Kampf anbieten - falls ".($session['user']['sex']?"sie":"er")." dich besiegen kann."); 
-  	addnav("Zurück zum Dorf","village.php");
+	output("`6Beim Anblick deines Gegners $row[name] `6wird dir Angst und Bang. Mit ein paar sehr dÃ¼rftigen Ausreden wie \"nicht genug Gold\" lehnst du die Herausforderung ab und verlÃ¤sst schnell die Arena.");
+	systemmail($row['acctid'],"`2Herausforderung abgelehnt","`2".$session['user']['name']."`2 hat deine Herausforderung abgelehnt. Vielleicht solltest du ".($session['user']['sex']?"ihr":"ihm")." etwas fÃ¼r den Kampf anbieten - falls ".($session['user']['sex']?"sie":"er")." dich besiegen kann."); 
+  	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="accept"){
 	if($session['user']['gold']<$cost){
-		output("`4Du kannst dir die Arena Nutzungsgebühr von `^$cost`4 Gold nicht leisten.");
-  		addnav("Zurück zum Dorf","village.php");
+		output("`4Du kannst dir die Arena NutzungsgebÃ¼hr von `^$cost`4 Gold nicht leisten.");
+  		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else if($session['user']['playerfights']<=0){
 		output("`4Du kannst heute nicht mehr gegen andere Krieger antreten.");
-  		addnav("Zurück zum Dorf","village.php");
+  		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else{
 		$sql="UPDATE pvp SET name2=?,hp2=?,maxhp2=?,att2=?,def2=?,weapon2=?,armor2=?,darkartuses2=?,magicuses2=?,thieveryuses2=?,bufflist2=?,turn=2 WHERE acctid2=?"; // Der zweite Spieler bestaetigt das Duell mit gebundenen Daten.
 		db_query_params($sql,array($session["user"]["name"],(int)$session["user"]["hitpoints"],(int)$session["user"]["maxhitpoints"],(int)$session["user"]["attack"],(int)$session["user"]["defence"],$session["user"]["weapon"],$session["user"]["armor"],(int)$session["user"]["darkartuses"],(int)$session["user"]["magicuses"],(int)$session["user"]["thieveryuses"],serialize($session["user"]["bufflist"]),(int)$session["user"]["acctid"])) or die(db_error(LINK));
@@ -519,12 +519,12 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 $sql="SELECT acctid,name FROM accounts WHERE acctid=?"; // Die Konto-ID wird als Zahl gebunden.
 $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$row = db_fetch_assoc($result);
-	output("`6Du bist es Leid, auf $row[name]`6 zu warten und ziehst deine Herausforderung zurück. Die Arenagebühr bekommst aber trotz langer Verhandlungen mit der Arena-Leitung nicht zurück.`n");
+	output("`6Du bist es Leid, auf $row[name]`6 zu warten und ziehst deine Herausforderung zurÃ¼ck. Die ArenagebÃ¼hr bekommst aber trotz langer Verhandlungen mit der Arena-Leitung nicht zurÃ¼ck.`n");
 	$sql = "DELETE FROM pvp WHERE acctid1=".$session['user']['acctid'];
 	db_query($sql) or die(db_error(LINK));
 	$session['user']['reputation']--;
-	systemmail($row['acctid'],"`2Herausforderung zurückgezogen","`2".$session['user']['name']."`2 hat seine Herausforderung zurückgezogen."); 
-  	addnav("Zurück zum Dorf","village.php");
+	systemmail($row['acctid'],"`2Herausforderung zurÃ¼ckgezogen","`2".$session['user']['name']."`2 hat seine Herausforderung zurÃ¼ckgezogen."); 
+  	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="fight"){
 	$sql="SELECT * FROM pvp WHERE acctid1=".$session['user']['acctid']." OR acctid2=".$session['user']['acctid']."";
   	$result = db_query($sql) or die(db_error(LINK));
@@ -567,13 +567,13 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			switch($HTTP_GET_VARS['l']){
 			case 1:
 				$goodguy['bufflist']['mp1'] = array(
-					"startmsg"=>"`n`^Du fängst an zu regenerieren!`n`n",
+					"startmsg"=>"`n`^Du fÃ¤ngst an zu regenerieren!`n`n",
 					"name"=>"`%Regeneration",
 					"rounds"=>5,
-					"wearoff"=>"Deine Regeneration hat aufgehört",
+					"wearoff"=>"Deine Regeneration hat aufgehÃ¶rt",
 					"regen"=>$goodguy['level'],
 					"effectmsg"=>"Du regenerierst um {damage} Punkte.",
-					"effectnodmgmsg"=>"Du bist völlig gesund.",
+					"effectnodmgmsg"=>"Du bist vÃ¶llig gesund.",
 					"activate"=>"roundstart");
 				break;
 			case 2:
@@ -581,7 +581,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 					"startmsg"=>"`n`^{badguy}`% wird von einer Klaue aus Erde gepackt und auf den Boden geschleudert!`n`n",
 					"name"=>"`%Erdenfaust",
 					"rounds"=>5,
-					"wearoff"=>"Die erdene Faust zerfällt zu staub.",
+					"wearoff"=>"Die erdene Faust zerfÃ¤llt zu staub.",
 					"minioncount"=>1,
 					"effectmsg"=>"`) Eine gewaltige Faust aus Erde trifft {badguy} `)mit `^{damage}`) Schadenspunkten.",
 					"minbadguydamage"=>1,
@@ -591,13 +591,13 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 				break;
 			case 3:
 				$goodguy['bufflist']['mp3'] = array(
-					"startmsg"=>"`n`^Deine Waffe glüht in einem überirdischen Schein.`n`n",
+					"startmsg"=>"`n`^Deine Waffe glÃ¼ht in einem Ã¼berirdischen Schein.`n`n",
 					"name"=>"`%Leben absaugen",
 					"rounds"=>5,
 					"wearoff"=>"Die Aura deiner Waffe verschwindet.",
 					"lifetap"=>1, //ratio of damage healed to damage dealt
 					"effectmsg"=>"Du wirst um {damage} Punkte geheilt.",
-					"effectnodmgmsg"=>"Du fühlst ein Prickeln, als deine Waffe versucht, deinen vollständig gesunden Körper zu heilen.",
+					"effectnodmgmsg"=>"Du fÃ¼hlst ein Prickeln, als deine Waffe versucht, deinen vollstÃ¤ndig gesunden KÃ¶rper zu heilen.",
 					"effectfailmsg"=>"Deine Waffe scheint zu jammern, als du deinem Gegner keinen Schaden machst.",
 					"activate"=>"offense,defense",
 					);
@@ -609,7 +609,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 					"rounds"=>5,
 					"wearoff"=>"Mit einem Zischen wird deine Haut wieder normal.",
 					"damageshield"=>2,
-					"effectmsg"=>"{badguy}`)wird von einem Blitzbogen aus deiner Haut mit `^{damage}`) Schadenspunkten zurückgeworfen.",
+					"effectmsg"=>"{badguy}`)wird von einem Blitzbogen aus deiner Haut mit `^{damage}`) Schadenspunkten zurÃ¼ckgeworfen.",
 					"effectnodmg"=>"{badguy} `)ist von deinen Blitzen leicht geblendet, ansonsten aber unverletzt.",
 					"effectfailmsg"=>"{badguy}`) ist von deinen Blitzen leicht geblendet, ansonsten aber unverletzt.",
 					"activate"=>"offense,defense"
@@ -619,7 +619,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			$goodguy['magicuses']-=(int)$HTTP_GET_VARS['l'];
 		}else{
 			$goodguy['bufflist']['mp0'] = array(
-				"startmsg"=>"`nDu legst deine Stirn in Falten und beschwörst die Elemente.  Eine kleine Flamme erscheint. {badguy} zündet sich eine Zigarette daran an, dankt dir und stürzt sich wieder auf dich.`n`n",
+				"startmsg"=>"`nDu legst deine Stirn in Falten und beschwÃ¶rst die Elemente.  Eine kleine Flamme erscheint. {badguy} zÃ¼ndet sich eine Zigarette daran an, dankt dir und stÃ¼rzt sich wieder auf dich.`n`n",
 				"rounds"=>1,
 				"activate"=>"roundstart"
 			);
@@ -631,10 +631,10 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			switch($HTTP_GET_VARS['l']){
 			case 1:
 				$goodguy['bufflist']['da1']=array(
-					"startmsg"=>"`n`\$Du rufst die Geister der Toten und skelettartige Hände zerren an {badguy} aus den Tiefen ihrer Gräber.`n`n",
+					"startmsg"=>"`n`\$Du rufst die Geister der Toten und skelettartige HÃ¤nde zerren an {badguy} aus den Tiefen ihrer GrÃ¤ber.`n`n",
 					"name"=>"`\$Skelettdiener",
 					"rounds"=>5,
-					"wearoff"=>"Deine Skelettdiener zerbröckeln zu staub.",
+					"wearoff"=>"Deine Skelettdiener zerbrÃ¶ckeln zu staub.",
 					"minioncount"=>round($goodguy['level']/3)+1,
 					"maxbadguydamage"=>round($goodguy['level']/2,0)+1,
 					"effectmsg"=>"`)Ein untoter Diener trifft {badguy} mit `^{damage}`) Schadenspunkten.",
@@ -645,7 +645,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			case 2:
 				$goodguy['bufflist']['da2']=array(
 					"startmsg"=>"`n`\$Du holst eine winzige Puppe die aussieht wie {badguy} hervor`n`n",
-					"effectmsg"=>"Du stößt eine Nadel in die {badguy}-Puppe und machst damit `^{damage}`) Schadenspunkte!",
+					"effectmsg"=>"Du stÃ¶ÃŸt eine Nadel in die {badguy}-Puppe und machst damit `^{damage}`) Schadenspunkte!",
 					"minioncount"=>1,
 					"maxbadguydamage"=>round($goodguy['attack']*3,0),
 					"minbadguydamage"=>round($goodguy['attack']*1.5,0),
@@ -665,7 +665,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 				break;
 			case 5:
 				$goodguy['bufflist']['da5']=array(
-					"startmsg"=>"`n`\$Du streckst deine Hand aus und {badguy} `\$fängt an, aus den Ohren zu bluten.`n`n",
+					"startmsg"=>"`n`\$Du streckst deine Hand aus und {badguy} `\$fÃ¤ngt an, aus den Ohren zu bluten.`n`n",
 					"name"=>"`\$Seele verdorren",
 					"rounds"=>5,
 					"wearoff"=>"Die Seele deines Opfers hat sich erholt.",
@@ -679,7 +679,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			$goodguy['darkartuses']-=(int)$HTTP_GET_VARS['l'];
 		}else{
 			$goodguy['bufflist']['da0'] = array(
-				"startmsg"=>"`nErschöpft versuchst du deine dunkelste Magie: einen schlechten Witz.  {badguy} schaut dich nachdenklich eine Minute lang an. Endlich versteht er den Witz und stürzt sich lachend wieder auf dich.`n`n",
+				"startmsg"=>"`nErschÃ¶pft versuchst du deine dunkelste Magie: einen schlechten Witz.  {badguy} schaut dich nachdenklich eine Minute lang an. Endlich versteht er den Witz und stÃ¼rzt sich lachend wieder auf dich.`n`n",
 				"rounds"=>1,
 				"activate"=>"roundstart"
 				);
@@ -694,7 +694,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 					"startmsg"=>"`n`^Du gibst deinem Gegner einen schlimmen Namen und bringst {badguy} zum Weinen.`n`n",
 					"name"=>"`^Beleidigung",
 					"rounds"=>5,
-					"wearoff"=>"Dein Gegner putzt sich die Nase und hört auf zu weinen.",
+					"wearoff"=>"Dein Gegner putzt sich die Nase und hÃ¶rt auf zu weinen.",
 					"roundmsg"=>"{badguy} ist deprimiert und kann nicht so gut angreifen.",
 					"badguyatkmod"=>0.5,
 					"activate"=>"defense"
@@ -713,7 +713,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 				break;
 			case 3:
 				$goodguy['bufflist']['ts3'] = array(
-					"startmsg"=>"`n`^Mit dem Geschick eines erfahrenen Diebs scheinst du zu verschwinden und kannst {badguy} aus einer günstigeren und sichereren Position angreifen.`n`n",
+					"startmsg"=>"`n`^Mit dem Geschick eines erfahrenen Diebs scheinst du zu verschwinden und kannst {badguy} aus einer gÃ¼nstigeren und sichereren Position angreifen.`n`n",
 					"name"=>"`^Versteckter Angriff",
 					"rounds"=>5,
 					"wearoff"=>"Dein Opfer hat dich gefunden.",
@@ -724,7 +724,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 				break;
 			case 5:
 				$goodguy['bufflist']['ts5']=array(
-					"startmsg"=>"`n`^Mit deinen Fähigkeiten als Dieb verschwindest du und schiebst {badguy} von hinten eine dünne Klinge zwischen die Rückenwirbel!`n`n",
+					"startmsg"=>"`n`^Mit deinen FÃ¤higkeiten als Dieb verschwindest du und schiebst {badguy} von hinten eine dÃ¼nne Klinge zwischen die RÃ¼ckenwirbel!`n`n",
 					"name"=>"`^Angriff von hinten",
 					"rounds"=>5,
 					"wearoff"=>"Dein Opfer ist nicht mehr so nett, dich hinter sich zu lassen!",
@@ -738,7 +738,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			$goodguy['thieveryuses']-=(int)$HTTP_GET_VARS['l'];
 		}else{
 			$goodguy['bufflist']['ts0'] = array(
-				"startmsg"=>"`nDu versuchst, {badguy} anzugreifen, indem du deine besten Diebeskünste in die Praxis umsetzt - aber du stolperst über deine eigenen Füsse.`n`n",
+				"startmsg"=>"`nDu versuchst, {badguy} anzugreifen, indem du deine besten DiebeskÃ¼nste in die Praxis umsetzt - aber du stolperst Ã¼ber deine eigenen FÃ¼sse.`n`n",
 				"rounds"=>1,
 				"activate"=>"roundstart"
 				);
@@ -758,7 +758,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			$buffs.=appoencode("",true);
 		}
 		output("$buffs");
-		output(" `@auf dich stürzt!`0`n`n");
+		output(" `@auf dich stÃ¼rzt!`0`n`n");
 		output("`2Level: `6$badguy[level]`0`n");
 		output("`2`bBeginn der Runde:`b`n");
 		output("`2$badguy[name]`2's Lebenspunkte: `6$badguy[hitpoints]`0`n");
@@ -843,7 +843,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 		// from hardest punch mod -- remove if not installed!!
 		if ($creaturedmg>$session['user']['punch']){
 			$session['user']['punch']=$creaturedmg;
-			output("`@`b`c--- DAS WAR DEIN BISHER HÄRTESTER SCHLAG! ---`c`b`n");
+			output("`@`b`c--- DAS WAR DEIN BISHER HÃ„RTESTER SCHLAG! ---`c`b`n");
 		}
 		// end hardest punch
 	}
@@ -879,9 +879,9 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 				$session['user']['battlepoints']+=3*($badguy['level']-$goodguy['level']);
 			}
 			$session['user']['reputation']+=5;
-			output("`n`&Kurz vor deinem finalen Todesstoß beendet der Arenawärter euren Kampf und erklärt dich zum Sieger!`0`n"); 
+			output("`n`&Kurz vor deinem finalen TodesstoÃŸ beendet der ArenawÃ¤rter euren Kampf und erklÃ¤rt dich zum Sieger!`0`n"); 
 			output("`b`\$Du hast $badguy[name] `\$besiegt!`0`b`n");
-			output("`#Du bekommst das Preisgeld in Höhe von `^$win`# Gold und deinen gerechten Lohn an Arenakampfpunkten!`n");
+			output("`#Du bekommst das Preisgeld in HÃ¶he von `^$win`# Gold und deinen gerechten Lohn an Arenakampfpunkten!`n");
 			$session['user']['donation']+=1;
 			output("Du bekommst insgesamt `^$exp`# Erfahrungspunkte!`n`0");
 			$session['user']['gold']+=$win;
@@ -891,7 +891,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			$sql = "UPDATE accounts SET charm=charm-1,experience=experience-$exp,playerfights=playerfights-1 WHERE acctid=$badguy[acctid]";
 			db_query($sql);
 			$mailmessage = "`^$goodguy[name]`2 hat dich mit %p `^".$goodguy['weapon']."`2 in der Arena besiegt!"
-				." `n`n%o hatte am Ende noch `^".$goodguy['hitpoints']."`2 Lebenspunkte übrig."
+				." `n`n%o hatte am Ende noch `^".$goodguy['hitpoints']."`2 Lebenspunkte Ã¼brig."
 				." `n`nDu hast `\$$exp`2 deiner Erfahrungspunkte verloren.";
  			$mailmessage = str_replace("%p",($session['user']['sex']?"ihre(r/m)":"seine(r/m)"),$mailmessage);
  			$mailmessage = str_replace("%o",($session['user']['sex']?"Sie":"Er"),$mailmessage);
@@ -919,7 +919,7 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			$taunt = str_replace("%w",$session['user']['name'],$taunt);
 			$badguy['acctid']=(int)$badguy['acctid'];
 			$badguy['creaturegold']=(int)$badguy['creaturegold'];
-			systemmail($badguy['acctid'],"`2 du warst in der Arena erfolgreich! ","`^".$session['user']['name']."`2 hat in der Arena verloren!`n`nDafür hast du `^$exp`2 Erfahrungspunkte und `^$win`2 Gold erhalten!"); 
+			systemmail($badguy['acctid'],"`2 du warst in der Arena erfolgreich! ","`^".$session['user']['name']."`2 hat in der Arena verloren!`n`nDafÃ¼r hast du `^$exp`2 Erfahrungspunkte und `^$win`2 Gold erhalten!"); 
 			$sql = "UPDATE accounts SET gold=gold+$win,experience=experience+$exp,donation=donation+1,playerfights=playerfights-1,battlepoints=battlepoints+$points,reputation=reputation+5 WHERE acctid=$badguy[acctid]";
 			db_query($sql);
 			$exp = round(getsetting("pvpdeflose",5)*10,0);
@@ -934,9 +934,9 @@ db_query_params("UPDATE items SET value1=?, gems=?, gold=? WHERE id=?", array((i
 			db_query($sql) or die(db_error(LINK));
 		}
 	}else{
-		output("`6Euer Kampf wurde vorzeitig beendet. Die Nutzungsgebühr kommt dem Ausbau der Arena zugute.");
+		output("`6Euer Kampf wurde vorzeitig beendet. Die NutzungsgebÃ¼hr kommt dem Ausbau der Arena zugute.");
 	}
-  	addnav("Zurück zum Dorf","village.php");
+  	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']=="del"){
 $sql="DELETE FROM pvp WHERE acctid1=? AND acctid2=?"; // Beide Kampfteilnehmer werden sicher als Zahlen gebunden.
 db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_unquote_legacy_input($_GET['kid2'])));
@@ -945,7 +945,7 @@ db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_u
 	systemmail($_GET['kid2'],"`2Dein Arenakampf wurde beendet!","`@Dein Kampf in der Arena wurde vom Kampfrichter beendet.");
 
 	addnav("Zur Arena","pvparena.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($HTTP_GET_VARS['op']==""){
 	$sql="SELECT * FROM pvp WHERE acctid1=".$session['user']['acctid']." OR acctid2=".$session['user']['acctid']."";
   	$result = db_query($sql) or die(db_error(LINK));
@@ -954,9 +954,9 @@ db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_u
 	if($row['acctid1']==$session['user']['acctid'] && $row['turn']==0){
  		$text=1;
 		output("`6Da du noch eine Herausforderung mit `&$row[name2] `6offen hast, machst du dich auf in Richtung Arena, um nach deinem Gegner Ausschau zu halten. Doch der scheint nirgendwo in Sicht zu sein.`n");
-		addnav("Herausforderung zurücknehmen","pvparena.php?op=back&id=$row[acctid2]");
+		addnav("Herausforderung zurÃ¼cknehmen","pvparena.php?op=back&id=$row[acctid2]");
 		if (@file_exists("battlearena.php")) addnav("Gladiator herausfordern","battlearena.php"); // ONE arena for TWO things - if installed ;)
- 		addnav("Zurück zum Dorf","village.php");
+ 		addnav("ZurÃ¼ck zum Dorf","village.php");
 		stats($row);
 	}else if($row['acctid1']==$session['user']['acctid'] && $row['turn']==1){
 		stats($row);
@@ -966,9 +966,9 @@ db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_u
 		output("`6Dein Gegner `&$row[name2]`6 hat seinen Zug noch nicht gemacht.`n`n");
 		$text=1;
 		if (@file_exists("battlearena.php")) addnav("Gladiator herausfordern","battlearena.php");
- 		addnav("Zurück zum Dorf","village.php");
+ 		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else if($row['acctid2']==$session['user']['acctid'] && $row['turn']==0){
-		output("`6Du wurdest von `&$row[name1] `6herausgefordert. Wenn du die Herausforderung annimmst, musst du `^$cost`6 Gold Arenagebühr bezahlen.`n");
+		output("`6Du wurdest von `&$row[name1] `6herausgefordert. Wenn du die Herausforderung annimmst, musst du `^$cost`6 Gold ArenagebÃ¼hr bezahlen.`n");
 		addnav("Du wurdest von $row[name1] herausgefordert");
 		addnav("Herausforderung annehmen","pvparena.php?op=accept");
 		addnav("Feige ablehnen","pvparena.php?op=deny&id=$row[acctid1]");
@@ -977,7 +977,7 @@ db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_u
 		output("`6Dein Gegner `&$row[name1]`6 hat seinen Zug noch nicht gemacht.`n`n");
 		$text=1;
 		if (@file_exists("battlearena.php")) addnav("Gladiator herausfordern","battlearena.php");
- 		addnav("Zurück zum Dorf","village.php");
+ 		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}else if($row['acctid2']==$session['user']['acctid'] && $row['turn']==2){
 		stats($row);
 		arenanav($row);
@@ -985,25 +985,25 @@ db_query_params($sql,array((int)db_unquote_legacy_input($_GET['kid1']),(int)db_u
 		$text=1;
 		addnav("Spieler herausfordern","pvparena.php?op=challenge");
 		if (@file_exists("battlearena.php")) addnav("Gladiator herausfordern","battlearena.php");
- 		addnav("Zurück zum Dorf","village.php");
+ 		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}
 	if($text==1){
 		checkday();
 	  	addnav("Aktualisieren","pvparena.php");
-		output("`6Du betrittst die große Kampfarena in der Nähe des Trainingslagers. Hier kämpfen einge der Krieger gegeneinander und üben sich in ihren besonderen Fertigkeiten, ");
-		output("um herauszufinden, wer von ihnen der Beste ist. Es geht um die Ehre - und um eine gute Platzierung in der Kämpferliga.`n"); 
+		output("`6Du betrittst die groÃŸe Kampfarena in der NÃ¤he des Trainingslagers. Hier kÃ¤mpfen einge der Krieger gegeneinander und Ã¼ben sich in ihren besonderen Fertigkeiten, ");
+		output("um herauszufinden, wer von ihnen der Beste ist. Es geht um die Ehre - und um eine gute Platzierung in der KÃ¤mpferliga.`n"); 
 		$sql="SELECT * FROM pvp WHERE acctid1 AND acctid2 AND turn>0";
   		$result = db_query($sql) or die(db_error(LINK));
 		if (db_num_rows($result)){
-			output(" Du beobachtest das bunte Treiben auf dem Platz eine Weile.`nFolgende Krieger kämpfen gerade gegeneinander:`n`n<table border='0' cellpadding='3' cellspacing='0'><tr><td align='center'>`bHerausforderer`b</td><td align='center'>`bVerteidiger`b</td><td align='center'>`bStand (LP)`b</td>".($session['user']['superuser']>2?"<td>Ops</td>":"")."</tr>",true);
+			output(" Du beobachtest das bunte Treiben auf dem Platz eine Weile.`nFolgende Krieger kÃ¤mpfen gerade gegeneinander:`n`n<table border='0' cellpadding='3' cellspacing='0'><tr><td align='center'>`bHerausforderer`b</td><td align='center'>`bVerteidiger`b</td><td align='center'>`bStand (LP)`b</td>".($session['user']['superuser']>2?"<td>Ops</td>":"")."</tr>",true);
 			for ($i=0;$i<db_num_rows($result);$i++){
 				$row = db_fetch_assoc($result);
-				output("<tr class='".($i%2?"trlight":"trdark")."'><td>$row[name1]</td><td>$row[name2]</td><td>$row[hp1] : $row[hp2]</td>".($session['user']['superuser']>2?"<td><a href='pvparena.php?op=del&kid1=$row[acctid1]&kid2=$row[acctid2]'>Löschen</a></td>":"")."</tr>",true);
+				output("<tr class='".($i%2?"trlight":"trdark")."'><td>$row[name1]</td><td>$row[name2]</td><td>$row[hp1] : $row[hp2]</td>".($session['user']['superuser']>2?"<td><a href='pvparena.php?op=del&kid1=$row[acctid1]&kid2=$row[acctid2]'>LÃ¶schen</a></td>":"")."</tr>",true);
 				if ($session['user']['superuser']>2) addnav("","pvparena.php?op=del&kid1=$row[acctid1]&kid2=$row[acctid2]");
 			}
 			output("</table>`n`n",true);
 		}else{
-			output("`n`n`6Im Moment laufen keine Kämpfe zwischen den Helden dieser Welt.`n`n");
+			output("`n`n`6Im Moment laufen keine KÃ¤mpfe zwischen den Helden dieser Welt.`n`n");
 		}
 		viewcommentary("pvparena","Rufen:",10,"ruft");
 		output("`n`n");

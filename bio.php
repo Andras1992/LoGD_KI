@@ -11,9 +11,9 @@ $row = db_fetch_assoc($result);
 $row['login'] = rawurlencode($row['login']);
 
 page_header("Charakter Biographie: ".preg_replace("'[`].'","",$row['name']));
-$specialty=array(0=>"nicht spezifiziert","Dunkle Künste","Mystische Kräfte","Diebeskunst");
+$specialty=array(0=>"nicht spezifiziert","Dunkle KÃ¼nste","Mystische KrÃ¤fte","Diebeskunst");
 //$horses=array(0=>"None","Pony","Gelding","Stallion");
-output("`^Biographie für $row[name]");
+output("`^Biographie fÃ¼r $row[name]");
 if ($session['user']['loggedin']) output("<a href=\"mail.php?op=write&to=$row[login]\" target=\"_blank\" onClick=\"".popup("mail.php?op=write&to=$row[login]").";return false;\"><img src='images/newscroll.GIF' width='16' height='16' alt='Mail schreiben' border='0'></a>",true);
 if (getsetting("avatare",0)==1){
 	if ($row['avatar']){
@@ -34,7 +34,7 @@ output("`^Level: `@$row[level]`n");
 output("`^Alter seit DK: `@$row[age]`^ Tage`n");
 output("`^Wiedererweckt: `@$row[resurrections]x`n");
 output("`^Rasse: `@{$races[$row['race']]}`n");
-output("`^Geschlecht: `@".($row['sex']?"Weiblich":"Männlich")."`n");
+output("`^Geschlecht: `@".($row['sex']?"Weiblich":"MÃ¤nnlich")."`n");
 output("`^Spezialgebiet: `@".$specialty[$row['specialty']]."`n");
 
 $sql = "SELECT mountname FROM mounts WHERE mountid=?";
@@ -83,7 +83,7 @@ if ($_GET['ret']==""){
 }else{
 	$return = preg_replace("'[&?]c=[[:digit:]-]+'","",$_GET['ret']);
 	$return = substr($return,strrpos($return,"/")+1);
-	addnav("Zurück",$return);
+	addnav("ZurÃ¼ck",$return);
 }
 page_footer();
 

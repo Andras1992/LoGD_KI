@@ -10,7 +10,7 @@ if ($_GET['op']=="block"){
         // Die Kontonummer wird als Zahl an die Abfrage gebunden, damit die URL sie nicht als SQL veraendern kann.
     $acctid = (int)db_unquote_legacy_input($_GET['userid']);
     $sql = "UPDATE accounts SET avatar='' WHERE acctid=?";
-	systemmail($acctid,"Dein Avatar wurde entfernt","Der Administrator hat beschlossen, dass dein Avatar unangebracht ist, oder nicht funktionierte, und hat ihn entfernt.`n`nWenn du darüber diskutieren willst, benutze bitte den Link zur Hilfeanfrage.");
+	systemmail($acctid,"Dein Avatar wurde entfernt","Der Administrator hat beschlossen, dass dein Avatar unangebracht ist, oder nicht funktionierte, und hat ihn entfernt.`n`nWenn du darÃ¼ber diskutieren willst, benutze bitte den Link zur Hilfeanfrage.");
 	db_query_params($sql, array($acctid));
 }
 $ppp=25; // Player Per Page to display
@@ -23,7 +23,7 @@ if (!$_GET['limit']){
 $limit="".($page*$ppp).",".($ppp+1);
 $sql = "SELECT name,acctid,avatar FROM accounts WHERE avatar>'' ORDER BY acctid DESC LIMIT $limit";
 $result = db_query($sql);
-if (db_num_rows($result)>$ppp) addnav("Nächste Seite","avatars.php?limit=".($page+1)."");
+if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Seite","avatars.php?limit=".($page+1)."");
 page_header("Spieleravatare");
 output("`b`&Spieler Avatare - Seite $page:`0`b`n");
 for ($i=0;$i<db_num_rows($result);$i++){
@@ -41,8 +41,8 @@ for ($i=0;$i<db_num_rows($result);$i++){
 
 }
 db_free_result($result);
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Aktualisieren","avatars.php");
 page_footer();
 ?>

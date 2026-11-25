@@ -19,30 +19,30 @@ switch($HTTP_GET_VARS['op']){
 	case "":
 	if($session['user']['lottery']<1){
 		addnav("Los kaufen","lottery.php?op=buy");
-		addnav("Zurück zur Bar","inn.php");
-		output("`^Du kannst jeden Tag ein Los kaufen und dein Glück damit versuchen, den Jackpot zu knacken. ");
-		output(" Um zu gewinnen, muss die Zahl auf deinem Los mit der Gewinn-Nummer übereinstimmen. Ein Los kostet dich $cost Gold. ");
-		output(" Je mehr Leute Lose kaufen, umso höher steigt der Jackpot. Sobald der Jackpot geknackt ist, wird eine neue Gewinn-Nummer festgelegt. ");
+		addnav("ZurÃ¼ck zur Bar","inn.php");
+		output("`^Du kannst jeden Tag ein Los kaufen und dein GlÃ¼ck damit versuchen, den Jackpot zu knacken. ");
+		output(" Um zu gewinnen, muss die Zahl auf deinem Los mit der Gewinn-Nummer Ã¼bereinstimmen. Ein Los kostet dich $cost Gold. ");
+		output(" Je mehr Leute Lose kaufen, umso hÃ¶her steigt der Jackpot. Sobald der Jackpot geknackt ist, wird eine neue Gewinn-Nummer festgelegt. ");
 		output("`n`n");
 		output("`7     `iJackpot: `^$jackpot`7 Gold!`i`n");
 		output("`7     `iGewinn-Nummer: `@$winnumber`i`n`n");
 	}else{
-		addnav("Zurück zur Kneipe","inn.php");
-		output("`7Du hast heute schon dein Glück versucht. Bitte warte bis morgen.`n");
+		addnav("ZurÃ¼ck zur Kneipe","inn.php");
+		output("`7Du hast heute schon dein GlÃ¼ck versucht. Bitte warte bis morgen.`n");
 	}
 	break;
 	case "buy":
 	if($session['user']['gold']<$cost){
 		output("`^Ein Los kostet $cost Gold! Soviel hast du nicht dabei.`n");
-		addnav("Zurück zur Kneipe","inn.php");
+		addnav("ZurÃ¼ck zur Kneipe","inn.php");
 	}else{
-		addnav("Zurück zur Kneipe","inn.php");
+		addnav("ZurÃ¼ck zur Kneipe","inn.php");
 		$session['user']['lottery'] = e_rand(100,500);
 		$session['user']['gold']-=$cost;
 		savesetting("jackpot",(string)(getsetting("jackpot",0)+ ($cost)));
 		output("`^Die Nummer auf deinem Los ist `b`@".$session['user']['lottery']."`b`^...`n");
 		if ($session['user']['lottery'] == $winnumber){
-			output("`^`cDU HAST GEWONNEN!!!!! DIE NUMMERN STIMMEN ÜBEREIN! DU GEWINNST `b$jackpot`b GOLD!`n");
+			output("`^`cDU HAST GEWONNEN!!!!! DIE NUMMERN STIMMEN ÃœBEREIN! DU GEWINNST `b$jackpot`b GOLD!`n");
 			$session['user']['gold']+=getsetting("jackpot",0);
 			savesetting("jackpot",100);
 			savesetting("lottonumber",e_rand(100,500));
@@ -164,7 +164,7 @@ for(i = 1; i <=count; i++)
 ",true);
 
 		}else{
-			output("`^Sorry, diesmal hast du kein Glück gehabt...`n");
+			output("`^Sorry, diesmal hast du kein GlÃ¼ck gehabt...`n");
 		}
 	}
 	break;

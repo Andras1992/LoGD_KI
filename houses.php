@@ -30,6 +30,9 @@
 
 	
 require_once("common.php");
+
+// Ohne gestarteten Kampf bleibt diese Seite bei ihrer normalen Anzeige.
+$battle = false;
 addcommentary();
 checkday();
 
@@ -41,7 +44,7 @@ $gemcost=50;
 //not needed v
 if ($session['user']['slainby']!=""){
 	page_header("Du wurdest besiegt!");
-		output("`\$Du wurdest in ".$session['user']['killedin']."`\$ von `%".$session['user']['slainby']."`\$ besiegt und um alles Gold beraubt, das du bei dir hattest. Das kostet dich 5% deiner Erfahrung. Meinst du nicht es ist Zeit für Rache?");
+		output("`\$Du wurdest in ".$session['user']['killedin']."`\$ von `%".$session['user']['slainby']."`\$ besiegt und um alles Gold beraubt, das du bei dir hattest. Das kostet dich 5% deiner Erfahrung. Meinst du nicht es ist Zeit fÃ¼r Rache?");
 	addnav("Weiter",$REQUEST_URI);
 	$session['user']['slainby']="";
 	$session['user']['donation']+=1;
@@ -52,28 +55,28 @@ if ($session['user']['slainby']!=""){
 page_header("Das Wohnviertel");
 
 if ($_GET['op']=="newday"){
-	output("`2Gut erholt wachst du im Haus auf und bist bereit für neue Abenteuer.");
+	output("`2Gut erholt wachst du im Haus auf und bist bereit fÃ¼r neue Abenteuer.");
 	$session['user']['location']=0;
-	$sql = "UPDATE items SET hvalue=0 WHERE hvalue>0 AND owner=".$session['user']['acctid']." AND class='Schlüssel'";
+	$sql = "UPDATE items SET hvalue=0 WHERE hvalue>0 AND owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel'";
 	db_query($sql) or die(sql_error($sql));
-	addnav("Tägliche News","news.php");
+	addnav("TÃ¤gliche News","news.php");
 	addnav("Wohnviertel","houses.php?op=enter");
-	addnav("Zurück ins Dorf","village.php");
+	addnav("ZurÃ¼ck ins Dorf","village.php");
 }else if ($_GET['op']=="bio"){
 	if (!$_GET['id']) redirect("houses.php");
 $sql="SELECT houses.*,accounts.name AS besitzer FROM houses LEFT JOIN accounts ON accounts.acctid=houses.owner WHERE houseid=?"; // Die Hausnummer aus der URL wird als Zahl gebunden.
 $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	$row = db_fetch_assoc($result);
-	output("`c`b`@Infos über Haus Nummer $row[houseid]`b`c`n`n`2Du näherst dich Haus Nummer $row[houseid], um es aus der Nähe zu betrachten. ");
+	output("`c`b`@Infos Ã¼ber Haus Nummer $row[houseid]`b`c`n`n`2Du nÃ¤herst dich Haus Nummer $row[houseid], um es aus der NÃ¤he zu betrachten. ");
 	if($row['description']){
-		output("Über dem Eingang  von $row[housename]`2 steht geschrieben:`n`& $row[description]`n`n");
+		output("Ãœber dem Eingang  von $row[housename]`2 steht geschrieben:`n`& $row[description]`n`n");
 	}else{
-		output("Das Haus trägt den Namen \"`&$row[housename]`2\".`n");
+		output("Das Haus trÃ¤gt den Namen \"`&$row[housename]`2\".`n");
 	}
 $sql="SELECT * FROM items WHERE class=? AND value1=? ORDER BY id ASC"; // Die Hausmoebel und die Hausnummer werden sicher als Suchwerte gebunden.
 $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote_legacy_input($_GET['id'])));
 	if ($row['besitzer']=="") $row['besitzer']="niemandem";
-	output("`2Das Haus gehört `^$row[besitzer]`2 und ist ");
+	output("`2Das Haus gehÃ¶rt `^$row[besitzer]`2 und ist ");
 	if ($row['status']==0) output("noch im Bau. ");
 	if ($row['status']==1) output("bewohnt. ");
 	if ($row['status']==2) output("zum Verkauf angeboten. ");
@@ -92,11 +95,11 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 		output(", aber das Haus hat sonst nichts weiter zu bieten.");
 	}
 	if (getsetting("dailyspecial",0)=="Waldsee"){
-		output("`n`n`@Während du dir das Haus genau ansiehst, fällt dir ein kleiner Trampelpfad auf...");
+		output("`n`n`@WÃ¤hrend du dir das Haus genau ansiehst, fÃ¤llt dir ein kleiner Trampelpfad auf...");
 		addnav("Trampelpfad","paths.php?ziel=forestlake");
 	}
 	if ($_GET['id']==$session['user']['housekey']) addnav("Haus betreten","houses.php?op=drin&id=$_GET[id]");
-	addnav("Zurück","houses.php");
+	addnav("ZurÃ¼ck","houses.php");
 }else if ($_GET['op']=="build"){
 	if ($_GET['act']=="start") {
 		$sql = "INSERT INTO houses (owner,status,gold,gems,housename) VALUES (".$session['user']['acctid'].",0,0,0,'".$session['user']['login']."s Haus')";
@@ -106,9 +109,9 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 		$result = db_query($sql) or die(db_error(LINK));
 		$row = db_fetch_assoc($result);
 		$session['user']['house']=$row['houseid'];
-		output("`@Du erklärst das Fleckchen Erde zu deinem Besitz und kannst mit dem Bau von Hausnummer `^$row[houseid]`@ beginnen.`n`n");
+		output("`@Du erklÃ¤rst das Fleckchen Erde zu deinem Besitz und kannst mit dem Bau von Hausnummer `^$row[houseid]`@ beginnen.`n`n");
 		output("`0<form action=\"houses.php?op=build&act=build2\" method='POST'>",true);
-		output("`nGebe einen Namen für dein Haus ein: <input name='housename' maxlength='25'>`n",true);
+		output("`nGebe einen Namen fÃ¼r dein Haus ein: <input name='housename' maxlength='25'>`n",true);
 		output("`nWieviel Gold anzahlen? <input type='gold' name='gold'>`n",true);
 		output("`nWieviele Edelsteine? <input type='gems' name='gems'>`n",true);
 		output("<input type='submit' class='button' value='Bauen'>",true);
@@ -128,24 +131,24 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 			output("`@Du hast nicht genug dabei!");
 			addnav("Nochmal","houses.php?op=build");
 		} else if ($session['user']['turns']<1){
-			output("`@Du bist zu müde, um heute noch an deinem Haus zu arbeiten!");
+			output("`@Du bist zu mÃ¼de, um heute noch an deinem Haus zu arbeiten!");
 		} else if ($paidgold<0 || $paidgems<0){
 			output("`@Versuch hier besser nicht zu beschummeln.");
 		} else {
-			output("`@Du baust für `^$paidgold`@ Gold und `#$paidgems`@ Edelsteine an deinem Haus \"`&$housename`@\"...`n");
+			output("`@Du baust fÃ¼r `^$paidgold`@ Gold und `#$paidgems`@ Edelsteine an deinem Haus \"`&$housename`@\"...`n");
 			$row['gold']+=$paidgold;
 			$session['user']['gold']-=$paidgold;
 			output("`nDu verlierst einen Waldkampf.");
 			$session['user']['turns']--;
 			if ($row['gold']>$goldcost) {
-				output("`nDu hast die kompletten Goldkosten bezahlt und bekommst das überschüssige Gold zurück.");
+				output("`nDu hast die kompletten Goldkosten bezahlt und bekommst das Ã¼berschÃ¼ssige Gold zurÃ¼ck.");
 				$session['user']['gold']+=$row['gold']-$goldcost;
 				$row['gold']=$goldcost;
 			}
 			$row['gems']+=$paidgems;
 			$session['user']['gems']-=$paidgems;
 			if ($row['gems']>$gemcost) {
-				output("`nDu hast die kompletten Edelsteinkosten bezahlt und bekommst überschüssige Edelsteine zurück.");
+				output("`nDu hast die kompletten Edelsteinkosten bezahlt und bekommst Ã¼berschÃ¼ssige Edelsteine zurÃ¼ck.");
 				$session['user']['gems']+=$row['gems']-$gemcost;
 				$row['gems']=$gemcost;
 			}
@@ -154,7 +157,7 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 			$done=round(100-((100*$goldtopay/$goldcost)+(100*$gemstopay/$gemcost))/2);
 			output("`nDein Haus ist damit zu `\$$done%`@ fertig. Du musst noch `^$goldtopay`@ Gold und `#$gemstopay `@Edelsteine bezahlen, bis du einziehen kannst.");
 			if ($row['gems']>=$gemcost && $row['gold']>=$goldcost) {
-				output("`n`n`bGlückwunsch!`b Dein Haus ist fertig. Du bekommst `b10`b Schlüssel überreicht, von denen du 9 an andere weitergeben kannst, und besitzt nun deine eigene kleine Burg.");
+				output("`n`n`bGlÃ¼ckwunsch!`b Dein Haus ist fertig. Du bekommst `b10`b SchlÃ¼ssel Ã¼berreicht, von denen du 9 an andere weitergeben kannst, und besitzt nun deine eigene kleine Burg.");
 				$row['gems']=0;
 				$row['gold']=0;
 				$session['user']['housekey']=$row['houseid'];
@@ -173,9 +176,9 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 		if ($session['user']['housekey']>0) {
 			output("`@Du hast bereits Zugang zu einem fertigen Haus und brauchst kein zweites. Wenn du ein neues oder ein eigenes Haus bauen willst, musst du erst aus deinem jetzigen Zuhause ausziehen.");
 		} else if ($session['user']['dragonkills']<1 || ($session['user']['dragonkills']==1 && $session['user']['level']<5)) {
-			output("`@Du hast noch nicht genug Erfahrung, um ein eigenes Haus bauen zu können. Du kannst aber bei einem Freund einziehen, wenn er dir einen Schlüssel für sein Haus gibt.");
+			output("`@Du hast noch nicht genug Erfahrung, um ein eigenes Haus bauen zu kÃ¶nnen. Du kannst aber bei einem Freund einziehen, wenn er dir einen SchlÃ¼ssel fÃ¼r sein Haus gibt.");
 		} else if ($session['user']['turns']<1) {
-			output("`@Du bist zu erschöpft, um heute noch irgendetwas zu bauen. Warte bis morgen.");
+			output("`@Du bist zu erschÃ¶pft, um heute noch irgendetwas zu bauen. Warte bis morgen.");
 		} else if ($session['user']['house']>0) {
 			$sql = "SELECT * FROM houses WHERE status=0 AND owner=".$session['user']['acctid']." ORDER BY houseid DESC";
 			$result = db_query($sql) or die(db_error(LINK));
@@ -192,16 +195,16 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 			output("<input type='submit' class='button' value='Bauen'>",true);
 			addnav("","houses.php?op=build&act=build2");
 		} else {
-			output("`@Du siehst ein schönes Fleckchen für ein Haus und überlegst dir, ob du nicht selbst eines bauen solltest, anstatt ein vorhandenes zu kaufen oder noch länger in Kneipe und Feldern zu übernachten.");
-			output(" Ein Haus zu bauen würde dich `^$goldcost Gold`@ und `#$gemcost Edelsteine`@ kosten. Du mußt das nicht auf einmal bezahlen, sondern könntest immer wieder mal für einen kleineren Betrag ein Stück ");
-			output("weiter bauen. Wie schnell du zu deinem Haus kommst, hängt also davon ab, wie oft und wieviel du bezahlst.`n");
-			output("Du kannst in deinem zukünftigen Haus alleine wohnen, oder es mit anderen teilen. Es bietet einen sicheren Platz zum Übernachten und einen Lagerplatz für einen Teil deiner Reichtümer.");
+			output("`@Du siehst ein schÃ¶nes Fleckchen fÃ¼r ein Haus und Ã¼berlegst dir, ob du nicht selbst eines bauen solltest, anstatt ein vorhandenes zu kaufen oder noch lÃ¤nger in Kneipe und Feldern zu Ã¼bernachten.");
+			output(" Ein Haus zu bauen wÃ¼rde dich `^$goldcost Gold`@ und `#$gemcost Edelsteine`@ kosten. Du muÃŸt das nicht auf einmal bezahlen, sondern kÃ¶nntest immer wieder mal fÃ¼r einen kleineren Betrag ein StÃ¼ck ");
+			output("weiter bauen. Wie schnell du zu deinem Haus kommst, hÃ¤ngt also davon ab, wie oft und wieviel du bezahlst.`n");
+			output("Du kannst in deinem zukÃ¼nftigen Haus alleine wohnen, oder es mit anderen teilen. Es bietet einen sicheren Platz zum Ãœbernachten und einen Lagerplatz fÃ¼r einen Teil deiner ReichtÃ¼mer.");
 			output(" Ein gestartetes Bauvorhaben kann nicht abgebrochen werden.`n`nWillst du mit dem Hausbau beginnen?");
 			addnav("Hausbau beginnen","houses.php?op=build&act=start");
 		}
 	}
-	addnav("Zurück zum Wohnviertel","houses.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Wohnviertel","houses.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($_GET['op']=="einbruch"){
 	$searchParams=array(); // Haus-Suchwerte werden sicher getrennt vom SQL-Befehl gesammelt.
 	if (!$_GET['id']){
@@ -231,16 +234,16 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sql = "SELECT * FROM houses WHERE $search status=1 AND owner<>".$session['user']['acctid']." ORDER BY houseid ASC LIMIT $limit";
 		output("`c`b`^Einbruch`b`c`0`n");
-		output("`@Du siehst dich um und suchst dir ein bewohntes Haus für einen Einbruch aus. ");
-		output("Leider kannst du nicht erkennen, wieviele Bewohner sich gerade darin aufhalten und wie stark diese sind. So ein Einbruch ist also sehr riskant.`nFür welches Haus entscheidest du dich?`n`n");
+		output("`@Du siehst dich um und suchst dir ein bewohntes Haus fÃ¼r einen Einbruch aus. ");
+		output("Leider kannst du nicht erkennen, wieviele Bewohner sich gerade darin aufhalten und wie stark diese sind. So ein Einbruch ist also sehr riskant.`nFÃ¼r welches Haus entscheidest du dich?`n`n");
 		output("<form action='houses.php?op=einbruch' method='POST'>Nach Hausname oder Nummer <input name='search' value='$_POST[search]'> <input type='submit' class='button' value='Suchen'></form>",true);
 		addnav("","houses.php?op=einbruch");
-		if ($session['user']['pvpflag']=="5013-10-06 00:42:00") output("`n`&(Du hast PvP-Immunität gekauft. Diese verfällt, wenn du jetzt angreifst!)`0`n`n");
-		output("<table cellspacing=0 cellpadding=2 align='center'><tr><td>`bHausNr.`b</td><td>`bName`b</td><td>`bEigentümer`b</td></tr>",true);
+		if ($session['user']['pvpflag']=="5013-10-06 00:42:00") output("`n`&(Du hast PvP-ImmunitÃ¤t gekauft. Diese verfÃ¤llt, wenn du jetzt angreifst!)`0`n`n");
+		output("<table cellspacing=0 cellpadding=2 align='center'><tr><td>`bHausNr.`b</td><td>`bName`b</td><td>`bEigentÃ¼mer`b</td></tr>",true);
 		$result = db_query_params($sql,$searchParams) or die(db_error(LINK)); // Suchdaten und Hausliste werden getrennt ausgefuehrt.
-		if (db_num_rows($result)>$ppp) addnav("Nächste Strasse","houses.php?op=einbruch&limit=".($page+1)."&search=$_POST[search]");
+		if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Strasse","houses.php?op=einbruch&limit=".($page+1)."&search=$_POST[search]");
 		if (db_num_rows($result)==0){
-  			output("<tr><td colspan=4 align='center'>`&`iEs gibt momentan keine bewohnten Häuser`i`0</td></tr>",true);
+  			output("<tr><td colspan=4 align='center'>`&`iEs gibt momentan keine bewohnten HÃ¤user`i`0</td></tr>",true);
 		}else{
 			for ($i=0;$i<db_num_rows($result);$i++){
 	  			$row = db_fetch_assoc($result);
@@ -257,23 +260,23 @@ $result = db_query_params($sql,array("M".chr(195).chr(182)."bel",(int)db_unquote
 		addnav("Umkehren","houses.php");
 	}else{
 		if ($session['user']['turns']<1 || $session['user']['playerfights']<=0){
-			output("`nDu bist wirklich schon zu müde, um ein Haus zu überfallen.");
-			addnav("Zurück","houses.php");
+			output("`nDu bist wirklich schon zu mÃ¼de, um ein Haus zu Ã¼berfallen.");
+			addnav("ZurÃ¼ck","houses.php");
 		}else{
-			output("`2Du näherst dich vorsichtig Haus Nummer $_GET[id].");
+			output("`2Du nÃ¤herst dich vorsichtig Haus Nummer $_GET[id].");
 			$session['housekey']=$_GET['id'];
-			// Abfrage, ob Schlüssel vorhanden!!
+			// Abfrage, ob SchlÃ¼ssel vorhanden!!
 $sql = "SELECT id FROM items WHERE owner=? AND class=? AND value1=? ORDER BY id DESC"; // Die eigene Konto-ID und Hausnummer werden als Zahlen gebunden.
 $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr(195).chr(188)."ssel",(int)$_GET['id'])); // Besitzer, Schluesselklasse und Hausnummer werden als Werte gebunden.
 			$row2 = db_fetch_assoc($result2);
 			if (db_num_rows($result2)>0) {
-				output(" An der Haustür angekommen suchst du etwas, um die Tür möglichst unauffällig zu öffnen. Am besten dürfte dafür der Hausschlüssel geeignet sein, ");
-				output(" den du einstecken hast.`nWolltest du wirklich gerade in ein Haus einbrechen, für das du einen Schlüssel hast?");
+				output(" An der HaustÃ¼r angekommen suchst du etwas, um die TÃ¼r mÃ¶glichst unauffÃ¤llig zu Ã¶ffnen. Am besten dÃ¼rfte dafÃ¼r der HausschlÃ¼ssel geeignet sein, ");
+				output(" den du einstecken hast.`nWolltest du wirklich gerade in ein Haus einbrechen, fÃ¼r das du einen SchlÃ¼ssel hast?");
 				addnav("Haus betreten","houses.php?op=drin&id=$_GET[id]");
-				addnav("Zurück zum Dorf","village.php");
+				addnav("ZurÃ¼ck zum Dorf","village.php");
 			} else {
 				// Wache besiegen
-				output("Deine gebückte Haltung und der schleichende Gang machen eine Stadtwache aufmerksam...`n");
+				output("Deine gebÃ¼ckte Haltung und der schleichende Gang machen eine Stadtwache aufmerksam...`n");
 				$pvptime = getsetting("pvptimeout",600);
 				$pvptimeout = date("Y-m-d H:i:s",strtotime(date("r")."-$pvptime seconds"));
 				$days = getsetting("pvpimmunity", 5);
@@ -293,9 +296,9 @@ $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr
 				if(db_num_rows($result)){
 					for ($i=0;$i<db_num_rows($result);$i++){
 						$row = db_fetch_assoc($result);
-						$sql = "SELECT value1 FROM items WHERE value1=".(int)$session['housekey']." AND owner=$row[acctid] AND class='Schlüssel' AND hvalue=".(int)$session['housekey']." ORDER BY id";
+						$sql = "SELECT value1 FROM items WHERE value1=".(int)$session['housekey']." AND owner=$row[acctid] AND class='SchlÃ¼ssel' AND hvalue=".(int)$session['housekey']." ORDER BY id";
 						$result2 = db_query($sql) or die(db_error(LINK));
-						if (db_num_rows($result2)>0 || ((int)$row['housekey']==(int)$session['housekey'] && 0==db_num_rows(db_query("SELECT hvalue FROM items WHERE hvalue<>0 AND class='Schlüssel' AND value1<>$session[housekey] AND owner=$row[acctid]")))){
+						if (db_num_rows($result2)>0 || ((int)$row['housekey']==(int)$session['housekey'] && 0==db_num_rows(db_query("SELECT hvalue FROM items WHERE hvalue<>0 AND class='SchlÃ¼ssel' AND value1<>$session[housekey] AND owner=$row[acctid]")))){
 							if ($row['maxhitpoints']>$hp){
 								$hp=(int)$row['maxhitpoints'];
 								$count++;
@@ -305,9 +308,9 @@ $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr
 					}
 				}
 				if ($count>0){
-					$badguy = array("creaturename"=>"Stadtwache","creaturelevel"=>$session['user']['level'],"creatureweapon"=>"Holzknüppel","creatureattack"=>$session['user']['attack'],"creaturedefense"=>$session['user']['defence'],"creaturehealth"=>abs($session['user']['maxhitpoints']-$hp)+1, "diddamage"=>0);
+					$badguy = array("creaturename"=>"Stadtwache","creaturelevel"=>$session['user']['level'],"creatureweapon"=>"HolzknÃ¼ppel","creatureattack"=>$session['user']['attack'],"creaturedefense"=>$session['user']['defence'],"creaturehealth"=>abs($session['user']['maxhitpoints']-$hp)+1, "diddamage"=>0);
 				}else{
-					$badguy = array("creaturename"=>"Stadtwache","creaturelevel"=>$session['user']['level'],"creatureweapon"=>"starker Holzknüppel","creatureattack"=>$session['user']['attack'],"creaturedefense"=>$session['user']['defence'],"creaturehealth"=>abs(max($session['user']['maxhitpoints'], $session['user']['hitpoints'])), "diddamage"=>0);
+					$badguy = array("creaturename"=>"Stadtwache","creaturelevel"=>$session['user']['level'],"creatureweapon"=>"starker HolzknÃ¼ppel","creatureattack"=>$session['user']['attack'],"creaturedefense"=>$session['user']['defence'],"creaturehealth"=>abs(max($session['user']['maxhitpoints'], $session['user']['hitpoints'])), "diddamage"=>0);
 					$session['user']['playerfights']--;
 					$session['user']['reputation']-=7;
 				} 
@@ -319,7 +322,7 @@ $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr
 }elseif ($_GET['op'] == "fight") { 
 	$fight=true; 
 } elseif ($_GET['op'] == "run") { 
-	output("`%Die Wache lässt dich nicht entkommen!`n");
+	output("`%Die Wache lÃ¤sst dich nicht entkommen!`n");
 	$session['user']['reputation']--;
 	$fight=true; 
 }else if ($_GET['op']=="einbruch2"){
@@ -343,9 +346,9 @@ $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr
 	// count chars at home and find strongest
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
-		$sql = "SELECT value1 FROM items WHERE value1=".(int)$session['housekey']." AND class='Schlüssel' AND owner=$row[acctid] AND hvalue=".(int)$session['housekey']." ORDER BY id";
+		$sql = "SELECT value1 FROM items WHERE value1=".(int)$session['housekey']." AND class='SchlÃ¼ssel' AND owner=$row[acctid] AND hvalue=".(int)$session['housekey']." ORDER BY id";
 		$result2 = db_query($sql) or die(db_error(LINK));
-		if (db_num_rows($result2)>0 || ((int)$row['housekey']==(int)$session['housekey'] && 0==db_num_rows(db_query("SELECT hvalue FROM items WHERE hvalue<>0 AND class='Schlüssel' AND value1<>$session[housekey] AND owner=$row[acctid]")))){
+		if (db_num_rows($result2)>0 || ((int)$row['housekey']==(int)$session['housekey'] && 0==db_num_rows(db_query("SELECT hvalue FROM items WHERE hvalue<>0 AND class='SchlÃ¼ssel' AND value1<>$session[housekey] AND owner=$row[acctid]")))){
 			$athome++;
 			if ($row['maxhitpoints']>$hp){
 				$hp=$row['maxhitpoints'];
@@ -354,21 +357,21 @@ $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr
 		}
 		db_free_result($result2);
 	}
-	addnav("Flüchte","village.php");
+	addnav("FlÃ¼chte","village.php");
 	if ($athome>0){
-		output("`n Dir kommen $athome misstrauische Bewohner schwer bewaffnet entgegen. Der wahrscheinlich Stärkste von ihnen wird sich jeden Augenblick auf dich stürzen, ");
-		output(" wenn du die Situation nicht sofort entschärfst.");
-		addnav("Kämpfe","pvp.php?act=attack&bg=2&name=".rawurlencode($name));
+		output("`n Dir kommen $athome misstrauische Bewohner schwer bewaffnet entgegen. Der wahrscheinlich StÃ¤rkste von ihnen wird sich jeden Augenblick auf dich stÃ¼rzen, ");
+		output(" wenn du die Situation nicht sofort entschÃ¤rfst.");
+		addnav("KÃ¤mpfe","pvp.php?act=attack&bg=2&name=".rawurlencode($name));
 	} else {
-		output(" Du hast Glück, denn es scheint niemand daheim zu sein. Das wird sicher ein Kinderspiel.");
+		output(" Du hast GlÃ¼ck, denn es scheint niemand daheim zu sein. Das wird sicher ein Kinderspiel.");
 		addnav("Einsteigen","houses.php?op=klauen&id=$session[housekey]");
 	}
 }else if ($_GET['op']=="klauen"){
 	if (!$_GET['id']){
-		output("Und jetzt? Bitte benachrichtige den Admin. Ich weiß nicht, was ich jetzt tun soll...");
-		addnav("Zurück zum Dorf","village.php");
+		output("Und jetzt? Bitte benachrichtige den Admin. Ich weiÃŸ nicht, was ich jetzt tun soll...");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 	} else {
-		addnav("Zurück zum Dorf","village.php");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 		$sql = "SELECT * FROM houses WHERE houseid=".$session['housekey']." ORDER BY houseid ASC";
 		$result = db_query($sql) or die(db_error(LINK));
 		$row = db_fetch_assoc($result);
@@ -420,12 +423,12 @@ $result2 = db_query_params($sql,array((int)$session['user']['acctid'],"Schl".chr
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
 		$sql = "SELECT * FROM houses WHERE status=2 OR status=3 OR status=4 ORDER BY houseid ASC LIMIT $limit";
-		output("`c`b`^Unbewohnte Häuser`b`c`0`n");
+		output("`c`b`^Unbewohnte HÃ¤user`b`c`0`n");
 		output("<table cellspacing=0 cellpadding=2 align='center'><tr><td>`bHausNr.`b</td><td>`bName`b</td><td>`bGold`b</td><td>`bEdelsteine`b</td><td>`bBemerkung`b</td></tr>",true);
 		$result = db_query($sql) or die(db_error(LINK));
-		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","houses.php?op=buy&limit=".($page+1)."");
+		if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Seite","houses.php?op=buy&limit=".($page+1)."");
 		if (db_num_rows($result)==0){
-  			output("<tr><td colspan=4 align='center'>`&`iEs stehen momentan keine Häuser zum Verkauf`i`0</td></tr>",true);
+  			output("<tr><td colspan=4 align='center'>`&`iEs stehen momentan keine HÃ¤user zum Verkauf`i`0</td></tr>",true);
 		}else{
 			for ($i=0;$i<db_num_rows($result);$i++){
 	  			$row = db_fetch_assoc($result);
@@ -450,18 +453,18 @@ $sql = "SELECT * FROM houses WHERE houseid=? ORDER BY houseid DESC"; // Die Haus
 $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 		$row = db_fetch_assoc($result);
 		if ($session['user']['acctid']==$row['owner']) {
-			output("`@du hängst doch zu sehr an deinem Haus und beschließt, es noch nicht zu verkaufen.");
+			output("`@du hÃ¤ngst doch zu sehr an deinem Haus und beschlieÃŸt, es noch nicht zu verkaufen.");
 			$session['user']['housekey']=$row['houseid'];
 			$sql = "UPDATE houses SET gold=0,gems=0,status=1 WHERE houseid=$row[houseid]";
 			db_query($sql);
 		}else if ($session['user']['gold']<$row['gold'] || $session['user']['gems']<$row['gems']){
-			output("`@Dieses edle Haus übersteigt wohl deine finanziellen Mittel.");
+			output("`@Dieses edle Haus Ã¼bersteigt wohl deine finanziellen Mittel.");
 		}else {
-			output("`@Glückwunsch zu deinem neuen Haus!`n`n");
+			output("`@GlÃ¼ckwunsch zu deinem neuen Haus!`n`n");
 			$session['user']['gold']-=$row['gold'];
 			$session['user']['gems']-=$row['gems'];
 			$session['user']['house']=$row['houseid'];
-			output("Du übergibst `^$row[gold]`@ Gold und `#$row[gems]`@ Edelsteine an den Verkäufer, und dieser händigt dir dafür einen Satz Schlüssel für Haus `b$row[houseid]`b aus."); 
+			output("Du Ã¼bergibst `^$row[gold]`@ Gold und `#$row[gems]`@ Edelsteine an den VerkÃ¤ufer, und dieser hÃ¤ndigt dir dafÃ¼r einen Satz SchlÃ¼ssel fÃ¼r Haus `b$row[houseid]`b aus."); 
 			if ($row['owner']>0){
 				$sql = "UPDATE accounts SET goldinbank=goldinbank+$row[gold],gems=gems+$row[gems],house=0,housekey=0 WHERE acctid=$row[owner]";
 				db_query($sql);
@@ -471,8 +474,8 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 			if ($row['status']==3){
 				$sql = "UPDATE houses SET status=1,owner=".$session['user']['acctid']." WHERE houseid=$row[houseid]";
 				db_query($sql);
-				$sql = "UPDATE items SET owner=".$session['user']['acctid']." WHERE owner=0 and class='Schlüssel' AND value1=$row[houseid]";
-				output(" Bitte bedenke, dass du ein verlassenes Haus gekauft hast, zu dem vielleicht noch andere einen Schlüssel haben!");
+				$sql = "UPDATE items SET owner=".$session['user']['acctid']." WHERE owner=0 and class='SchlÃ¼ssel' AND value1=$row[houseid]";
+				output(" Bitte bedenke, dass du ein verlassenes Haus gekauft hast, zu dem vielleicht noch andere einen SchlÃ¼ssel haben!");
 				$session['user']['housekey']=$row['houseid'];
 			}else if ($row['status']==4){
 				$sql = "UPDATE houses SET status=0,owner=".$session['user']['acctid']." WHERE houseid=$row[houseid]";
@@ -480,14 +483,14 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 			}else{
 				$sql = "UPDATE houses SET gold=0,gems=0,status=1,owner=".$session['user']['acctid']." WHERE houseid=$row[houseid]";
 				db_query($sql);
-				$sql = "UPDATE items SET owner=".$session['user']['acctid']." WHERE class='Schlüssel' AND value1=$row[houseid]";
+				$sql = "UPDATE items SET owner=".$session['user']['acctid']." WHERE class='SchlÃ¼ssel' AND value1=$row[houseid]";
 				$session['user']['housekey']=$row['houseid'];
 			}
 			db_query($sql);
 		}
 	}
-	addnav("W?Zurück zum Wohnviertel","houses.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("W?ZurÃ¼ck zum Wohnviertel","houses.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($_GET['op']=="sell"){
 	$sql = "SELECT * FROM houses WHERE houseid=".$session['user']['housekey']." ORDER BY houseid DESC";
 	$result = db_query($sql) or die(db_error(LINK));
@@ -496,10 +499,10 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 	$halfgems=round($gemcost/3);
 	if ($_GET['act']=="sold"){
 		if (!$_POST['gold'] && !$_POST['gems']){
-			output("`@Du denkst ernsthaft darüber nach, dein Häuschen zu verkaufen. Wenn du selbst einen Preis festlegst, bedenke, daß er auf einmal bezahlt werden muss ");
-			output(" und vom Käufer nicht in Raten abgezahlt werden kann. Außerdem kannst du weder ein neues Haus bauen, noch in diesem Haus wohnen, bis es verkauft ist.");
-			output(" Du bekommst dein Geld erst, wenn das Haus verkauft ist. Der Verkauf läßt sich abbrechen, indem du selbst das Haus von dir kaufst.");
-			output("`nWenn du sofort Geld sehen willst, musst du dein Haus für `^$halfgold`@ Gold und `#$halfgems`@ Edelsteine an einen Makler verkaufen.");
+			output("`@Du denkst ernsthaft darÃ¼ber nach, dein HÃ¤uschen zu verkaufen. Wenn du selbst einen Preis festlegst, bedenke, daÃŸ er auf einmal bezahlt werden muss ");
+			output(" und vom KÃ¤ufer nicht in Raten abgezahlt werden kann. AuÃŸerdem kannst du weder ein neues Haus bauen, noch in diesem Haus wohnen, bis es verkauft ist.");
+			output(" Du bekommst dein Geld erst, wenn das Haus verkauft ist. Der Verkauf lÃ¤ÃŸt sich abbrechen, indem du selbst das Haus von dir kaufst.");
+			output("`nWenn du sofort Geld sehen willst, musst du dein Haus fÃ¼r `^$halfgold`@ Gold und `#$halfgems`@ Edelsteine an einen Makler verkaufen.");
 			output("`0<form action=\"houses.php?op=sell&act=sold\" method='POST'>",true);
 			output("`nWieviel Gold willst du verlangen? <input type='gold' name='gold'>`n",true);
 			output("`nWieviele Edelsteine soll das Haus kosten? <input type='gems' name='gems'>`n",true);
@@ -510,16 +513,16 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 			$halfgold=(int)$_POST['gold'];
 			$halfgems=(int)$_POST['gems'];
 			if (($halfgold<$goldcost/40 && $halfgems<$gemcost/10) || ($halfgold==0 && $halfgems<$gemcost/2) || ($halfgold<$goldcost/20 && $halfgems==0)){
-				output("`@Du solltest vielleicht erst deinen Ale-Rausch ausschlafen, bevor du über einen Preis nachdenkst. Wie? Du bist nüchtern? Das glaubt dir so kein Mensch.");
+				output("`@Du solltest vielleicht erst deinen Ale-Rausch ausschlafen, bevor du Ã¼ber einen Preis nachdenkst. Wie? Du bist nÃ¼chtern? Das glaubt dir so kein Mensch.");
 				addnav("Neuer Preis","houses.php?op=sell&act=sold");
 			}else if ($halfgold>$goldcost*2 || $halfgems>$gemcost*4){
-				output("`@Bei so einem hohen Preis bist du dir nicht sicher, ob du wirklich verkaufen sollst. Überlege es dir nochmal.");
+				output("`@Bei so einem hohen Preis bist du dir nicht sicher, ob du wirklich verkaufen sollst. Ãœberlege es dir nochmal.");
 				addnav("Neuer Preis","houses.php?op=sell&act=sold");
 			}else{
-				output("`@Dein Haus steht ab sofort für `^$halfgold`@ Gold und `#$halfgems`@ Edelsteine zum Verkauf. Du und alle Mitbewohner habt den Schatz des Hauses gleichmäßig ");
-				output(" unter euch aufgeteilt und deine Untermieter haben ihre Schlüssel abgegeben.");
-				// Gold und Edelsteine an Bewohner verteilen und Schlüssel einziehen
-				$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='Schlüssel' AND owner<>$row[owner] ORDER BY id ASC";
+				output("`@Dein Haus steht ab sofort fÃ¼r `^$halfgold`@ Gold und `#$halfgems`@ Edelsteine zum Verkauf. Du und alle Mitbewohner habt den Schatz des Hauses gleichmÃ¤ÃŸig ");
+				output(" unter euch aufgeteilt und deine Untermieter haben ihre SchlÃ¼ssel abgegeben.");
+				// Gold und Edelsteine an Bewohner verteilen und SchlÃ¼ssel einziehen
+				$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' AND owner<>$row[owner] ORDER BY id ASC";
 				$result = db_query($sql) or die(db_error(LINK));
 				$amt=db_num_rows($result);
 				$goldgive=round($row['gold']/($amt+1));
@@ -533,7 +536,7 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 					db_query($sql);
 					systemmail($item['owner'],"`@Rauswurf!`0","`&{$session['user']['name']}`2 hat das Haus `b$row[housename]`b`2 verkauft, in dem du als Untermieter gewohnt hast. Du bekommst `^$goldgive`2 Gold auf die Bank und `#$gemsgive`2 Edelsteine aus dem gemeinsamen Schatz ausbezahlt!");
 				}
-				$sql = "UPDATE items SET owner=$row[owner] WHERE class='Schlüssel' AND value1=$row[houseid]";
+				$sql = "UPDATE items SET owner=$row[owner] WHERE class='SchlÃ¼ssel' AND value1=$row[houseid]";
 				db_query($sql);
 				// Variablen setzen und Datenbank updaten
 				$row['gold']=$halfgold;
@@ -544,10 +547,10 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 		}
 		} // Ende der Preispruefung vor dem naechsten Hausverkaufszweig.
 	}else if ($_GET['act']=="makler"){
-		output("`@Dem Makler entfährt ungewollt ein freudiges Glucksen, als er dir `^$halfcost`@ Gold und die `#$halfcost`@ Edelsteine vorzählt.`n`n");
+		output("`@Dem Makler entfÃ¤hrt ungewollt ein freudiges Glucksen, als er dir `^$halfcost`@ Gold und die `#$halfcost`@ Edelsteine vorzÃ¤hlt.`n`n");
 		output("Ab sofort steht dein Haus zum Verkauf und du kannst ein neues bauen, woanders mit einziehen, oder ein anderes Haus kaufen.");
-		// Gold und Edelsteine an Bewohner verteilen und Schlüssel einziehen
-		$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='Schlüssel' AND owner<>$row[owner] ORDER BY id ASC";
+		// Gold und Edelsteine an Bewohner verteilen und SchlÃ¼ssel einziehen
+		$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' AND owner<>$row[owner] ORDER BY id ASC";
 		$result = db_query($sql) or die(db_error(LINK));
 		$goldgive=round($row['gold']/(db_num_rows($result)+1));
 		$gemsgive=round($row['gems']/(db_num_rows($result)+1));
@@ -561,7 +564,7 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 			systemmail($item['owner'],"`@Rauswurf!`0","`&{$session['user']['name']}`2 hat das Haus `b$row[housename]`b`2 verkauft, in dem du als Untermieter gewohnt hast. Du bekommst `^$goldgive`2 Gold auf die Bank und `#$gemsgive`2 Edelsteine aus dem gemeinsamen Schatz ausbezahlt!");
 
 		}
-		$sql = "UPDATE items SET owner=0 WHERE class='Schlüssel' AND value1=$row[houseid]";
+		$sql = "UPDATE items SET owner=0 WHERE class='SchlÃ¼ssel' AND value1=$row[houseid]";
 		db_query($sql);
 		// Variablen setzen und Datenbank updaten
 		$row['gold']=$goldcost-$halfgold;
@@ -574,18 +577,18 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 		$sql = "UPDATE houses SET owner=0,gold=$row[gold],gems=$row[gems],status=2 WHERE houseid=$row[houseid]";
 		db_query($sql);
 	} else {
-		output("`@Gib einen Preis für dein Haus ein, oder lass einen Makler den Verkauf übernehmen. Der schmierige Makler würde dir sofort `^$halfgold`@ Gold und `#$halfgems`@ Edelsteine geben. ");
-		output("Wenn du selbst verkaufst, kannst du vielleicht einen höheren Preis erzielen, musst aber auf dein Geld warten, bis jemand kauft.`nAlles, was sich noch im Haus befindet, wird ");
-		output("gleichmässig unter allen Bewohnern aufgeteilt.`n`n");
+		output("`@Gib einen Preis fÃ¼r dein Haus ein, oder lass einen Makler den Verkauf Ã¼bernehmen. Der schmierige Makler wÃ¼rde dir sofort `^$halfgold`@ Gold und `#$halfgems`@ Edelsteine geben. ");
+		output("Wenn du selbst verkaufst, kannst du vielleicht einen hÃ¶heren Preis erzielen, musst aber auf dein Geld warten, bis jemand kauft.`nAlles, was sich noch im Haus befindet, wird ");
+		output("gleichmÃ¤ssig unter allen Bewohnern aufgeteilt.`n`n");
 		output("`0<form action=\"houses.php?op=sell&act=sold\" method='POST'>",true);
 		output("`nWieviel Gold verlangen? <input type='gold' name='gold'>`n",true);
 		output("`nWieviele Edelsteine? <input type='gems' name='gems'>`n`n",true);
-		output("<input type='submit' class='button' value='Für diesen Preis verkaufen'></form>",true);
+		output("<input type='submit' class='button' value='FÃ¼r diesen Preis verkaufen'></form>",true);
 		addnav("","houses.php?op=sell&act=sold");
 		addnav("An den Makler","houses.php?op=sell&act=makler");
 	}
-	addnav("W?Zurück zum Wohnviertel","houses.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("W?ZurÃ¼ck zum Wohnviertel","houses.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($_GET['op']=="drin"){
 	if ($_GET['id']) $session['housekey']=(int)$_GET['id'];
 	if (!$session['housekey']) redirect("houses.php");
@@ -594,10 +597,10 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 	$row = db_fetch_assoc($result);
 	if ($_GET['act']=="takekey"){
 		if (!$_POST['ziel']){
-			$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='Schlüssel' ORDER BY value2 ASC";
+			$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' ORDER BY value2 ASC";
 			$result = db_query($sql) or die(db_error(LINK));
 			output("<form action='houses.php?op=drin&act=takekey' method='POST'>",true);
-			output("`2Wem willst du den Schlüssel wegnehmen? <select name='ziel'>",true);
+			output("`2Wem willst du den SchlÃ¼ssel wegnehmen? <select name='ziel'>",true);
 			for ($i=0;$i<db_num_rows($result);$i++){
 				$item = db_fetch_assoc($result);
 				$sql = "SELECT acctid,name,login FROM accounts WHERE acctid=$item[owner] ORDER BY login DESC";
@@ -607,50 +610,50 @@ $result = db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])))
 				$amt=$row2['acctid'];
 			}
 			output("</select>`n`n",true);
-			output("<input type='submit' class='button' value='Schlüssel abnehmen'></form>",true);
+			output("<input type='submit' class='button' value='SchlÃ¼ssel abnehmen'></form>",true);
 			addnav("","houses.php?op=drin&act=takekey");
 $sql = "SELECT acctid,name,login,gold,gems FROM accounts WHERE name=? AND locked=0"; // Der eingegebene Spielername wird getrennt vom SQL-Befehl gesucht.
 $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POST['ziel']))));
 			}else{
 			$row2  = db_fetch_assoc($result2);
-			output("`2Du verlangst den Schlüssel von `&$row2[name]`2 zurück.`n");
-			$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='Schlüssel' AND owner<>$row[owner] ORDER BY id ASC";
+			output("`2Du verlangst den SchlÃ¼ssel von `&$row2[name]`2 zurÃ¼ck.`n");
+			$sql = "SELECT owner FROM items WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' AND owner<>$row[owner] ORDER BY id ASC";
 			$result = db_query($sql) or die(db_error(LINK));
 			$goldgive=round($row['gold']/(db_num_rows($result)+1));
 			$gemsgive=round($row['gems']/(db_num_rows($result)+1));
-			systemmail($row2['acctid'],"`@Schlüssel zurückverlangt!`0","`&{$session['user']['name']}`2 hat den Schlüssel zu Haus Nummer `b$row[houseid]`b ($row[housename]`2) zurückverlangt. Du bekommst `^$goldgive`2 Gold auf die Bank und `#$gemsgive`2 Edelsteine aus dem gemeinsamen Schatz ausbezahlt!");
+			systemmail($row2['acctid'],"`@SchlÃ¼ssel zurÃ¼ckverlangt!`0","`&{$session['user']['name']}`2 hat den SchlÃ¼ssel zu Haus Nummer `b$row[houseid]`b ($row[housename]`2) zurÃ¼ckverlangt. Du bekommst `^$goldgive`2 Gold auf die Bank und `#$gemsgive`2 Edelsteine aus dem gemeinsamen Schatz ausbezahlt!");
 			output("$row2[name]`2 bekommt `^$goldgive`2 Gold und `#$gemsgive`2 Edelsteine aus dem gemeinsamen Schatz.");
-			$sql = "UPDATE items SET owner=$row[owner],hvalue=0 WHERE owner=$row2[acctid] AND class='Schlüssel' AND value1=$row[houseid]";
+			$sql = "UPDATE items SET owner=$row[owner],hvalue=0 WHERE owner=$row2[acctid] AND class='SchlÃ¼ssel' AND value1=$row[houseid]";
 			db_query($sql);
 			$sql = "UPDATE accounts SET goldinbank=goldinbank+$goldgive,gems=gems+$gemsgive WHERE acctid=$row2[acctid]";
 			db_query($sql);
 			$sql = "UPDATE houses SET gold=gold-$goldgive,gems=gems-$gemsgive WHERE houseid=$row[houseid]";
 			db_query($sql);
-			$sql = "INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'house-".$row['houseid']."',".$session['user']['acctid'].",'/me `^nimmt $row2[name]`^ einen Schlüssel ab. $row2[name]`^ bekommt einen Teil aus dem Schatz.')";
+			$sql = "INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'house-".$row['houseid']."',".$session['user']['acctid'].",'/me `^nimmt $row2[name]`^ einen SchlÃ¼ssel ab. $row2[name]`^ bekommt einen Teil aus dem Schatz.')";
 			db_query($sql) or die(db_error(LINK));
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="givekey"){
 		if (!$_POST['ziel']){
-			output("`2Einen Schlüssel für dieses Haus hat:`n`n");
-			$sql = "SELECT items.*,accounts.name AS besitzer FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE value1=$row[houseid] AND class='Schlüssel' AND owner<>".$session['user']['acctid']." ORDER BY value2 ASC";
+			output("`2Einen SchlÃ¼ssel fÃ¼r dieses Haus hat:`n`n");
+			$sql = "SELECT items.*,accounts.name AS besitzer FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' AND owner<>".$session['user']['acctid']." ORDER BY value2 ASC";
 			$result = db_query($sql) or die(db_error(LINK));
 			for ($i=0;$i<db_num_rows($result);$i++){
 				$item = db_fetch_assoc($result);
 				output("`c`& $item[besitzer]`0`c");
 			}
-			$sql = "SELECT value2 FROM items WHERE value1=$row[houseid] AND class='Schlüssel' AND owner=$row[owner] ORDER BY id ASC";
+			$sql = "SELECT value2 FROM items WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' AND owner=$row[owner] ORDER BY id ASC";
 			$result = db_query($sql) or die(db_error(LINK));
 			if (db_num_rows($result)>0) {
-				output("`n`2Du kannst noch `b".db_num_rows($result)."`b Schlüssel vergeben.");
+				output("`n`2Du kannst noch `b".db_num_rows($result)."`b SchlÃ¼ssel vergeben.");
 				output("<form action='houses.php?op=drin&act=givekey' method='POST'>",true);
-				output("An wen willst du einen Schlüssel übergeben? <input name='ziel'>`n", true);
-				output("<input type='submit' class='button' value='Übergeben'></form>",true);
-				output("`n`nWenn du einen Schlüssel vergibst, wird der Schatz des Hauses gemeinsam genutzt. Du kannst einem Mitbewohner zwar jederzeit den Schlüssel wieder wegnehmen, ");
+				output("An wen willst du einen SchlÃ¼ssel Ã¼bergeben? <input name='ziel'>`n", true);
+				output("<input type='submit' class='button' value='Ãœbergeben'></form>",true);
+				output("`n`nWenn du einen SchlÃ¼ssel vergibst, wird der Schatz des Hauses gemeinsam genutzt. Du kannst einem Mitbewohner zwar jederzeit den SchlÃ¼ssel wieder wegnehmen, ");
 				output("aber er wird dann einen gerechten Anteil aus dem gemeinsamen Schatz bekommen.");
 				addnav("","houses.php?op=drin&act=givekey");
 			}else{
-				output("`n`2Du hast keine Schlüssel mehr übrig. Vielleicht kannst du in der Jägerhütte noch einen nachmachen lassen?");
+				output("`n`2Du hast keine SchlÃ¼ssel mehr Ã¼brig. Vielleicht kannst du in der JÃ¤gerhÃ¼tte noch einen nachmachen lassen?");
 			} 
 		} else {
 			if ($_GET['subfinal']==1){
@@ -668,9 +671,9 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 			if (db_num_rows($result2) == 0) {
 				output("`2Es gibt niemanden mit einem solchen Namen. Versuchs nochmal.");
 			} elseif(db_num_rows($result2) > 100) {
-				output("`2Es gibt über 100 Krieger mit einem ähnlichen Namen. Bitte sei etwas genauer.");
+				output("`2Es gibt Ã¼ber 100 Krieger mit einem Ã¤hnlichen Namen. Bitte sei etwas genauer.");
 			} elseif(db_num_rows($result2) > 1) {
-				output("`2Es gibt mehrere mögliche Krieger, denen du einen Schlüssel übergeben kannst.`n");
+				output("`2Es gibt mehrere mÃ¶gliche Krieger, denen du einen SchlÃ¼ssel Ã¼bergeben kannst.`n");
 				output("<form action='houses.php?op=drin&act=givekey&subfinal=1' method='POST'>",true);
 				output("`2Wen genau meinst du? <select name='ziel'>",true);
 				for ($i=0;$i<db_num_rows($result2);$i++){
@@ -678,38 +681,38 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 					output("<option value=\"".rawurlencode($row2['name'])."\">".preg_replace("'[`].'","",$row2['name'])."</option>",true);
 				}
 				output("</select>`n`n",true);
-				output("<input type='submit' class='button' value='Schlüssel übergeben'></form>",true);
+				output("<input type='submit' class='button' value='SchlÃ¼ssel Ã¼bergeben'></form>",true);
 				addnav("","houses.php?op=drin&act=givekey&subfinal=1");
 				//addnav("","houses.php?op=drin&act=givekey"); // why the hell was this in there?
 			} else {
 				$row2  = db_fetch_assoc($result2);
-				$sql = "SELECT owner FROM items WHERE owner=$row2[acctid] AND value1=$row[houseid] AND class='Schlüssel' ORDER BY id ASC";
+				$sql = "SELECT owner FROM items WHERE owner=$row2[acctid] AND value1=$row[houseid] AND class='SchlÃ¼ssel' ORDER BY id ASC";
 				$result = db_query($sql) or die(db_error(LINK));
 				$item = db_fetch_assoc($result);
 				if ($row2['login'] == $session['user']['login']) {
-					output("`2Du kannst dir nicht selbst einen Schlüssel geben.");
+					output("`2Du kannst dir nicht selbst einen SchlÃ¼ssel geben.");
 				} elseif ($item['owner']==$row['owner']) {
-					output("`2$row2[name]`2 hat bereits einen Schlüssel!");
+					output("`2$row2[name]`2 hat bereits einen SchlÃ¼ssel!");
 		 		} elseif ($session['user']['lastip'] == $row2['lastip'] || ($session['user']['emailaddress'] == $row2['emailaddress'] && $row2['emailaddress'])){
-					output("`2Deine Charaktere dürfen leider nicht miteinander interagieren!");
+					output("`2Deine Charaktere dÃ¼rfen leider nicht miteinander interagieren!");
 				} elseif ($row2['level']<5 && $row2['dragonkills']<1){
-					output("`2$row2[name]`2 ist noch nicht lange genug um Dorf, als dass du ".($row2['sex']?"ihr":"ihm")." vertrauen könntest. Also beschließt du, noch eine Weile zu beobachten.");
+					output("`2$row2[name]`2 ist noch nicht lange genug um Dorf, als dass du ".($row2['sex']?"ihr":"ihm")." vertrauen kÃ¶nntest. Also beschlieÃŸt du, noch eine Weile zu beobachten.");
 				} else {
-					$sql = "SELECT value2 FROM items WHERE value1=$row[houseid] AND class='Schlüssel' AND owner=$row[owner] ORDER BY id ASC LIMIT 1";
+					$sql = "SELECT value2 FROM items WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' AND owner=$row[owner] ORDER BY id ASC LIMIT 1";
 					$result = db_query($sql) or die(db_error(LINK));
 					$knr = db_fetch_assoc($result);
 					$knr=$knr['value2'];
-					output("`2Du übergibst `&$row2[name]`2 einen Schlüssel für dein Haus. Du kannst den Schlüssel zum Haus jederzeit wieder wegnehmen, aber $row2[name]`2 wird dann ");
+					output("`2Du Ã¼bergibst `&$row2[name]`2 einen SchlÃ¼ssel fÃ¼r dein Haus. Du kannst den SchlÃ¼ssel zum Haus jederzeit wieder wegnehmen, aber $row2[name]`2 wird dann ");
 					output("einen gerechten Anteil aus dem gemeinsamen Schatz des Hauses bekommen.`n");
-					systemmail($row2['acctid'],"`@Schlüssel erhalten!`0","`&{$session['user']['name']}`2 hat dir einen Schlüssel zu Haus Nummer `b$row[houseid]`b ($row[housename]`2) gegeben!");
-					$sql = "UPDATE items SET owner=$row2[acctid],hvalue=0 WHERE owner=$row[owner] AND class='Schlüssel' AND value1=$row[houseid] AND value2=$knr";
+					systemmail($row2['acctid'],"`@SchlÃ¼ssel erhalten!`0","`&{$session['user']['name']}`2 hat dir einen SchlÃ¼ssel zu Haus Nummer `b$row[houseid]`b ($row[housename]`2) gegeben!");
+					$sql = "UPDATE items SET owner=$row2[acctid],hvalue=0 WHERE owner=$row[owner] AND class='SchlÃ¼ssel' AND value1=$row[houseid] AND value2=$knr";
 					db_query($sql);
-					$sql = "INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'house-".$row['houseid']."',".$session['user']['acctid'].",'/me `^gibt $row2[name]`^ einen Schlüssel.')";
+					$sql = "INSERT INTO commentary (postdate,section,author,comment) VALUES (now(),'house-".$row['houseid']."',".$session['user']['acctid'].",'/me `^gibt $row2[name]`^ einen SchlÃ¼ssel.')";
 					db_query($sql) or die(db_error(LINK));
 				}
 			}
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="takegold"){
 		$maxtfer = $session['user']['level']*getsetting("transferperlevel",25);
 		if (!$_POST['gold']){
@@ -728,7 +731,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 			}else if ($amt<0){
 				output("`2Wenn du etwas in den Schatz legen willst, versuche nicht, etwas negatives herauszunehmen.");
 			}else if($session['user']['transferredtoday']>=getsetting("transferreceive",3)){
-				output("`2Du hast heute schon genug Gold bekommen. Du wirst bis morgen warten müssen.");
+				output("`2Du hast heute schon genug Gold bekommen. Du wirst bis morgen warten mÃ¼ssen.");
 			}else{
 				$row['gold']-=$amt;
 				$session['user']['gold']+=$amt;
@@ -739,7 +742,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 				db_query($sql) or die(db_error(LINK));
 			}
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="givegold"){
 		$maxout = $session['user']['level']*getsetting("maxtransferout",25);
 		if (!$_POST['gold']){
@@ -770,7 +773,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 				db_query_params($sql,array((int)$row["gold"],(int)$row["houseid"]));
 			}
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="takegems"){
 		if (!$_POST['gems']){
 			output("`2Es befinden sich `#$row[gems]`2 Edelsteine in der Schatztruhe des Hauses.`n`n");
@@ -794,7 +797,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 				db_query($sql) or die(db_error(LINK));
 			}
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="givegems"){
 		if (!$_POST['gems']){
 			output("`2<form action=\"houses.php?op=drin&act=givegems\" method='POST'>",true);
@@ -821,19 +824,19 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 				db_query($sql) or die(db_error(LINK));
 			}
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="rename"){
 		if (!$_POST['housename']){
 			output("`2Das Haus umbenennen kostet `^1000`2 Gold und `#1`2 Edelstein.`n`n");
 			output("`0<form action=\"houses.php?op=drin&act=rename\" method='POST'>",true);
-			output("`nGebe einen neuen Namen für dein Haus ein: <input name='housename' maxlength='25'>`n",true);
+			output("`nGebe einen neuen Namen fÃ¼r dein Haus ein: <input name='housename' maxlength='25'>`n",true);
 			output("<input type='submit' class='button' value='Umbenennen'>",true);
 			addnav("","houses.php?op=drin&act=rename");
 		}else{
 			if ($session['user']['gold']<1000 || $session['user']['gems']<1){
 				output("`2Das kannst du nicht bezahlen.");
 			}else{
-				output("`2Dein Haus `@$row[housename]`2 heißt jetzt `@".stripslashes($_POST['housename'])."`2.");
+				output("`2Dein Haus `@$row[housename]`2 heiÃŸt jetzt `@".stripslashes($_POST['housename'])."`2.");
 				// Hausname und Hausnummer werden separat gebunden, damit Sonderzeichen im Namen keinen SQL-Befehl veraendern.
 				$sql = "UPDATE houses SET housename=? WHERE houseid=?";
 				db_query_params($sql, array(db_unquote_legacy_input($_POST['housename']), (int)$row['houseid']));
@@ -842,25 +845,25 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 				$session['user']['gems']-=1;
 			}
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="desc"){
 		if (!$_POST['desc']){
-			output("`2Hier kannst du die Beschreibung für dein Haus ändern.`n`nDie aktuelle Beschreibung lautet:`0$row[description]`0`n");
+			output("`2Hier kannst du die Beschreibung fÃ¼r dein Haus Ã¤ndern.`n`nDie aktuelle Beschreibung lautet:`0$row[description]`0`n");
 			output("`0<form action=\"houses.php?op=drin&act=desc\" method='POST'>",true);
-			output("`n`2Gebe eine Beschreibung für dein Haus ein:`n<input name='desc' maxlength='250' size='50'>`n",true);
+			output("`n`2Gebe eine Beschreibung fÃ¼r dein Haus ein:`n<input name='desc' maxlength='250' size='50'>`n",true);
 			output("<input type='submit' class='button' value='Abschicken'>",true);
 			addnav("","houses.php?op=drin&act=desc");
 		}else{
-			output("`2Die Beschreibung wurde geändert.`n`0".stripslashes($_POST['desc'])."`2.");
+			output("`2Die Beschreibung wurde geÃ¤ndert.`n`0".stripslashes($_POST['desc'])."`2.");
 				// Hausbeschreibung und Hausnummer werden sicher als Datenwerte gebunden.
 				$sql = "UPDATE houses SET description=? WHERE houseid=?";
 				db_query_params($sql, array(db_unquote_legacy_input($_POST['desc']), (int)$row['houseid']));
 			db_query($sql);
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 	}else if ($_GET['act']=="logout"){
 		if ($session['user']['housekey']!=$session['housekey']){
-			$sql = "UPDATE items SET hvalue=".$session['housekey']." WHERE value1=".(int)$session['housekey']." AND owner=".$session['user']['acctid']." AND class='Schlüssel'";
+			$sql = "UPDATE items SET hvalue=".$session['housekey']." WHERE value1=".(int)$session['housekey']." AND owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel'";
 			db_query($sql) or die(sql_error($sql));
 		}
 		debuglog("logged out in a house ");
@@ -877,11 +880,11 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 			output("`2Du blickst in den Spiegel, in der Hoffnung etwas erfreuliches zu sehen. ");
 			break;
 			case 2:
-			output("`2Dir starrt ".($session['user']['sex']?"eine völlig unbekannte Frau":"ein völlig unbekannter Mann")." entgegen. ");
+			output("`2Dir starrt ".($session['user']['sex']?"eine vÃ¶llig unbekannte Frau":"ein vÃ¶llig unbekannter Mann")." entgegen. ");
 			break;
 			case 3:
-			if ($session['user']['charm']<10) output("`2Du fragst dich, warum dieses häßliche Bild im Haus hängt. ");
-			if ($session['user']['charm']>=10 and $session['user']['charm']<50) output("`2Naja, wer auch immer dieses Bild gemalt hat, hat Talent, sollte aber noch etwas üben. ");
+			if ($session['user']['charm']<10) output("`2Du fragst dich, warum dieses hÃ¤ÃŸliche Bild im Haus hÃ¤ngt. ");
+			if ($session['user']['charm']>=10 and $session['user']['charm']<50) output("`2Naja, wer auch immer dieses Bild gemalt hat, hat Talent, sollte aber noch etwas Ã¼ben. ");
 			if ($session['user']['charm']>=50) output("`2Das ist ein wirklich tolles Bild von ".($session['user']['sex']?"einer Frau":"einem Mann")."! ");
 			break;
 			case 4:
@@ -890,7 +893,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 			case 5:
 			output("`2Du verbringst eine ganze Weile vor dem Spiegel. ");
 			if (e_rand(1,3)==2 && $sesion['user']['turns']>0){
-				output("Dabei merkst du nicht, wie die Zeit vergeht. Du vertrödelst einen Waldkampf! ");
+				output("Dabei merkst du nicht, wie die Zeit vergeht. Du vertrÃ¶delst einen Waldkampf! ");
 				$session['user']['turns']--;
 			}
 			break;
@@ -904,10 +907,10 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 			$session['user']['charm']++;
 			output("`nDu `@bekommst`2 einen Charmepunkt.");
 		}else if ($session['user']['turns']<=0){
-			output("`nDu hast heute keine Zeit mehr, dich um dein Äußeres zu kümmern.");
+			output("`nDu hast heute keine Zeit mehr, dich um dein Ã„uÃŸeres zu kÃ¼mmern.");
 		}else{
 		}
-		addnav("Zurück zum Haus","houses.php?op=drin");
+		addnav("ZurÃ¼ck zum Haus","houses.php?op=drin");
 // end items
 	}else{
 		output("`2`b`c$row[housename]`c`b`n");
@@ -916,8 +919,8 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 		if (getsetting('activategamedate','0')==1) output("Wir schreiben den `^".getgamedate()."`2.`n");
 		output ("Es ist jetzt `^".getgametime()."`2 Uhr.`n`n");
 		viewcommentary("house-".$row['houseid'],"Mit Mitbewohnern reden:",30,"sagt");
-		output("`n`n`n<table border='0'><tr><td>`2`bDie Schlüssel:`b `0</td><td>`2`bExtra Ausstattung`b</td></tr><tr><td valign='top'>",true);
-		$sql = "SELECT items.*,accounts.acctid AS aid,accounts.name AS besitzer FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE value1=$row[houseid] AND class='Schlüssel' ORDER BY id ASC";
+		output("`n`n`n<table border='0'><tr><td>`2`bDie SchlÃ¼ssel:`b `0</td><td>`2`bExtra Ausstattung`b</td></tr><tr><td valign='top'>",true);
+		$sql = "SELECT items.*,accounts.acctid AS aid,accounts.name AS besitzer FROM items LEFT JOIN accounts ON accounts.acctid=items.owner WHERE value1=$row[houseid] AND class='SchlÃ¼ssel' ORDER BY id ASC";
 		$result = db_query($sql) or die(db_error(LINK));
 		for ($i=1;$i<=db_num_rows($result);$i++){
 			$item = db_fetch_assoc($result);
@@ -926,17 +929,17 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 			}else{
 				output("`n`2$i: `&$item[besitzer]`0");
 			}
-			if ($item['aid']==$row['owner']) output(" (der Eigentümer) ");
-			if ($item['hvalue']>0 && $item['owner']>0) output(" `ischläft hier`i");
+			if ($item['aid']==$row['owner']) output(" (der EigentÃ¼mer) ");
+			if ($item['hvalue']>0 && $item['owner']>0) output(" `ischlÃ¤ft hier`i");
 		}
 		if (db_num_rows(db_query_params("SELECT id FROM items WHERE owner=? AND value1<>? AND hvalue>0 AND class=?",array((int)$row["owner"],(int)$row["houseid"],"Schl".chr(195).chr(188)."ssel")))==0 && db_num_rows(db_query_params("SELECT acctid FROM accounts WHERE acctid=? AND location=2",array((int)$row["owner"])))>0) output("`nDer Eigent`uuml;mer schl`uuml;ft hier"); // Hausbesitzer und Schluessel werden als Datenwerte gebunden.
 		output("</td><td valign='top'>",true);
-		$sql = "SELECT * FROM items WHERE value1=$row[houseid] AND class='Möbel' ORDER BY class,id ASC";
+		$sql = "SELECT * FROM items WHERE value1=$row[houseid] AND class='MÃ¶bel' ORDER BY class,id ASC";
 		$result = db_query($sql) or die(db_error(LINK));
 		for ($i=1;$i<=db_num_rows($result);$i++){
 			$item = db_fetch_assoc($result);
 			output("`n`&$item[name]`0 (`i$item[description]`i)");
-			if ($item['name']=="Großer Spiegel") addnav("Spiegel","houses.php?op=drin&act=mirror");
+			if ($item['name']=="GroÃŸer Spiegel") addnav("Spiegel","houses.php?op=drin&act=mirror");
 		}
 		output("</td></tr></table>",true);
 		addnav("Gold");
@@ -946,24 +949,24 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 		addnav("Deponieren","houses.php?op=drin&act=givegems");
 		addnav("Mitnehmen","houses.php?op=drin&act=takegems");
 		if ($session['user']['house']==$session['housekey']){
-			addnav("Schlüssel");
+			addnav("SchlÃ¼ssel");
 			addnav("Vergeben","houses.php?op=drin&act=givekey");
-			addnav("n?Zurücknehmen","houses.php?op=drin&act=takekey");
+			addnav("n?ZurÃ¼cknehmen","houses.php?op=drin&act=takekey");
 		}
 		addnav("Sonstiges");
 		if ($session['user']['house']==$session['housekey']){
 			addnav("Haus umbenennen","houses.php?op=drin&act=rename");
-			addnav("Beschreibung ändern","houses.php?op=drin&act=desc");
+			addnav("Beschreibung Ã¤ndern","houses.php?op=drin&act=desc");
 		}
 		addnav("Log Out","houses.php?op=drin&act=logout");
-		addnav("W?Zurück zum Wohnviertel","houses.php");
-		addnav("Zurück zum Dorf","village.php");
+		addnav("W?ZurÃ¼ck zum Wohnviertel","houses.php");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 	}
 }else if ($_GET['op']=="enter"){
-	output("`@Du hast Zugang zu folgenden Häusern:`n`n");
-	$sql = "UPDATE items SET hvalue=0 WHERE hvalue>0 AND owner=".$session['user']['acctid']." AND class='Schlüssel'";
+	output("`@Du hast Zugang zu folgenden HÃ¤usern:`n`n");
+	$sql = "UPDATE items SET hvalue=0 WHERE hvalue>0 AND owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel'";
 	db_query($sql) or die(sql_error($sql));
-	$sql = "SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND class='Schlüssel' ORDER BY id ASC";
+	$sql = "SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel' ORDER BY id ASC";
 	$result = db_query($sql) or die(db_error(LINK));
 	output("<table cellpadding=2 align='center'><tr><td>`bHausNr.`b</td><td>`bName`b</td></tr>",true);
 	$ppp=25; // Player Per Page +1 to display
@@ -971,7 +974,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 		$page=0;
 	}else{
 		$page=(int)$_GET['limit'];
-		addnav("Vorherige Straße","houses.php?op=enter&limit=".($page-1)."");
+		addnav("Vorherige StraÃŸe","houses.php?op=enter&limit=".($page-1)."");
 	}
 	$limit="".($page*$ppp).",".($ppp+1);
 	if ($session['user']['house']>0 && $session['user']['housekey']>0){
@@ -983,9 +986,9 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 	}else if ($session['user']['house']>0 && $session['user']['housekey']==0){
 		output("<tr><td colspan=2 align='center'>`&`iDein Haus ist noch im Bau oder steht zum Verkauf`i`0</td></tr>",true);
 	}
-	if (db_num_rows($result)>$ppp) addnav("Nächste Seite","houses.php?op=enter&limit=".($page+1)."");
+	if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Seite","houses.php?op=enter&limit=".($page+1)."");
 	if (db_num_rows($result)==0){
-		output("<tr><td colspan=4 align='center'>`&`iDu hast keinen Schlüssel`i`0</td></tr>",true);
+		output("<tr><td colspan=4 align='center'>`&`iDu hast keinen SchlÃ¼ssel`i`0</td></tr>",true);
 	}else{
 		$rebuy=0;
 		for ($i=0;$i<db_num_rows($result);$i++){
@@ -1003,21 +1006,21 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 		}
 	}
 	output("</table>",true);
-	if ($rebuy==1) addnav("Verkauf rückgängig","houses.php?op=buy&id=".$session['user']['house']."");
+	if ($rebuy==1) addnav("Verkauf rÃ¼ckgÃ¤ngig","houses.php?op=buy&id=".$session['user']['house']."");
 	if (getsetting("dailyspecial",0)=="Waldsee"){
-		output("`n`n`@Während du deine Schlüssel suchst, fällt dir ein kleiner Trampelpfad auf...");
+		output("`n`n`@WÃ¤hrend du deine SchlÃ¼ssel suchst, fÃ¤llt dir ein kleiner Trampelpfad auf...");
 		addnav("Trampelpfad","paths.php?ziel=forestlake");
 	}
-	addnav("Zurück zum Dorf","village.php");
-	addnav("W?Zurück zum Wohnviertel","houses.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
+	addnav("W?ZurÃ¼ck zum Wohnviertel","houses.php");
 }else{
 	output("`@`b`cDas Wohnviertel`c`b`n`n");
 	$session['housekey']=0;
-	$sql = "SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND class='Schlüssel' ORDER BY id ASC";
+	$sql = "SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND class='SchlÃ¼ssel' ORDER BY id ASC";
 	$result2 = db_query($sql) or die(db_error(LINK));
 	if (db_num_rows($result2)>0 || $session['user']['housekey']>0) addnav("Haus betreten","houses.php?op=enter");
-	output("Du verlässt den Dorfplatz und schlenderst Richtung Wohnviertel. In diesem schön angelegten Teil des Dorfes siehst du einige Baustellen zwischen bewohnten ");
-	output("und unbewohnten Häusern. Hier wohnen also die Helden...`n`n");
+	output("Du verlÃ¤sst den Dorfplatz und schlenderst Richtung Wohnviertel. In diesem schÃ¶n angelegten Teil des Dorfes siehst du einige Baustellen zwischen bewohnten ");
+	output("und unbewohnten HÃ¤usern. Hier wohnen also die Helden...`n`n");
 	$searchParams=array(); // Suchwerte fuer die Uebersicht werden getrennt gesammelt.
 	if ($_POST['search']>""){
 		if ($_GET['search']>"" || $_GET['search']>"") $_POST['search']=$_GET['search'];
@@ -1040,7 +1043,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 		$page=0;
 	}else{
 		$page=(int)$_GET['limit'];
-		addnav("Vorherige Straße","houses.php?limit=".($page-1)."&search=$_POST[search]");
+		addnav("Vorherige StraÃŸe","houses.php?limit=".($page-1)."&search=$_POST[search]");
 	}
 	$limit="".($page*$ppp).",".($ppp+1);
 	//$sql = "SELECT * FROM houses WHERE status<100 ORDER BY houseid ASC LIMIT $limit";
@@ -1051,11 +1054,11 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 	WHERE $search status<100 ORDER BY houseid ASC LIMIT $limit";
 	output("<form action='houses.php' method='POST'>Nach Hausname oder Nummer <input name='search' value='$_POST[search]'> <input type='submit' class='button' value='Suchen'></form>",true);
 	addnav("","houses.php");
-	output("<table cellpadding=2 cellspacing=1 bgcolor='#999999' align='center'><tr class='trhead'><td>`bHausNr.`b</td><td>`bName`b</td><td>`bEigentümer`b</td><td>`bStatus`b</td></tr>",true);
+	output("<table cellpadding=2 cellspacing=1 bgcolor='#999999' align='center'><tr class='trhead'><td>`bHausNr.`b</td><td>`bName`b</td><td>`bEigentÃ¼mer`b</td><td>`bStatus`b</td></tr>",true);
 	$result = db_query_params($sql,$searchParams) or die(db_error(LINK)); // Hausname oder Nummer werden sicher gesucht.
-	if (db_num_rows($result)>$ppp) addnav("Nächste Straße","houses.php?limit=".($page+1)."&search=$_POST[search]");
+	if (db_num_rows($result)>$ppp) addnav("NÃ¤chste StraÃŸe","houses.php?limit=".($page+1)."&search=$_POST[search]");
 	if (db_num_rows($result)==0){
-  		output("<tr><td colspan=4 align='center'>`&`iEs gibt noch keine Häuser`i`0</td></tr>",true);
+  		output("<tr><td colspan=4 align='center'>`&`iEs gibt noch keine HÃ¤user`i`0</td></tr>",true);
 	}else{
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
@@ -1075,7 +1078,7 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 	}
 	output("</table>",true);
 	if ($session['user']['housekey']) {
-		output("`nStolz schwingst du den Schlüssel zu deinem Haus im Gehen hin und her.");
+		output("`nStolz schwingst du den SchlÃ¼ssel zu deinem Haus im Gehen hin und her.");
 	}
 	if ($session['user']['house'] && $session['user']['housekey']) {
 		addnav("Haus verkaufen","houses.php?op=sell");
@@ -1086,31 +1089,31 @@ $result2 = db_query_params($sql,array(rawurldecode(db_unquote_legacy_input($_POS
 	if (getsetting("pvp",1)==1) addnav("Einbrechen","houses.php?op=einbruch");
 	if (@file_exists("well.php")) addnav("Dorfbrunnen","well.php");
 	if ($session['user']['superuser']) addnav("Admin Grotte","superuser.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }
 if ($fight){ 
 	if (count($session['bufflist'])>0 && is_array($session['bufflist']) || $HTTP_GET_VARS['skill']!=""){ 
 		$HTTP_GET_VARS['skill']=""; 
 		if ($HTTP_GET_VARS['skill']=="") $session['user']['buffbackup']=serialize($session['bufflist']); 
 		$session['bufflist']=array(); 
-		output("`&Die ungewohnte Umgebung verhindert den Einsatz deiner besonderen Fähigkeiten!`0"); 
+		output("`&Die ungewohnte Umgebung verhindert den Einsatz deiner besonderen FÃ¤higkeiten!`0"); 
 	} 
 	include "battle.php"; 
 	if ($victory){ 
 		output("`n`#Du hast die Stadtwache besiegt und der Weg zum Haus ist frei!`nDu bekommst ein paar Erfahrungspunkte."); 
 		addnav("Weiter zum Haus","houses.php?op=einbruch2&id=$session[housekey]");
-		addnav("Zurück zum Dorf","village.php");
+		addnav("ZurÃ¼ck zum Dorf","village.php");
 		$session['user']['experience']+=$session['user']['level']*10;
 		$session['user']['turns']--;
 		$badguy=array();
 	}elseif ($defeat){ 
-		output("`n`\$Die Stadtwache hat dich besiegt. Du bist tot!`nDu verlierst 10% deiner Erfahrungspunkte, aber kein Gold.`nDu kannst morgen wieder kämpfen."); 
+		output("`n`\$Die Stadtwache hat dich besiegt. Du bist tot!`nDu verlierst 10% deiner Erfahrungspunkte, aber kein Gold.`nDu kannst morgen wieder kÃ¤mpfen."); 
 		$session['user']['hitpoints']=0; 
 		$session['user']['alive']=false;
 		$session['user']['experience']=round($session['user']['experience']*0.9);
 		$session['user']['badguy']="";
 		addnews("`%".$session['user']['name']."`3 wurde von der Stadtwache bei einem Einbruch besiegt.");
-		addnav("Tägliche News","news.php");
+		addnav("TÃ¤gliche News","news.php");
 	}else{ 
 		fightnav(false,true); 
 	} 

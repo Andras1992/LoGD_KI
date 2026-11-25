@@ -10,29 +10,29 @@ if (!isset($session)) exit();
 if ($HTTP_GET_VARS['op']=="do"){
 	$session['user']['reputation']--;
 	if ($session['user']['sex']>0){
-		output("`%Du folgst dem Gott in die Büsche. Wenige Minuten später, sind "); 
-		output("nur noch leise Geräusche zu hören. "); 
+		output("`%Du folgst dem Gott in die BÃ¼sche. Wenige Minuten spÃ¤ter, sind "); 
+		output("nur noch leise GerÃ¤usche zu hÃ¶ren. "); 
 		output("Als du erwachst, stellst du fest dass ...`n`n`^"); 
 		switch(e_rand(1,10)){ 
 			case 1: 
 			case 2: 
-			output("er verschwunden ist ohne sich zu verabschieden. Aufgrund deiner Erschöpfung, verlierst du einen Waldkampf."); 
+			output("er verschwunden ist ohne sich zu verabschieden. Aufgrund deiner ErschÃ¶pfung, verlierst du einen Waldkampf."); 
 			$session['user']['turns']-=1; 
 			$session['user']['experience']+=150; 
 			break; 
 			case 3: 
 			case 4: 
-			output("er verschwunden ist ohne sich zu verabschieden. Du fühlst dich gut und könntest jetzt einen Kampf vertragen."); 
+			output("er verschwunden ist ohne sich zu verabschieden. Du fÃ¼hlst dich gut und kÃ¶nntest jetzt einen Kampf vertragen."); 
 			$session['user']['turns']+=1; 
 			$session['user']['experience']+=150; 
 			break; 
 			case 5: 
-			output("er dir einen Beutel mit Edelsteinen da gelassen hat. Du fühlst dich benutzt, akzeptierst aber die Bezahlung!"); 
+			output("er dir einen Beutel mit Edelsteinen da gelassen hat. Du fÃ¼hlst dich benutzt, akzeptierst aber die Bezahlung!"); 
 			$session['user']['gems']+=3; 
 			$session['user']['experience']+=150; 
 			break; 
 			case 6: 
-			output("er einen goldenen Apfel da gelassen hat. Als du in den Apfel beißt, fühlst du zusätzliche Lebenskraft in dir!"); 
+			output("er einen goldenen Apfel da gelassen hat. Als du in den Apfel beiÃŸt, fÃ¼hlst du zusÃ¤tzliche Lebenskraft in dir!"); 
 			$session['user']['maxhitpoints']+=1; 
 			$session['user']['experience']+=150; 
 			break; 
@@ -45,31 +45,31 @@ if ($HTTP_GET_VARS['op']=="do"){
 		} 
 		addnews($session['user']['name']." hatte einen Quicky mit einem Gott.");
 		$session['user']['specialinc']="";
-		//addnav("Zurück in den Wald","forest.php");
+		//addnav("ZurÃ¼ck in den Wald","forest.php");
 	}else{ 
-		output("`%Du folgst der Göttin in die Büsche. Wenige Minuten später, sind "); 
-		output("nur noch leise Geräusche zu hören. "); 
+		output("`%Du folgst der GÃ¶ttin in die BÃ¼sche. Wenige Minuten spÃ¤ter, sind "); 
+		output("nur noch leise GerÃ¤usche zu hÃ¶ren. "); 
 		output("Als du erwachst, stellst du fest dass ...`n`n`^"); 
 		switch(e_rand(1,10)){ 
 			case 1: 
 			case 2: 
-			output("sie verschwunden ist ohne sich zu verabschieden. Aufgrund deiner Erschöpfung, verlierst du einen Waldkampf."); 
+			output("sie verschwunden ist ohne sich zu verabschieden. Aufgrund deiner ErschÃ¶pfung, verlierst du einen Waldkampf."); 
 			$session['user']['turns']-=1; 
 			$session['user']['experience']+=150; 
 			break; 
 			case 3: 
 			case 4: 
-			output("sie verschwunden ist ohne sich zu verabschieden. Du fühlst dich gut und könntest jetzt einen Kampf vertragen."); 
+			output("sie verschwunden ist ohne sich zu verabschieden. Du fÃ¼hlst dich gut und kÃ¶nntest jetzt einen Kampf vertragen."); 
 			$session['user']['turns']+=1; 
 			$session['user']['experience']+=150; 
 			break; 
 			case 5: 
-			output("sie dir einen Beutel mit Edelsteinen da gelassen hat. Du fühlst dich benutzt, akzeptierst aber die Bezahlung!"); 
+			output("sie dir einen Beutel mit Edelsteinen da gelassen hat. Du fÃ¼hlst dich benutzt, akzeptierst aber die Bezahlung!"); 
 			$session['user']['gems']+=3; 
 			$session['user']['experience']+=150; 
 			break; 
 			case 6: 
-			output("sie einen goldenen Apfel da gelassen hat. Als du in den Apfel beisst, fühlst du zusätzliche Lebenskraft in dir!"); 
+			output("sie einen goldenen Apfel da gelassen hat. Als du in den Apfel beisst, fÃ¼hlst du zusÃ¤tzliche Lebenskraft in dir!"); 
 			$session['user']['maxhitpoints']+=1; 
 			$session['user']['experience']+=150; 
 			break; 
@@ -80,20 +80,20 @@ if ($HTTP_GET_VARS['op']=="do"){
 			increment_specialty(); 
 			break; 
 		} 
-		addnews($session['user']['name']." hatte einen Quicky mit einer Göttin.");
+		addnews($session['user']['name']." hatte einen Quicky mit einer GÃ¶ttin.");
 		$session['user']['specialinc']="";
-		//addnav("Zurück in den Wald","forest.php");
+		//addnav("ZurÃ¼ck in den Wald","forest.php");
 	}
 }else if ($HTTP_GET_VARS['op']=="dont"){
 	output("In Gedanken an ".($session['user']['sex']?"deinen Geliebten":"deine Geliebte")." rennst du weg. Die Gottheit lacht auf und verschwindet in den Schatten des Waldes.");
 	$session['user']['specialinc']="";
 	$session['user']['reputation']+=2;
-	//addnav("Zurück in den Wald","forest.php");
+	//addnav("ZurÃ¼ck in den Wald","forest.php");
 }else{
 	if ($session['user']['sex']>0){
-		output("`%Als du durch den Wald wanderst, spricht dich ein stattlicher Mann an. \"`^Ich bin der Gott Fexez. Ich habe von dir gehört. Komm mit mir.`%\" Was tust du ?"); 
+		output("`%Als du durch den Wald wanderst, spricht dich ein stattlicher Mann an. \"`^Ich bin der Gott Fexez. Ich habe von dir gehÃ¶rt. Komm mit mir.`%\" Was tust du ?"); 
 	}else{
-		output("`%Als du durch den Wald wanderst, erscheint Dir eine wunderschöne Frau. \"`^Ich bin die Göttin Aphrodite. Ich habe sogar in Athen von deiner Manneskraft gehört. Ich will es ausprobieren. Komm mit mir.`%\" Was tust du?"); 
+		output("`%Als du durch den Wald wanderst, erscheint Dir eine wunderschÃ¶ne Frau. \"`^Ich bin die GÃ¶ttin Aphrodite. Ich habe sogar in Athen von deiner Manneskraft gehÃ¶rt. Ich will es ausprobieren. Komm mit mir.`%\" Was tust du?"); 
 	}
 		addnav("Gehe mit","forest.php?op=do"); 
 		addnav("Laufe weg","forest.php?op=dont"); 

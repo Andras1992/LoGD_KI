@@ -14,6 +14,8 @@
 * to the daily news.
 */
 require_once("common.php");
+// Ohne Auswahl wird die normale Plumpsklo-Seite angezeigt; so fehlt die Aktion beim ersten Aufruf nicht.
+if (!isset($_GET["op"])) $_GET["op"] = "";
 
 // How much does it cost to use the Private Toilet?
 $cost = 5;
@@ -32,7 +34,8 @@ $goodmusthit = 6;
 // Minimum random number for bad habits
 $badminimum = 1;
 // Maximum random number for bad habits
-$badminimum = 4;
+// Diese Zahl ist die obere Grenze fuer die Zufallspruefung bei schlechtem Verhalten.
+$badmaximum = 4;
 // Odds of losing money
 $badmusthit = 2;
 // Turn on to give the player a chance of finding a Gem if they visit the Private Toilet and Wash their hands.
@@ -61,47 +64,48 @@ if ($session['user']['gold'] >= $cost) $canpay = True;
 if ($_GET['op'] == "pay"){
 	page_header("Private Toilette");
 	$session['user']['usedouthouse'] = 1;
-	output("`7Du bezahlst die $cost Gold an den Klo-Gnom für die Erlaubnis, das private Klo zu benutzen.`n");
+	output("`7Du bezahlst die $cost Gold an den Klo-Gnom fÃ¼r die Erlaubnis, das private Klo zu benutzen.`n");
 	output("Dies ist das sauberste Plumpsklo im ganzen Land!`n");
 	output("Der Klopapier-Gnom sagt dir noch, dass du einfach fragen sollst, wenn du noch etwas brauchst.`n");
-	output (($session['user']['sex']?"Sie":"Er") . " dreht dir höflich ");
-	output (($session['user']['sex']?"ihren":"seinen") . " Rücken zu und schließt die Reinigung des Waschstandes ab.`n`n");
+	output (($session['user']['sex']?"Sie":"Er") . " dreht dir hÃ¶flich ");
+	output (($session['user']['sex']?"ihren":"seinen") . " RÃ¼cken zu und schlieÃŸt die Reinigung des Waschstandes ab.`n`n");
 	$session['user']['gold'] -= $cost;
 	//debuglog("spent $cost gold to use the outhouse");
-	addnav("Hände waschen", "outhouse.php?op=washpay");
+	addnav("HÃ¤nde waschen", "outhouse.php?op=washpay");
 	addnav("Verlassen", "outhouse.php?op=nowash");
 }elseif ($_GET['op'] == "free"){
-	page_header("Öffentliche Toilette!");
+	page_header("Ã–ffentliche Toilette!");
 	$session['user']['usedouthouse'] = 1;
-	output("`2Der furchtbare Gestank treibt dir Tränen in die Augen und deine Nasenhaare kräuseln sich!`n");
-	output("Nachdem er sich die Nase damit geputzt hat, überreicht dir der Klopapier-Gnom ein Blatt einlagiges Klopapier.`n");
-	output("Du entschliesst dich, dieses Teil lieber nicht zu benutzen, nachdem du seine Hände gesehen hast.`n`n");
-	output("Beinahe rutschst du in das große Loch in der Mitte des Raumes, während du " . ($session['user']['sex']?"darüber in die Hocke gehst":"dich darüber stellst") . ". Der Klopapier-Gnom beobachtet dich bei deinem Geschäft sehr genau.`n");
+	output("`2Der furchtbare Gestank treibt dir TrÃ¤nen in die Augen und deine Nasenhaare krÃ¤useln sich!`n");
+	output("Nachdem er sich die Nase damit geputzt hat, Ã¼berreicht dir der Klopapier-Gnom ein Blatt einlagiges Klopapier.`n");
+	output("Du entschliesst dich, dieses Teil lieber nicht zu benutzen, nachdem du seine HÃ¤nde gesehen hast.`n`n");
+	output("Beinahe rutschst du in das groÃŸe Loch in der Mitte des Raumes, wÃ¤hrend du " . ($session['user']['sex']?"darÃ¼ber in die Hocke gehst":"dich darÃ¼ber stellst") . ". Der Klopapier-Gnom beobachtet dich bei deinem GeschÃ¤ft sehr genau.`n");
 	output("Du machst so schnell du kannst, denn so arg lange kannst du die Luft nicht anhalten.`n");
 	if (!$session['user']['prefs']['nosounds']) output("<embed src=\"media/ogpissd.wav\" width=10 height=10 autostart=true loop=false hidden=true volume=100>",true);
-	addnav("Hände waschen", "outhouse.php?op=washfree");
+	addnav("HÃ¤nde waschen", "outhouse.php?op=washfree");
 	addnav("Verlassen", "outhouse.php?op=nowash");
 }elseif ($_GET['op'] == "washpay"|| $_GET['op'] == "washfree"){
 	page_header("Wasch Stand");
-	output("`2Hände waschen ist immer eine gute Sache. Du machst dich zurecht, bringst dein(e/n) {$session['user']['armor']} in Ordnung und betrachtest dein Spiegelbild im Wasser. Dann machst du dich wieder auf den Weg.`0`n");
+	output("`2HÃ¤nde waschen ist immer eine gute Sache. Du machst dich zurecht, bringst dein(e/n) {$session['user']['armor']} in Ordnung und betrachtest dein Spiegelbild im Wasser. Dann machst du dich wieder auf den Weg.`0`n");
 	$goodhabits = e_rand($goodminimum, $goodmaximum);
-	if ($goodhabits > $musthit && $_GET['op']=="washpay"){
+	// Der konfigurierte Grenzwert entscheidet, ob die Waschraum-Belohnung ausgeloest wird.
+	if ($goodhabits > $goodmusthit && $_GET['op']=="washpay"){
 		output("`^Die Waschraum-Fee segnet dich!`n");
 		if (e_rand(1,2)==1){
-			output("`7Du bekommst `^$giveback `7Gold für Hygiene und Sauberkeit!`0`n");
+			output("`7Du bekommst `^$giveback `7Gold fÃ¼r Hygiene und Sauberkeit!`0`n");
 			$session['user']['gold'] += $giveback;
 			// debuglog("got $giveback gold in the outhouse for washing");
 		}else{
 			// idea by metatron-sama, coded by anpera
 			output("`7Deine Verteidigung steigt!`0`n");
-			$session['bufflist']['segen'] = array("name"=>"`9Segen","rounds"=>8,"wearoff"=>"Der Segen der Waschraumfee wirkt nicht mehr.","defmod"=>1.1,"roundmsg"=>"`9Der Segen der Waschraumfee schützt dich.","activate"=>"offense");
+			$session['bufflist']['segen'] = array("name"=>"`9Segen","rounds"=>8,"wearoff"=>"Der Segen der Waschraumfee wirkt nicht mehr.","defmod"=>1.1,"roundmsg"=>"`9Der Segen der Waschraumfee schÃ¼tzt dich.","activate"=>"offense");
 		}
 		if ($giveagem == 1){
 			$givegemtemp = e_rand($gemminimum, $gemmaximum);
 			if ($givegemtemp <= $givegempercent){
 				$session['user']['gems']++;
 				//debuglog("gained 1 gem in the outhouse");
-				output("`&Bist du nicht ein Glückspilz? Du findest einen Edelstein beim Eingang!`0`n");
+				output("`&Bist du nicht ein GlÃ¼ckspilz? Du findest einen Edelstein beim Eingang!`0`n");
 			}
 			if ($giveaturn == 1){
 				$session['user']['turns']++;
@@ -109,10 +113,11 @@ if ($_GET['op'] == "pay"){
 			}
 			if ($session['user']['drunkenness']>0){
 				$session['user']['drunkenness'] *= .9;
-				output("`&Du verlässt das Klohäuschen und fühlst dich etwas nüchterner!`n`0");
+				output("`&Du verlÃ¤sst das KlohÃ¤uschen und fÃ¼hlst dich etwas nÃ¼chterner!`n`0");
 			}
 		}
-	}elseif ($goodhabits > $musthit && $_GET['op'] == "washfree"){
+	// Auch beim kostenlosen Waschplatz wird derselbe konfigurierte Grenzwert verwendet.
+	}elseif ($goodhabits > $goodmusthit && $_GET['op'] == "washfree"){
 		if (e_rand(1, 3)==1) {
 			output("`&Du bemerkst einen kleinen Beutel mit `^$giveback `7Gold, den hier wohl jemand vergessen hat.`0");
 			$session['user']['gold'] += $giveback;
@@ -121,55 +126,55 @@ if ($_GET['op'] == "pay"){
 	}
 	forest(true);
 }elseif (($_GET['op'] == "nowash")){
-	page_header("Stinkende Hände");
-	output("`2Deine Hände sind schmutzig und stinken!`n");
+	page_header("Stinkende HÃ¤nde");
+	output("`2Deine HÃ¤nde sind schmutzig und stinken!`n");
 	output("Hat dir deine Mutter denn gar nichts beigebracht?`n");
 	$takeaway = e_rand($badminimum, $badmaximum);
 	if ($takeaway >= $badmusthit){
 		if ($session['user']['gold'] >= $goldinhand){
 			$session['user']['gold'] -= $takeback;
 			//debuglog("lost $takeback gold in the outhouse for not washing");
-			output("`nDer Klopapier-Gnom hat dich auf den schleimigen, verdreckten Boden geschmissen und dir $takeback Goldstück" . ($takeback > 1?"e":"") . " für deine Schlampigkeit abgenommen!`n");
+			output("`nDer Klopapier-Gnom hat dich auf den schleimigen, verdreckten Boden geschmissen und dir $takeback GoldstÃ¼ck" . ($takeback > 1?"e":"") . " fÃ¼r deine Schlampigkeit abgenommen!`n");
 		}
 		output("Bist du nicht auch froh, dass peinliche Momente wie dieser nicht in den News stehen?`n");
 		$session['user']['donation']+=1;
-		addnews("`2Cool, " . ($session['user']['name']) . " `2lief mit einem langen Stück Klopapier an " . ($session['user']['sex']?"ihrem":"seinem") . " Fuß herum.");
+		addnews("`2Cool, " . ($session['user']['name']) . " `2lief mit einem langen StÃ¼ck Klopapier an " . ($session['user']['sex']?"ihrem":"seinem") . " FuÃŸ herum.");
 	}
 	forest(true);
 }else{
-	page_header("Die Klohäuschen");
+	page_header("Die KlohÃ¤uschen");
 	if ($session['user']['usedouthouse'] == 0){
-		output("`2Das Dorf verfügt über 2 Klohäuschen, die wegen der monsterabwehrenden Wirkung des Gestanks etwas ");
+		output("`2Das Dorf verfÃ¼gt Ã¼ber 2 KlohÃ¤uschen, die wegen der monsterabwehrenden Wirkung des Gestanks etwas ");
 		output("ausserhalb im Wald stehen.`n`nIn typischer Klassenmanier gibt es ein bevorzugtes und ein ");
-		output("heruntergekommenes Häuschen. Du hast die Wahl!`0`n`n");
+		output("heruntergekommenes HÃ¤uschen. Du hast die Wahl!`0`n`n");
 		addnav("Toiletten");	
 		if ($canpay){
 			addnav("Private Toilette: ($cost Gold)", "outhouse.php?op=pay");
 		}else{
-			output("`2Die private Toilette kostet `^$cost `2Gold. Sieht so aus. als ob du es entweder aushalten, oder die öffentliche Toilette benutzen musst!");
+			output("`2Die private Toilette kostet `^$cost `2Gold. Sieht so aus. als ob du es entweder aushalten, oder die Ã¶ffentliche Toilette benutzen musst!");
 		}
-		addnav("Öffentliche Toilette (kostenlos)", "outhouse.php?op=free");
+		addnav("Ã–ffentliche Toilette (kostenlos)", "outhouse.php?op=free");
 		addnav("Aushalten", "forest.php");
 		if (getsetting("dailyspecial","Keines")=="Orkburg"){
 			addnav("Zur Orkburg","paths.php?ziel=castle");
-			output("`2Neben den Klohäuschen findest du, halb von Gras bewachsen, einen uralten, abgebrochenen Wegweiser am Boden. Er scheint aber noch immer in die ");
-			output("Richtung zu zeigen, für die er einst gedacht war. Die Aufschrift lautet \"`tOrkburg`2\". Du könntest diese Chance nutzen...");
+			output("`2Neben den KlohÃ¤uschen findest du, halb von Gras bewachsen, einen uralten, abgebrochenen Wegweiser am Boden. Er scheint aber noch immer in die ");
+			output("Richtung zu zeigen, fÃ¼r die er einst gedacht war. Die Aufschrift lautet \"`tOrkburg`2\". Du kÃ¶nntest diese Chance nutzen...");
 		}
 	}else{
-		output("`2Das Dorf verfügt über 2 Klohäuschen, die wegen der monsterabwehrenden Wirkung des Gestanks etwas ");
+		output("`2Das Dorf verfÃ¼gt Ã¼ber 2 KlohÃ¤uschen, die wegen der monsterabwehrenden Wirkung des Gestanks etwas ");
 		output("ausserhalb im Wald stehen.`n`n");
 			switch(e_rand(1,3)){
 			case 1:
-		output("Die Klohäuschen sind wegen ... Reparaturarbeiten ... geschlossen.`nDu wirst es bis morgen aushalten müssen!");
+		output("Die KlohÃ¤uschen sind wegen ... Reparaturarbeiten ... geschlossen.`nDu wirst es bis morgen aushalten mÃ¼ssen!");
 				break;
 			case 2:
-				output("Als du dich den Plumpsklos näherst, erkennst du, dass du den Gestank heute nicht noch einmal aushalten kannst.");
+				output("Als du dich den Plumpsklos nÃ¤herst, erkennst du, dass du den Gestank heute nicht noch einmal aushalten kannst.");
 				break;
 			case 3:
-				output("Du hast wirklich nichts mehr in dir, was du heute noch ablassen könntest!");
+				output("Du hast wirklich nichts mehr in dir, was du heute noch ablassen kÃ¶nntest!");
 				break;
 			}
-		output("`n`n`7Du kehrst in den Wald zurück.`0");
+		output("`n`n`7Du kehrst in den Wald zurÃ¼ck.`0");
 		forest(true);
 	}
 }

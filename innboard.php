@@ -13,7 +13,7 @@ if ($_GET['op']=="del"){
 	$acctid = (int)db_unquote_legacy_input($_GET['userid']);
 	$sql = "UPDATE accounts SET message='',msgdate='0000-00-00 00:00:00' WHERE acctid=?";
 	db_query_params($sql, array($acctid));
-	systemmail($acctid,"`0Nachricht gelöscht","`0Ein Administrator hat deine Nachricht vom schwarzen Brett genommen.`n`nWenn du darüber diskutieren willst, wende dich an ".$session['user']['name']."`0, oder benutze bitte den Link zur Hilfeanfrage.");
+	systemmail($acctid,"`0Nachricht gelÃ¶scht","`0Ein Administrator hat deine Nachricht vom schwarzen Brett genommen.`n`nWenn du darÃ¼ber diskutieren willst, wende dich an ".$session['user']['name']."`0, oder benutze bitte den Link zur Hilfeanfrage.");
 }
 
 $sql = "SELECT acctid,login,name,message,msgdate FROM accounts WHERE message>'' ORDER BY msgdate DESC";
@@ -31,8 +31,8 @@ if (db_num_rows($result)<=0){
 	}
 }
 db_free_result($result);
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Aktualisieren","innboard.php");
 page_footer();
 ?>

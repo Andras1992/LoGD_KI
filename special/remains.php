@@ -19,13 +19,13 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 	$result = db_query("SELECT name,sex FROM accounts WHERE alive=0 ORDER BY rand(".e_rand().") LIMIT 1");
 	$row2 = db_fetch_assoc($result);
 	$tname = $row2['name'];
-	output("`GDu stoplerst über etwas. Es sind die skelettierten Überreste dessen, was einst ein Abenteuer wie du gewesen sein könnte. Tatsächlich deutes vieles darauf hin, dass dies die Überreste von `%$tname`G sind.");
-	output("Die sterblichen Überreste scheinen unberührt und was immer ".($row2['sex']?"sie":"er")." für Schätze dabei gehabt haben mag, könnte immer noch dort sein. ");
+	output("`GDu stoplerst Ã¼ber etwas. Es sind die skelettierten Ãœberreste dessen, was einst ein Abenteuer wie du gewesen sein kÃ¶nnte. TatsÃ¤chlich deutes vieles darauf hin, dass dies die Ãœberreste von `%$tname`G sind.");
+	output("Die sterblichen Ãœberreste scheinen unberÃ¼hrt und was immer ".($row2['sex']?"sie":"er")." fÃ¼r SchÃ¤tze dabei gehabt haben mag, kÃ¶nnte immer noch dort sein. ");
 	output("`n`nWas wirst du tun?`n`n");
-	addnav("Nach Reichtümern suchen","forest.php?op=desecrate");
+	addnav("Nach ReichtÃ¼mern suchen","forest.php?op=desecrate");
 	addnav("Die Leiche in Ruhe lassen","forest.php?op=leave");
 	if ($session['user']['turns'] > 2) {
-		addnav("Begraben (3 Waldkämpfe)","forest.php?op=bury");
+		addnav("Begraben (3 WaldkÃ¤mpfe)","forest.php?op=bury");
 	}
 	$session['user']['specialinc']="remains.php";
 } elseif ($HTTP_GET_VARS['op']=="bury"){
@@ -34,11 +34,11 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 	// changed to fit the anpera.net code
 	$session['user']['reputation']+=2;
 	//check_align();
-	output("`GDu verbringst einen großen Teil des Tages damit, diesem gefallenen Abenteuerer ein Grab zu Schaufeln und ihm ein ordentliches Begräbnis zukommen zu lassen. ");
-	output("Du verzichtest auf Reichtum, wenn du ihn stehlen müsstest - erst Recht von Toten.`n ");
-	output("`n`nAußerdem willst du nicht die Rache der Toten hinter dir wissen, zusätzlich zu den Kreaturen des Waldes.`n`n");
+	output("`GDu verbringst einen groÃŸen Teil des Tages damit, diesem gefallenen Abenteuerer ein Grab zu Schaufeln und ihm ein ordentliches BegrÃ¤bnis zukommen zu lassen. ");
+	output("Du verzichtest auf Reichtum, wenn du ihn stehlen mÃ¼sstest - erst Recht von Toten.`n ");
+	output("`n`nAuÃŸerdem willst du nicht die Rache der Toten hinter dir wissen, zusÃ¤tzlich zu den Kreaturen des Waldes.`n`n");
 	output("Als du endlich mit dem Grab fertig bist, erscheint eine kleine Fee vor dir. \"`#Das war sehr edel, was du getan hast. ");
-	output(" Ich werde dich dafür belohnen.`G\"`n`n");
+	output(" Ich werde dich dafÃ¼r belohnen.`G\"`n`n");
 	$reward = rand(1,12);
 	switch ($reward) {
 		case 1:
@@ -72,7 +72,7 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 			}
 			break;
 		default:
-			output("Du fühlst dich gut bei dem, was du getan hast.`n");
+			output("Du fÃ¼hlst dich gut bei dem, was du getan hast.`n");
 			output("Du bekommst mehr Charme!");
 			// debuglog("gained two charm for burying a corpse");
 			$session['user']['charm']+=e_rand(1,2);
@@ -80,11 +80,11 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 	}
 	$session['user']['specialinc']="";
 } elseif ($HTTP_GET_VARS['op']=="leave"){
-	output("`GIrgendetwas hat diese Person getötet und dieses Etwas könnte immer noch hier sein. Es ist sicherer, schnell zu verschwinden.`n`n ");
+	output("`GIrgendetwas hat diese Person getÃ¶tet und dieses Etwas kÃ¶nnte immer noch hier sein. Es ist sicherer, schnell zu verschwinden.`n`n ");
 	$session['user']['specialinc']="";
 } elseif ($HTTP_GET_VARS['op']=="desecrate"){
 	$session['user']['turns']--;
-	output("`GDu durchwühlst die Sachen der Leiche nach etwas Brauchbarem.`n");
+	output("`GDu durchwÃ¼hlst die Sachen der Leiche nach etwas Brauchbarem.`n");
 	// The following line is specific to lgd.tod-online.com
 	// changed for anpera.net code
 	$session['user']['reputation']-=2;
@@ -95,8 +95,8 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 			$gold_gain = rand($session['user']['level']*10,$session['user']['level']*20);
 			$gemword = "Edelsteine";
 			if ($gem_gain == 1) $gemword = "Edelstein";
-			output("Die Leiche zu plündern hat sich bezahlt gemacht! Du hast $gem_gain $gemword ");
-			output("und $gold_gain Goldstücke gefunden.`n`n");
+			output("Die Leiche zu plÃ¼ndern hat sich bezahlt gemacht! Du hast $gem_gain $gemword ");
+			output("und $gold_gain GoldstÃ¼cke gefunden.`n`n");
 			$session['user']['gems']+=$gem_gain;
 			$session['user']['gold']+=$gold_gain;
 			$session['user']['specialinc']="";
@@ -105,14 +105,14 @@ if ($HTTP_GET_VARS['op']=="" || $HTTP_GET_VARS['op']=="search"){
 		case 3:
 		case 4:
 			output("Du durchsuchst die Leiche nach Reichtum, aber alles, was du finden kannst, sind vermoderte Lumpen und verrostete Waffen. ");
-			output("Vielleicht hast du bei der nächsten Leiche mehr Glück.`n`n");
+			output("Vielleicht hast du bei der nÃ¤chsten Leiche mehr GlÃ¼ck.`n`n");
 			$session['user']['specialinc']="";
 			//debuglog("looted a corpse and found nothing");
 			break;
 		default:
-			output("Als du die Leiche nach Reichtümern durchwühlst, lenkt eine plötzliche Bewegung deine Aufmerksamkeit auf sich. Du machst einen Satz zurück und ");
-			output("siehst, wie sich dieses tote Skelett aufrappelt. Seine leeren Augenhöhlen staren dich mit einem roten Glühen an. ");
-			output("Wenn es reden könnte, würde es dich sicher verfluchen, aber schon das kranke Schleifgeräusch von Knochen auf Knochen lässt es dir eiskalt den Rücken runterlaufen. ");
+			output("Als du die Leiche nach ReichtÃ¼mern durchwÃ¼hlst, lenkt eine plÃ¶tzliche Bewegung deine Aufmerksamkeit auf sich. Du machst einen Satz zurÃ¼ck und ");
+			output("siehst, wie sich dieses tote Skelett aufrappelt. Seine leeren AugenhÃ¶hlen staren dich mit einem roten GlÃ¼hen an. ");
+			output("Wenn es reden kÃ¶nnte, wÃ¼rde es dich sicher verfluchen, aber schon das kranke SchleifgerÃ¤usch von Knochen auf Knochen lÃ¤sst es dir eiskalt den RÃ¼cken runterlaufen. ");
 			output("`n`n");
 			$badguy = array(
             				"creaturename"=>"`\$Skelettkrieger`0",
@@ -148,7 +148,7 @@ if ($battle) {
             		$session['user']['badguy']="";
             		output("`n`GNach einem heftigen Kampf hast du den Skelettkrieger besiegt. Du hoffst, dass er vielleicht jetzt ");
            		output("endlich seine ewige Ruhe finden wird.`n`n");
-            		output("Oder wenigstens, bis der nächste Abenteurer auf der Suche nach dem schnellen Geld über seine Leiche stolpert.`n`n");
+            		output("Oder wenigstens, bis der nÃ¤chste Abenteurer auf der Suche nach dem schnellen Geld Ã¼ber seine Leiche stolpert.`n`n");
             		// debuglog("defeated a skeletal warrior after disturbing it");
 			if (rand(1,2)==1) {
 				$gem_gain = rand(1,3);
@@ -156,11 +156,11 @@ if ($battle) {
 				$gemword = "Edelsteine";
 				if ($gem_gain == 1) $gemword="Edelstein";
 				output("Nach deinem Sieg nimmst du dir, was die deiner Meinung nach zusteht. Du findest $gem_gain $gemword ");
-				output("und $gold_gain Goldstücke.`n`n");
+				output("und $gold_gain GoldstÃ¼cke.`n`n");
 				$session['user']['gems']+=$gem_gain;
 				$session['user']['gold']+=$gold_gain;
 			} else {
-				output("Trotz allem findest du nichts, was die Mühe wert gewesen wäre.`n`n");
+				output("Trotz allem findest du nichts, was die MÃ¼he wert gewesen wÃ¤re.`n`n");
 			}
 			$exp_gain=($session['user']['level']+1)*20;
 			output("Du bekommst $exp_gain Erfahrungspunkte.`n`n");
@@ -170,8 +170,8 @@ if ($battle) {
             		$badguy=array();
             		$session['user']['badguy']="";
             		//debuglog("was killed by a Skeletal Warrior.");
-            		output("`n`GDu wurdest vom Skelettkrieger besiegt! Doch anstatt im Totenreich aufzuwachen, bist du immer noch am Leben!`n`nDu verlierst 2% deiner Erfahrung".($session['user']['gems']?" und vermisst plötzlich einen deiner Edelsteine":"").". ");
-		output("`nAußerdem scheint ein schwerer Fluch vom Skelettkrieger auf dich übergesprungen zu sein. Ob das seine Todesursache war? ");
+            		output("`n`GDu wurdest vom Skelettkrieger besiegt! Doch anstatt im Totenreich aufzuwachen, bist du immer noch am Leben!`n`nDu verlierst 2% deiner Erfahrung".($session['user']['gems']?" und vermisst plÃ¶tzlich einen deiner Edelsteine":"").". ");
+		output("`nAuÃŸerdem scheint ein schwerer Fluch vom Skelettkrieger auf dich Ã¼bergesprungen zu sein. Ob das seine Todesursache war? ");
 		if ($session['user']['gems']) $session['user']['gems']--;
 		// Don't take away live and wellnes ... just curse the player ;)
 		// addnav("Daily news","news.php");

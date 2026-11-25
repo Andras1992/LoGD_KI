@@ -33,7 +33,7 @@ if ($HTTP_POST_VARS['name']!=""){
 				}*/
 				if ($session['user']['emailvalidation']!="" && substr($session['user']['emailvalidation'],0,1)!="x"){
 					$session['user']=array();
-					$session['message']="`4Fehler: Du musst deine E-Mail Adresse bestätigen lassen, bevor du dich einloggen kannst.";
+					$session['message']="`4Fehler: Du musst deine E-Mail Adresse bestÃ¤tigen lassen, bevor du dich einloggen kannst.";
 					echo $session['message'];
 					//header("Location: index.php");
 					exit();
@@ -87,7 +87,7 @@ if ($HTTP_POST_VARS['name']!=""){
 					}
 				}
 			}else{
-				$session['message']="`4Fehler: Login-Daten waren ungültig.`0";
+				$session['message']="`4Fehler: Login-Daten waren ungÃ¼ltig.`0";
 				//now we'll log the failed attempt and begin to issue bans if there are too many, plus notify the admins.
 $sql = "DELETE FROM faillog WHERE date<?";
 				checkban();

@@ -13,7 +13,7 @@ if (addcommentary()) {
 $statuses=array(0=>"`bUngelesen`b","Gelesen","Geschlossen");
 
 if ($_GET['op']=="del"){
-	// Alle drei Löschbefehle binden die Petitionsnummer als Zahl; so bleibt sie getrennt vom SQL-Code.
+	// Alle drei LÃ¶schbefehle binden die Petitionsnummer als Zahl; so bleibt sie getrennt vom SQL-Code.
 	$sql = 'DELETE FROM petitions WHERE petitionid=?';
 	db_query_params($sql,array((int)$_GET['id']));
 	$sql = 'DELETE FROM commentary WHERE section=?';
@@ -23,28 +23,28 @@ if ($_GET['op']=="del"){
 	$_GET['op']="";
 }
 elseif ($_GET['op']=='sendmessage') {
-	// Die ID wird als Zahl gebunden, damit sie den SQL-Befehl nicht verändern kann.
+	// Die ID wird als Zahl gebunden, damit sie den SQL-Befehl nicht verÃ¤ndern kann.
 	$sql = 'SELECT author,body FROM petitions WHERE petitionid=?';
 	$result = db_query_params($sql,array((int)$_GET['id']));
 	$row = db_fetch_assoc($result);
 	// Formulareingaben vor der Textbearbeitung von der alten Backslash-Zusatzschicht befreien.
 	$subject=db_unquote_legacy_input(isset($_POST['subject']) ? $_POST['subject'] : '');
 	$body=db_unquote_legacy_input(isset($_POST['body']) ? $_POST['body'] : '');
-	// Betreff und Nachricht wie bisher von Spiel-Tags und Zeilenumbrüchen bereinigen.
+	// Betreff und Nachricht wie bisher von Spiel-Tags und ZeilenumbrÃ¼chen bereinigen.
 	$subject=closetags(str_replace(chr(96).'n',"",$subject),chr(96).'c'.chr(96).'i'.chr(96).'b');
 	$body=str_replace(chr(96).'n',"\n",$body);
 	$body=str_replace("\r\n","\n",$body);
 	$body=str_replace("\r","\n",$body);
 	$body=substr($body,0,(int)getsetting("mailsizelimit",1024));
 	$body=closetags($body,chr(96).'c'.chr(96).'i'.chr(96).'b');
-	// Derselbe bereinigte Text geht an den Empfänger und in den Petitionsverlauf.
+	// Derselbe bereinigte Text geht an den EmpfÃ¤nger und in den Petitionsverlauf.
 	systemmail($row['author'],$subject,$body);
 	petitionmail($subject,$body,$_GET['id'],$session['user']['acctid'],1,$row['author'],db_insert_id(LINK));
 	redirect('viewpetition.php?op=view&id='.$_GET['id']);
 }
 page_header("Petition Viewer");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 if ($_GET['op']==""){
 	// Das Datum wird als Wert gebunden, damit MariaDB es sicher als Datum vergleicht.
 	$petitionMailExpiry=date("Y-m-d H:i:s",strtotime(date("r")."-7 days"));
@@ -69,11 +69,11 @@ if ($_GET['op']==""){
 	output("<table border='0'><tr class='trhead'><td>Num</td><td>Ops</td><td>Von</td><td>Sent</td><td>Status</td><td>Kommentare</td></tr>",true);
 	for ($i=0;$i<db_num_rows($result);$i++){
 		$row = db_fetch_assoc($result);
-		// Die Petitionsnummer wird als Teil des Abschnitts sicher an die Abfrage übergeben.
+		// Die Petitionsnummer wird als Teil des Abschnitts sicher an die Abfrage Ã¼bergeben.
 		$sql = "SELECT count(commentid) AS c FROM commentary WHERE section=?";
 		$res = db_query_params($sql,array('pet-'.(int)$row['petitionid']));
 		$counter = db_fetch_assoc($res);
-		output("<tr class='".($i%2?"trlight":"trdark")."'><td>{$row['petitionid']}</td><td>[<a href='viewpetition.php?op=view&id={$row['petitionid']}'>Anzeigen</a>|<a href='viewpetition.php?op=del&id={$row['petitionid']}' onClick='return confirm(\"Diese Anfrage wirklich löschen?\");'>Del</a>|<a href='viewpetition.php?setstat=0&id={$row['petitionid']}'>Ungelesen</a>|<a href='viewpetition.php?setstat=1&id={$row['petitionid']}'>Gelesen</a>|<a href='viewpetition.php?setstat=2&id={$row['petitionid']}'>Geschlossen</a>]</td>",true);
+		output("<tr class='".($i%2?"trlight":"trdark")."'><td>{$row['petitionid']}</td><td>[<a href='viewpetition.php?op=view&id={$row['petitionid']}'>Anzeigen</a>|<a href='viewpetition.php?op=del&id={$row['petitionid']}' onClick='return confirm(\"Diese Anfrage wirklich lÃ¶schen?\");'>Del</a>|<a href='viewpetition.php?setstat=0&id={$row['petitionid']}'>Ungelesen</a>|<a href='viewpetition.php?setstat=1&id={$row['petitionid']}'>Gelesen</a>|<a href='viewpetition.php?setstat=2&id={$row['petitionid']}'>Geschlossen</a>]</td>",true);
 		output("<td>",true);
 		if ($row['name']==""){
 			output(preg_replace("'[^a-zA-Z0-91234567890\\[\\]= @.!,?-]'","",substr($row['body'],0,strpos($row['body'],"[email"))));
@@ -88,14 +88,14 @@ if ($_GET['op']==""){
 		addnav("","viewpetition.php?setstat=2&id=$row[petitionid]");
 	}
 	output("</table>",true);
-	output("`i(Geschlossene Anfragen werden nach 7 Tagen automatisch gelöscht)`i");
-	output("`n`bSchlüssel:`b`nUngelesen: Niemand arbeitet bisher an diesem Problem.
+	output("`i(Geschlossene Anfragen werden nach 7 Tagen automatisch gelÃ¶scht)`i");
+	output("`n`bSchlÃ¼ssel:`b`nUngelesen: Niemand arbeitet bisher an diesem Problem.
 	`nGelesen: Es arbeitet jemand an diesem Problem.
-	`nGeschlossen: Diese Anfrage wurde bearbeitet. Es sollte keine weitere Arbeit mehr nötig sein.`n`n
+	`nGeschlossen: Diese Anfrage wurde bearbeitet. Es sollte keine weitere Arbeit mehr nÃ¶tig sein.`n`n
 	Wenn eine Anfrage gelesen wird, wird sie automatisch als gelesen markiert, wenn sie nicht schon als geschlossen markiert war. 
-	Wenn du ein Problem nicht lösen kannst, markiere die Anfrage wieder als ungelesen, damit 
+	Wenn du ein Problem nicht lÃ¶sen kannst, markiere die Anfrage wieder als ungelesen, damit 
 	ein anderer dem Spieler helfen kann.`n
-	Wenn eine Anfrage erfolgreich bearbeitet wurde, markiere sie als geschlossen. Sie wird nach 7 Tagen dann automatisch gelöscht.");
+	Wenn eine Anfrage erfolgreich bearbeitet wurde, markiere sie als geschlossen. Sie wird nach 7 Tagen dann automatisch gelÃ¶scht.");
 }elseif($_GET['op']=="view"){
 	if ($_GET['viewpageinfo']==1){
 		addnav("Details ausblenden","viewpetition.php?op=view&id={$_GET['id']}");
@@ -128,12 +128,12 @@ if ($_GET['op']==""){
 	$body = preg_replace("'([\\[][[:alnum:]_.-]+[\\]])'i","<span class='colLtRed'>\\1</span>",$body);
 	$output.="<span style='font-family: fixed-width'>".nl2br($body)."</span>";
 	output("`n`@Kommentare:`n");
-	viewcommentary("pet-{$_GET['id']}","Hinzufügen",200);
+	viewcommentary("pet-{$_GET['id']}","HinzufÃ¼gen",200);
 	if ($row['login']!='') {
 		$answerbody = "\n\n----- Deine Anfrage -----\n".$row['body'];
 		$answersubject = 'RE: Hilfeanfrage';
 		output('`n`n`@Mailverkehr:`n<table><tr><td>',true);
-		// Die Petitionsnummer wird gebunden, damit sie den SQL-Befehl nicht verändern kann.
+		// Die Petitionsnummer wird gebunden, damit sie den SQL-Befehl nicht verÃ¤ndern kann.
 		$sql = 'SELECT petitionmail.*, accounts.login FROM petitionmail LEFT JOIN accounts ON petitionmail.msgfrom=accounts.acctid WHERE petitionid=? ORDER BY sent ASC';
 		$result = db_query_params($sql,array((int)$_GET['id']));
 		while ($row2 = db_fetch_assoc($result)) {

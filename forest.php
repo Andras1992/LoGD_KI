@@ -8,6 +8,8 @@ require_once "common.php";
 $HTTP_GET_VARS =& $_GET;
 // Ohne op ist der Wald einfach in seiner normalen Startansicht.
 if (!isset($_GET['op'])) $_GET['op'] = "";
+// Der optionale Typ beschreibt nur den Waldabschnitt und darf fehlen.
+if (!isset($HTTP_GET_VARS["type"])) { $HTTP_GET_VARS["type"] = ""; }
 $balance = getsetting("creaturebalance", 0.33);
 
 // Handle updating any commentary that might be around.
@@ -55,30 +57,30 @@ if ($HTTP_GET_VARS['op']=="run"){
 	}
 }
 if ($HTTP_GET_VARS['op']=="dragon"){
-	addnav("Betrete die Höhle","dragon.php");
+	addnav("Betrete die HÃ¶hle","dragon.php");
 	addnav("Renne weg wie ein Baby","inn.php");
-	output("`\$Du betrittst den dunklen Eingang einer Höhle in den Tiefen des Waldes, ");
-	output(" im Umkreis von mehreren hundert Metern sind die Bäume bis zu den Stümpfen niedergebrannt.  ");
-	output("Rauchschwaden steigen an der Decke des Höhleneinganges empor und werden plötzlich ");
-	output("von einer kalten Windböe verweht.  Der Eingang der Höhle liegt an der Seite eines Felsens ");
-	output("ein Dutzent Meter über dem Boden des Waldes, wobei Geröll eine kegelförmige ");
+	output("`\$Du betrittst den dunklen Eingang einer HÃ¶hle in den Tiefen des Waldes, ");
+	output(" im Umkreis von mehreren hundert Metern sind die BÃ¤ume bis zu den StÃ¼mpfen niedergebrannt.  ");
+	output("Rauchschwaden steigen an der Decke des HÃ¶hleneinganges empor und werden plÃ¶tzlich ");
+	output("von einer kalten WindbÃ¶e verweht.  Der Eingang der HÃ¶hle liegt an der Seite eines Felsens ");
+	output("ein Dutzent Meter Ã¼ber dem Boden des Waldes, wobei GerÃ¶ll eine kegelfÃ¶rmige ");
 	output("Rampe zum Eingang bildet.  Stalaktiten und Stalagmiten nahe des Einganges ");
-	output("erwecken in dir dein Eindruck, dass der Höhleneingang in Wirklichkeit ");
+	output("erwecken in dir dein Eindruck, dass der HÃ¶hleneingang in Wirklichkeit ");
 	output("das Maul einer riesigen Bestie ist.  ");
-	output("`n`nAls du vorsichtig den Eingang der Höhle betrittst, hörst - oder besser fühlst du, ");
-	output("ein lautes Rumpeln, das etwa dreißig Sekunden andauert, bevor es wieder verstummt ");
-	output("Du bemerkst, dass dir ein Schwefelgeruch entgegenkommt.  Das Poltern ertönt erneut, und hört wieder auf, ");
-	output("in einem regelmäßigen Rhythmus.  ");
-	output("`n`nDu kletterst den Geröllhaufen rauf, der zum Eingang der Höhle führt. Deine Schritte zerbrechen ");
-	output("die scheinbaren Überreste ehemaliger Helden.");
-	output("`n`nJeder Instinkt in deinem Körper will fliehen und so schnell wie möglich zurück ins warme Wirtshaus und ");
-	output(" ".($session['user']['sex']?"zum noch wärmeren Seth":"zur noch wärmeren Violet").".  Was tust du?");
+	output("`n`nAls du vorsichtig den Eingang der HÃ¶hle betrittst, hÃ¶rst - oder besser fÃ¼hlst du, ");
+	output("ein lautes Rumpeln, das etwa dreiÃŸig Sekunden andauert, bevor es wieder verstummt ");
+	output("Du bemerkst, dass dir ein Schwefelgeruch entgegenkommt.  Das Poltern ertÃ¶nt erneut, und hÃ¶rt wieder auf, ");
+	output("in einem regelmÃ¤ÃŸigen Rhythmus.  ");
+	output("`n`nDu kletterst den GerÃ¶llhaufen rauf, der zum Eingang der HÃ¶hle fÃ¼hrt. Deine Schritte zerbrechen ");
+	output("die scheinbaren Ãœberreste ehemaliger Helden.");
+	output("`n`nJeder Instinkt in deinem KÃ¶rper will fliehen und so schnell wie mÃ¶glich zurÃ¼ck ins warme Wirtshaus und ");
+	output(" ".($session['user']['sex']?"zum noch wÃ¤rmeren Seth":"zur noch wÃ¤rmeren Violet").".  Was tust du?");
 	$session['user']['seendragon']=1;
 }
 if ($HTTP_GET_VARS['op']=="search"){
 	checkday();
   if ($session['user']['turns']<=0){
-    output("`\$`bDu bist zu müde um heute den Wald weiter zu durchsuchen. Vielleicht hast du morgen mehr Energie dazu.`b`0");
+    output("`\$`bDu bist zu mÃ¼de um heute den Wald weiter zu durchsuchen. Vielleicht hast du morgen mehr Energie dazu.`b`0");
     $HTTP_GET_VARS['op']="";
   }else{
 	  $session['user']['drunkenness']=round($session['user']['drunkenness']*.9,0);
@@ -109,7 +111,7 @@ if ($HTTP_GET_VARS['op']=="search"){
 					$HTTP_GET_VARS['op']=$y;
 				}
 			}else{
-			  output("`c`b`\$FEHLER!!!`b`c`&Es ist nicht möglich die besonderen Ereignisse zu öffnen! Bitte benachrichtige den Administrator!!");
+			  output("`c`b`\$FEHLER!!!`b`c`&Es ist nicht mÃ¶glich die besonderen Ereignisse zu Ã¶ffnen! Bitte benachrichtige den Administrator!!");
 			}
   		if ($nav=="") forest(true);
   	}else{
@@ -124,12 +126,12 @@ if ($HTTP_GET_VARS['op']=="search"){
 			}
 			if ($HTTP_GET_VARS['type']=="slum"){
 			  $nlev++;
-				output("`\$Du steuerst den Abschnitt des Waldes an, von dem du weißt, dass sich dort Feinde aufhalten, die dir ein bisschen angenehmer sind.`0`n");
+				output("`\$Du steuerst den Abschnitt des Waldes an, von dem du weiÃŸt, dass sich dort Feinde aufhalten, die dir ein bisschen angenehmer sind.`0`n");
 				$session['user']['reputation']--;
 			}
 			if ($HTTP_GET_VARS['type']=="thrill"){
 			  $plev++;
-				output("`\$Du steuerst den Abschnitt des Waldes an, in dem sich Kreaturen deiner schlimmsten Albträume aufhalten, in der Hoffnung dass Du eine findest die verletzt ist.`0`n");
+				output("`\$Du steuerst den Abschnitt des Waldes an, in dem sich Kreaturen deiner schlimmsten AlbtrÃ¤ume aufhalten, in der Hoffnung dass Du eine findest die verletzt ist.`0`n");
 				$session['user']['reputation']++;
 			}
 			$targetlevel = ($session['user']['level'] + $plev - $nlev );
@@ -205,7 +207,7 @@ if ($battle){
 		);
 		output("`b`&$badguy[creaturelose]`0`b`n"); 
 		output("`b`\$Du hast $badguy[creaturename] erledigt!`0`b`n");
-		output("`#Du erbeutest `^$badguy[creaturegold]`# Goldstücke!`n");
+		output("`#Du erbeutest `^$badguy[creaturegold]`# GoldstÃ¼cke!`n");
 		if ($badguy['creaturegold']) {
 			//debuglog("received {$badguy['creaturegold']} gold for slaying a monster.");
 		}
@@ -250,7 +252,7 @@ if ($battle){
 					$sql="INSERT INTO items(name,class,owner,gold,value1,description) VALUES (?,?,?,?,?,?)"; // Ruestungswerte werden getrennt von der SQL-Abfrage gespeichert.
 					$params=array($row2["armorname"],"R".chr(195).chr(188)."stung",(int)$session["user"]["acctid"],(int)$row2["value"],(int)$row2["defense"],"Gebrauchte Level ".(int)$row2["level"]." Ruestung mit ".(int)$row2["defense"]." Verteidigung.");
 				 db_query_params($sql,$params) or die(db_error(LINK)); // Ruestung wird mit ihren sicheren Parameterwerten gespeichert.
-				output("`n`QBeim Durchsuchen von $badguy[creaturename] `Qfindest du die Rüstung `%$row2[armorname]`Q!`n`n`#");
+				output("`n`QBeim Durchsuchen von $badguy[creaturename] `Qfindest du die RÃ¼stung `%$row2[armorname]`Q!`n`n`#");
 			}
 		}
 		if ($findit == 26 && e_rand(1,6)==2){ // weapon
@@ -267,7 +269,7 @@ if ($battle){
 		}
 
 		if ($expbonus>0){
-		  output("`#*** Durch die hohe Schwierigkeit des Kampfes erhältst du zusätzlich `^$expbonus`# Erfahrungspunkte! `n($badguy[creatureexp] + ".abs($expbonus)." = ".($badguy['creatureexp']+$expbonus).") ");
+		  output("`#*** Durch die hohe Schwierigkeit des Kampfes erhÃ¤ltst du zusÃ¤tzlich `^$expbonus`# Erfahrungspunkte! `n($badguy[creatureexp] + ".abs($expbonus)." = ".($badguy['creatureexp']+$expbonus).") ");
 		}else if ($expbonus<0){
 		  output("`#*** Weil dieser Kampf so leicht war, verlierst du `^".abs($expbonus)."`# Erfahrungspunkte! `n($badguy[creatureexp] - ".abs($expbonus)." = ".($badguy['creatureexp']+$expbonus).") ");
 		}
@@ -279,13 +281,13 @@ if ($battle){
 		//if ($session[user][hitpoints] == $session[user][maxhitpoints]){
 		if ($badguy['diddamage']!=1){
 			if ($session['user']['level']>=getsetting("lowslumlevel",4) || $session['user']['level']<=$creaturelevel){
-				output("`b`c`&~~ Perfekter Kampf! ~~`\$`n`bDu erhältst eine Extrarunde!`c`0`n");
+				output("`b`c`&~~ Perfekter Kampf! ~~`\$`n`bDu erhÃ¤ltst eine Extrarunde!`c`0`n");
 				$session['user']['turns']++;
 				if ($expbonus>0){
 					$session['user']['donation']+=1;
 				}
 			}else{
-				output("`b`c`&~~ Perfekter Kampf! ~~`b`\$`nEin schwierigerer Kampf hätte dir eine extra Runde gebracht.`c`n`0");
+				output("`b`c`&~~ Perfekter Kampf! ~~`b`\$`nEin schwierigerer Kampf hÃ¤tte dir eine extra Runde gebracht.`c`n`0");
 			}
 		}
 		$dontdisplayforestmessage=true;
@@ -293,7 +295,7 @@ if ($battle){
 		$badguy=array();
 	}else{
 		if($defeat){
-			addnav("Tägliche News","news.php");
+			addnav("TÃ¤gliche News","news.php");
 			$sql = "SELECT taunt FROM taunts ORDER BY rand(".e_rand().") LIMIT 1";
 			$result = db_query($sql) or die(db_error(LINK));
 			$taunt = db_fetch_assoc($result);
@@ -315,7 +317,7 @@ if ($battle){
 			output("`b`&Du wurdest von `%$badguy[creaturename]`& niedergemetzelt!!!`n");
 			output("`4Dein ganzes Gold wurde dir abgenommen!`n");
 			output("`410% deiner Erfahrung hast du verloren!`n");
-			output("Du kannst morgen weiter kämpfen.");
+			output("Du kannst morgen weiter kÃ¤mpfen.");
 			
 			page_footer();
 		}else{

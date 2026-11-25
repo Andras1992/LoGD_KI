@@ -4,16 +4,16 @@ require_once "common.php";
 isnewday(2);
 
 page_header("Wortfilter.");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Liste aktualisieren","badword.php");
-output("Hier kannst du Wörter festlegen, die das Spiel ausfiltert. Benutze ein * am Anfang oder am Ende ");
-output("eines Worts, um Wortkombinationen mit dem Wort zu filtern (wildcard). Die Wörter werden nur gefiltert, wenn der ");
+output("Hier kannst du WÃ¶rter festlegen, die das Spiel ausfiltert. Benutze ein * am Anfang oder am Ende ");
+output("eines Worts, um Wortkombinationen mit dem Wort zu filtern (wildcard). Die WÃ¶rter werden nur gefiltert, wenn der ");
 output("Wortfilter in den Spieleinstellungen aktiviert ist.");
 //output("<form action='badword.php?op=add' method='POST'>Add a word: <input name='word'><input type='submit' value='Add'></form>",true);
 //output("<form action='badword.php?op=remove' method='POST'>Remove a word: <input name='word'><input type='submit' value='Remove'></form>",true);
 //output("<form action='badword.php?op=test' method='POST'>Test a word: <input name='word'><input type='submit' value='Test'></form>",true);
-output("<form action='badword.php?op=add' method='POST'>Wort hinzufügen: <input name='word'><input type='submit' class='button' value='Hinzufügen'></form>",true);
+output("<form action='badword.php?op=add' method='POST'>Wort hinzufÃ¼gen: <input name='word'><input type='submit' class='button' value='HinzufÃ¼gen'></form>",true);
 output("<form action='badword.php?op=remove' method='POST'>Wort entfernen: <input name='word'><input type='submit' class='button' value='Entfernen'></form>",true);
 output("<form action='badword.php?op=test' method='POST'>Wort testen: <input name='word'><input type='submit' class='button' value='Test'></form>",true);
 

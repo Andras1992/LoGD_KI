@@ -17,8 +17,8 @@
 require_once "common.php";
 
 page_header("Item Editor");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 
 if ($_GET['op']=="del"){
 $sql = "DELETE FROM items WHERE id=?"; // Die Item-ID wird als Zahl gebunden, bevor der Gegenstand geloescht wird.
@@ -107,14 +107,14 @@ $sql = "SELECT items.*,accounts.name AS ownername FROM items LEFT JOIN accounts 
 $result = db_query_params($sql,array(db_unquote_legacy_input($_GET['show'])));
 		output("<tr><td>Ops</td><td>Name</td><td>Besitzer</td><td>Beschreibung</td></tr>",true);
 // Die vorbereitete Abfrage wurde bereits ausgefuehrt.
-		if (db_num_rows($result)>$ppp) addnav("Nächste Seite","itemeditor.php?show=".urlencode($_GET['show'])."&limit=".($page+1)."");
+		if (db_num_rows($result)>$ppp) addnav("NÃ¤chste Seite","itemeditor.php?show=".urlencode($_GET['show'])."&limit=".($page+1)."");
 		$cat = "";
 		for ($i=0;$i<db_num_rows($result);$i++){
 			$row = db_fetch_assoc($result);
 			output("<tr>",true);
 			output("<td>[ <a href='itemeditor.php?op=edit&id=$row[id]&show=".urlencode($row['class'])."'>Edit</a> |",true);
 			addnav("","itemeditor.php?op=edit&id=$row[id]&show=".urlencode($row['class'])."");
-			output(" <a href='itemeditor.php?op=del&id=$row[id]&show=".urlencode($row['class'])."' onClick=\"return confirm('Diesen Gegenstand wirklich löschen?');\">Löschen</a> ]</td>",true);
+			output(" <a href='itemeditor.php?op=del&id=$row[id]&show=".urlencode($row['class'])."' onClick=\"return confirm('Diesen Gegenstand wirklich lÃ¶schen?');\">LÃ¶schen</a> ]</td>",true);
 			addnav("","itemeditor.php?op=del&id=$row[id]&show=".urlencode($row['class'])."");
 			output("<td>$row[name]</td>",true);
 			output("<td>$row[ownername]</td>",true);
@@ -123,10 +123,10 @@ $result = db_query_params($sql,array(db_unquote_legacy_input($_GET['show'])));
 		}
 		output("</table>",true);
 		addnav("Item Editor","itemeditor.php");
-		addnav("Item hinzufügen","itemeditor.php?op=add&show=".urlencode($_GET['show'])."");
+		addnav("Item hinzufÃ¼gen","itemeditor.php?op=add&show=".urlencode($_GET['show'])."");
 	}else{
 		$sql = "SELECT class FROM items ORDER BY class";
-		output("Verfügbare \"classes\":`n`n<table>",true);
+		output("VerfÃ¼gbare \"classes\":`n`n<table>",true);
 		output("<tr><td>Name</td></tr>",true);
 		$result = db_query($sql);
 		$cat = "";
@@ -139,8 +139,8 @@ $result = db_query_params($sql,array(db_unquote_legacy_input($_GET['show'])));
 				output("</tr>",true);
 			}
 		}
-		output("</table>`n`nUm eine class zu löschen, müssen alle Items dieser class gelöscht werden.`nUm eine neue class zu erstellen, einfach ein Item erzeugen.",true);
-		addnav("Item hinzufügen","itemeditor.php?op=add");
+		output("</table>`n`nUm eine class zu lÃ¶schen, mÃ¼ssen alle Items dieser class gelÃ¶scht werden.`nUm eine neue class zu erstellen, einfach ein Item erzeugen.",true);
+		addnav("Item hinzufÃ¼gen","itemeditor.php?op=add");
 	}
 }
 
@@ -168,7 +168,7 @@ function itemform($item){
 	$output.="Kein Schaden Meldung: <input name='item[buff][effectnodmgmsg]' value=\"".htmlentities($item['buff']['effectnodmgmsg'])."\"><Br/>";
 	$output.="Fehlgeschlagen Meldung: <input name='item[buff][effectfailmsg]' value=\"".htmlentities($item['buff']['effectfailmsg'])."\"><Br/>";
 	$output.="<Br/><b>Effekt:</b><Br/>";
-	$output.="Hält Runden (nach Aktivierung): <input name='item[buff][rounds]' value=\"".htmlentities($item['buff']['rounds'])."\" size='5'><Br/>";
+	$output.="HÃ¤lt Runden (nach Aktivierung): <input name='item[buff][rounds]' value=\"".htmlentities($item['buff']['rounds'])."\" size='5'><Br/>";
 	$output.="Angriffsmulti Spieler: <input name='item[buff][atkmod]' value=\"".htmlentities($item['buff']['atkmod'])."\" size='5'><Br/>";
 	$output.="Verteidigungsmulti Spieler: <input name='item[buff][defmod]' value=\"".htmlentities($item['buff']['defmod'])."\" size='5'><Br/>";
 	$output.="Regen: <input name='item[buff][regen]' value=\"".htmlentities($item['buff']['regen'])."\"><Br/>";

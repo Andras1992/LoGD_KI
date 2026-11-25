@@ -40,31 +40,31 @@ if (@file_exists("houses.php")) addnav("Wohnviertel","houses.php");
 addnav("Klingengasse");
 addnav("Trainingslager","train.php");
 if (getsetting("pvp",1)){
-	addnav("Spieler töten","pvp.php");
+	addnav("Spieler tÃ¶ten","pvp.php");
 	addnav("A?Die Arena","pvparena.php");
 }
 addnav("Ruhmeshalle","hof.php");
 
 addnav("Marktplatz");
-if (getsetting("vendor",0)==1) addnav("Wanderhändler","vendor.php");
+if (getsetting("vendor",0)==1) addnav("WanderhÃ¤ndler","vendor.php");
 addnav("W?MightyEs Waffen","weapons.php");
-addnav("R?Pegasus Rüstungen","armor.php");
+addnav("R?Pegasus RÃ¼stungen","armor.php");
 addnav("B?Die alte Bank","bank.php");
 addnav("Z?Zigeunerzelt","gypsy.php");
-if (@file_exists("pavilion.php")) addnav("P?Auffälliger Pavilion","pavilion.php");
+if (@file_exists("pavilion.php")) addnav("P?AuffÃ¤lliger Pavilion","pavilion.php");
 
 addnav("Tavernenstrasse");
 addnav("E?Schenke zum Eberkopf","inn.php",true);
-addnav("Mericks Ställe","stables.php");
-if (@file_exists("lodge.php"))	addnav("J?Jägerhütte","lodge.php");
+addnav("Mericks StÃ¤lle","stables.php");
+if (@file_exists("lodge.php"))	addnav("J?JÃ¤gerhÃ¼tte","lodge.php");
 addnav("G?Der Garten", "gardens.php");
 addnav("F?Seltsamer Felsen", "rock.php");
 
 addnav("`bSonstiges`b");
-addnav("??F.A.Q. (für neue Spieler)", "petition.php?op=faq",false,true);
-addnav("N?Tägliche News","news.php");
+addnav("??F.A.Q. (fÃ¼r neue Spieler)", "petition.php?op=faq",false,true);
+addnav("N?TÃ¤gliche News","news.php");
 addnav("Profil & Inventar","prefs.php");
-addnav("Kämpferliste","list.php");
+addnav("KÃ¤mpferliste","list.php");
 addnav("In die Felder (Logout)","login.php?op=logout",true);
 addnav("Spiel-Forum","http://www.logd-welt.de/forum/index.php",false,false,true);
 
@@ -104,8 +104,8 @@ if (getsetting("topwebid", 0) != 0) {
 
 page_header("Dorfplatz");
 //output("<img src='images/trans.gif' width='1' height='700' alt='' align='right'>",true);
-output("`@`c`bDorfplatz`b`cDie Einwohner rennen geschäftig umher.  Keiner bemerkt wirklich, dass Du dort stehst.");
-output("  Du siehst verschiedene Geschäfte und Läden entlang der Strasse.  Es gibt einen merkwürdig aussehenden Felsen auf einer Seite.  ");
+output("`@`c`bDorfplatz`b`cDie Einwohner rennen geschÃ¤ftig umher.  Keiner bemerkt wirklich, dass Du dort stehst.");
+output("  Du siehst verschiedene GeschÃ¤fte und LÃ¤den entlang der Strasse.  Es gibt einen merkwÃ¼rdig aussehenden Felsen auf einer Seite.  ");
 $sql = "SELECT * FROM news WHERE 1 ORDER BY newsid DESC LIMIT 1";
 $result = db_query($sql) or die(db_error(LINK));
 $row = db_fetch_assoc($result);
@@ -121,8 +121,8 @@ output(" Das heutige Wetter: `6".$settings['weather']."`@.");
 //	$d2 = date("Y-m-d",$t2);
 //output("`n`nToday is $d1, your last new day was $d2");
 
-output("`n`n`%`@In der Nähe reden einige Dorfbewohner:`n");
-viewcommentary("village","Hinzufügen",25);
+output("`n`n`%`@In der NÃ¤he reden einige Dorfbewohner:`n");
+viewcommentary("village","HinzufÃ¼gen",25);
 // Erklaerung: Diese Funktion beendet die Seite und komprimiert ihre Antwort fuer den Browser.
 // Darum darf danach kein schliessendes PHP-Tag stehen, sonst landen Leerzeichen in der komprimierten Antwort.
 page_footer();

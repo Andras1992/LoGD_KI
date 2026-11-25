@@ -3,8 +3,8 @@
 // 24072004
 
 // The vendor Aeki sells furniture for houses and buys items found at beaten monsters in the forest.
-// items.class for furniture prototypes must be 'Möbel.Prot'.
-// items.class for bought furniture is set to 'Möbel' automatically.
+// items.class for furniture prototypes must be 'MÃ¶bel.Prot'.
+// items.class for bought furniture is set to 'MÃ¶bel' automatically.
 // Use itemeditor.php in admin grotto to generate furniture prototyps and items.
 // More classes will be added soon!
 //
@@ -18,12 +18,12 @@
 // by anpera (2004) while listening to music by 'The Sweet' ;)
 
 require_once "common.php";
-page_header("Wanderhändler");
+page_header("WanderhÃ¤ndler");
 
 if ($_GET['op']=="buy"){ // Wig-Wam Bam
 	if (!$_GET['id']){
 		$sorti=($_GET['sorti']?"$_GET[sorti]":"class DESC, name");
-		output("`qStolz präsentiert dir der Händler `tAeki`q seinen Wagen. Zu jedem der seltsamen Gegenstände, Artefakte und Zauber scheint er eine kleine Geschichte zu kennen. Dabei scheint er auffällig oft darauf ");
+		output("`qStolz prÃ¤sentiert dir der HÃ¤ndler `tAeki`q seinen Wagen. Zu jedem der seltsamen GegenstÃ¤nde, Artefakte und Zauber scheint er eine kleine Geschichte zu kennen. Dabei scheint er auffÃ¤llig oft darauf ");
 		output("hinzuweisen, dass viele Leute, von denen er etwas gekauft hat, den wahren Wert dieser Dinge nicht zu kennen scheinen.`n ");
 		$ppp=25; // Player Per Page to display
 		if (!$_GET['limit']){
@@ -33,7 +33,7 @@ if ($_GET['op']=="buy"){ // Wig-Wam Bam
 			addnav("Vorherige Waren","vendor.php?op=buy&sorti=$sorti&limit=".($page-1));
 		}
 		$limit="".($page*$ppp).",".($ppp+1);
-		$sql="SELECT * FROM items WHERE owner=0 AND (class='Schmuck' OR class='Möbel.Prot' OR class='Beute') ORDER BY $sorti ASC LIMIT $limit";
+		$sql="SELECT * FROM items WHERE owner=0 AND (class='Schmuck' OR class='MÃ¶bel.Prot' OR class='Beute') ORDER BY $sorti ASC LIMIT $limit";
 		$result=db_query($sql);
 		if (db_num_rows($result)>$ppp) addnav("Mehr Waren","vendor.php?op=buy&sorti=$sorti&limit=".($page+1));
 		if (db_num_rows($result)){
@@ -51,24 +51,24 @@ if ($_GET['op']=="buy"){ // Wig-Wam Bam
 			output("</table>",true);
 		
 		} else {
-			output("`qDa `tAeki `qheute schon ein gutes Geschäft gemacht hat, will er sich leider nicht von seinen verbliebenen Sachen trennen. Enttäuscht schlenderst du zurück zum Dorfplatz.");
+			output("`qDa `tAeki `qheute schon ein gutes GeschÃ¤ft gemacht hat, will er sich leider nicht von seinen verbliebenen Sachen trennen. EnttÃ¤uscht schlenderst du zurÃ¼ck zum Dorfplatz.");
 		}
 	}else{ // Alexander Graham Bell (what? no, he's not the author of this part. It's the name of a song by The Sweet)
 $sql="SELECT * FROM items WHERE id=?"; // Die angeforderte Artikel-ID wird sicher als Zahl gebunden.
 $result=db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	  	$row = db_fetch_assoc($result);
 		if ($session['user']['gems']<$row['gems'] || $session['user']['gold']<$row['gold']){
-			output("`qHoppla! Das kannst du dir nicht leisten. Der Händler schüttelt nur traurig den Kopf und verstaut $row[name] wieder in seinem Wagen.");
+			output("`qHoppla! Das kannst du dir nicht leisten. Der HÃ¤ndler schÃ¼ttelt nur traurig den Kopf und verstaut $row[name] wieder in seinem Wagen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
-		}else if ($row['class']=="Möbel.Prot" && $session['user']['housekey']<=0 ){
-			output("`q$row[name]`q gefällt dir wirklich gut, aber da du kein eigenes Haus besitzt, kannst du mit Möbeln auch nichts anfangen.");
+		}else if ($row['class']=="MÃ¶bel.Prot" && $session['user']['housekey']<=0 ){
+			output("`q$row[name]`q gefÃ¤llt dir wirklich gut, aber da du kein eigenes Haus besitzt, kannst du mit MÃ¶beln auch nichts anfangen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
 }else if (db_num_rows(db_query_params("SELECT id FROM items WHERE name=? AND owner=? AND class=?",array($row['name'],(int)$session['user']['acctid'],"M".chr(195).chr(182)."bel")))>0){ // Name, Besitzer und Moebelklasse werden als Datenwerte gebunden.
-			output("`qDu hast $row[name]`q schon. Du überlegst, ob sich eine Neuanschaffung wirklich lohnt. Allerdings müsstest du dazu auch erst den alten Krempel verkaufen.");
+			output("`qDu hast $row[name]`q schon. Du Ã¼berlegst, ob sich eine Neuanschaffung wirklich lohnt. Allerdings mÃ¼sstest du dazu auch erst den alten Krempel verkaufen.");
 			addnav("Etwas anderes kaufen","vendor.php?op=buy");
 		}else{
-			output("`qDer Händler reibt sich die Hände und übergibt dir $row[name], während du ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." abzählst. ");
-			if ($row['class']=="Möbel.Prot") output(" Er ist dir noch kurz beim Transport behilflich, bevor er sich seinem nächsten Kunden zuwendet.");
+			output("`qDer HÃ¤ndler reibt sich die HÃ¤nde und Ã¼bergibt dir $row[name], wÃ¤hrend du ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." abzÃ¤hlst. ");
+			if ($row['class']=="MÃ¶bel.Prot") output(" Er ist dir noch kurz beim Transport behilflich, bevor er sich seinem nÃ¤chsten Kunden zuwendet.");
 			addnav("Mehr kaufen","vendor.php?op=buy");
 $sql="UPDATE items SET owner=? WHERE id=?"; // Besitzer und Artikel-ID werden als Zahlenwerte gebunden.
 $sqlParams=array((int)$session['user']['acctid'],(int)db_unquote_legacy_input($_GET['id']));
@@ -82,11 +82,11 @@ $sqlParams=array($row['name'],"M".chr(195).chr(182)."bel",(int)$session['user'][
 db_query_params($sql,$sqlParams); // Der Kauf wird mit den vorbereiteten Werten ausgefuehrt.
 		}
 	}
-	addnav("Zurück","vendor.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck","vendor.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else if ($_GET['op']=="sell"){ // Ballroom Blitz
 	if (!$_GET['id']){
-		output("`qDer Händler begutachtet deinen Besitz. Mit dem geübten Auge eines Kenners sortiert er die Dinge aus, die ihn interessieren würden und nennt dir einen Preis dafür.`n`n");
+		output("`qDer HÃ¤ndler begutachtet deinen Besitz. Mit dem geÃ¼bten Auge eines Kenners sortiert er die Dinge aus, die ihn interessieren wÃ¼rden und nennt dir einen Preis dafÃ¼r.`n`n");
 		$sql="SELECT * FROM items WHERE owner=".$session['user']['acctid']." AND (gold>0 OR gems>0) AND class<>'Fluch' AND class<>'Zauber'";
 		$result=db_query($sql);
 		if (db_num_rows($result)){
@@ -101,37 +101,37 @@ db_query_params($sql,$sqlParams); // Der Kauf wird mit den vorbereiteten Werten 
 			output("</table>",true);
 		
 		} else {
-			output("Du hast aber nichts, was `tAeki`q interessieren würde. Enttäuscht schlenderst du zurück zum Dorfplatz.");
+			output("Du hast aber nichts, was `tAeki`q interessieren wÃ¼rde. EnttÃ¤uscht schlenderst du zurÃ¼ck zum Dorfplatz.");
 		}
 	}else{ // Hell Raiser
 $sql="SELECT * FROM items WHERE id=?"; // Die angeforderte Artikel-ID wird sicher als Zahl gebunden.
 $result=db_query_params($sql,array((int)db_unquote_legacy_input($_GET['id'])));
 	  	$row = db_fetch_assoc($result);
 		output("`qMit einem breiten und siegessicheren Grinsen gibt er dir die vereinbarten ".($row['gold']?"`^$row[gold] `qGold":"")." ".($row['gems']?"`#$row[gems]`q Edelsteine":"")." und schnappt sich $row[name]. ");
-		if ($row['class']=="Beute") output(" Noch bevor du fragen kannst, wofür $row[name] wirklich zu gebrauchen ist, lässt der Händler das Teil in seinem Wagen verschwinden, grinst immer noch und fragt, ob du sonst noch etwas für ihn hast.");
+		if ($row['class']=="Beute") output(" Noch bevor du fragen kannst, wofÃ¼r $row[name] wirklich zu gebrauchen ist, lÃ¤sst der HÃ¤ndler das Teil in seinem Wagen verschwinden, grinst immer noch und fragt, ob du sonst noch etwas fÃ¼r ihn hast.");
 		addnav("Mehr verkaufen","vendor.php?op=sell");
 $sql="UPDATE items SET owner=0 WHERE id=?"; // Die Artikel-ID wird fuer den Verkauf als Zahl gebunden.
 $sqlParams=array((int)db_unquote_legacy_input($_GET['id']));
-		// insert SQL für special classes here to reset their values
-		if ($row['class']=="Möbel") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
+		// insert SQL fÃ¼r special classes here to reset their values
+		if ($row['class']=="MÃ¶bel") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
 		if ($row['class']=="Beute") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
-		if ($row['class']=="Waffe" || $row['class']=="Rüstung") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
+		if ($row['class']=="Waffe" || $row['class']=="RÃ¼stung") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
 		if ($row['class']=="Schmuck" AND $row['name']=="Elfenkunst") $sql="DELETE FROM items WHERE id=?"; // Der Gegenstand wird ueber seine gebundene Artikel-ID geloescht.
 		$session['user']['gold']+=$row['gold'];
 		$session['user']['gems']+=$row['gems'];
 db_query_params($sql,$sqlParams); // Der Verkauf nutzt die vorbereitete Artikel-ID.
 	}
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }else{ // Teenage Rampage
 	checkday();
 	if (!getsetting("vendor",0)) redirect("village.php");
-	output("`qHeute ist der Wanderhändler `tAeki `qwieder im Dorf! Direkt vor `!MightyE`qs Waffenladen hat er seinen Wagen aufgebaut, was MightyE sichtlich missfällt. Da er aber ");
-	output(" selbst hin und wieder Handel mit ihm betreibt, läßt er ihn gewähren.`nNeugierig näherst du dich dem Wagen, um zu sehen, ob der Händler diesmal etwas Interessantes");
-	output(" für dich dabei hat. Vielleicht hast du aber auch etwas, das du ihm verkaufen kannst?`n");
-	addnav("Waren durchstöbern","vendor.php?op=buy");
+	output("`qHeute ist der WanderhÃ¤ndler `tAeki `qwieder im Dorf! Direkt vor `!MightyE`qs Waffenladen hat er seinen Wagen aufgebaut, was MightyE sichtlich missfÃ¤llt. Da er aber ");
+	output(" selbst hin und wieder Handel mit ihm betreibt, lÃ¤ÃŸt er ihn gewÃ¤hren.`nNeugierig nÃ¤herst du dich dem Wagen, um zu sehen, ob der HÃ¤ndler diesmal etwas Interessantes");
+	output(" fÃ¼r dich dabei hat. Vielleicht hast du aber auch etwas, das du ihm verkaufen kannst?`n");
+	addnav("Waren durchstÃ¶bern","vendor.php?op=buy");
 	addnav("Etwas verkaufen","vendor.php?op=sell");
 	addnav("Inventar anzeigen","prefs.php?op=inventory&back=vendor.php");
-	addnav("Zurück zum Dorf","village.php");
+	addnav("ZurÃ¼ck zum Dorf","village.php");
 }
 page_footer();
 // reading source code can seriously damage your eyes! Well, at least it can take out the fun of a game...

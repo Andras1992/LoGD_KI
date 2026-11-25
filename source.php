@@ -18,17 +18,17 @@ $illegal_files = array(
 	($subdir=="//"?"/":$subdir)."dbconnect.php"=>"X",
 	($subdir=="//"?"/":$subdir)."topwebvote.php"=>"X", // hide completely
 	($session['user']['donation']>500?"none":($subdir=="//"?"/":$subdir)."lodge.php")=>"Spiele und sammle 500 Donationpoints, um dieses Script zu sehen ;)",
-	($subdir=="//"?"/":$subdir)."translator_de.php"=>"Hol dir lieber die vollständige Datei von <a href='http://www.anpera.net/forum/viewtopic.php?t=341' target='_blank'>hier</a>!",
-	($subdir=="//"?"/":$subdir)."translator_it.php"=>"Noch nicht veröffentlicht.",
+	($subdir=="//"?"/":$subdir)."translator_de.php"=>"Hol dir lieber die vollstÃ¤ndige Datei von <a href='http://www.anpera.net/forum/viewtopic.php?t=341' target='_blank'>hier</a>!",
+	($subdir=="//"?"/":$subdir)."translator_it.php"=>"Noch nicht verÃ¶ffentlicht.",
 	($subdir=="//"?"/":$subdir)."source.php"=>"uh, da stehen ein paar Sachen drin, ich sag dir.... ;)",
 	($subdir=="//"?"/":$subdir)."anticheat.php"=>"X",
-	//($subdir=="//"?"/":$subdir)."common.php"=>"momentan wegen Tests nicht verfügbar",
-	(getsetting("vendor",0)==1?($subdir=="//"?"/":$subdir)."vendor.php":"none")=>"Der Wanderhändler ist heute in der Stadt! ;)",
+	//($subdir=="//"?"/":$subdir)."common.php"=>"momentan wegen Tests nicht verfÃ¼gbar",
+	(getsetting("vendor",0)==1?($subdir=="//"?"/":$subdir)."vendor.php":"none")=>"Der WanderhÃ¤ndler ist heute in der Stadt! ;)",
 	($subdir=="//"?"/":$subdir)."chat.php"=>"X",
 	($subdir=="//"?"/":$subdir)."translator_de(komplett).php"=>"X",
 	($subdir=="//"?"/":$subdir)."test.php"=>"X",
 	($session['user']['dragonkills']?"none":($subdir=="//"?"/":$subdir)."dragon.php")=>"Wenn du das Drachenskript lesen willst, schlage ich vor, du besiegst erst den Drachen!",
-	($subdir=="//"?"/":$subdir)."special/alice.php"=>"Servergebunden! ein sprechender Felsen mit künstlicher Intelligenz",
+	($subdir=="//"?"/":$subdir)."special/alice.php"=>"Servergebunden! ein sprechender Felsen mit kÃ¼nstlicher Intelligenz",
 	($session['user']['specialinc']=="vampire.php"?($subdir=="//"?"/":$subdir)."special/vampire.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
 	($session['user']['specialinc']=="gladiator.php"?($subdir=="//"?"/":$subdir)."special/gladiator.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
 	($session['user']['specialinc']=="alter.php"?($subdir=="//"?"/":$subdir)."special/alter.php":"none")=>"Du kannst diese Datei JETZT nicht lesen!",
@@ -47,12 +47,12 @@ $illegal_files = array(
 
 $legal_files=array();
 
-echo "LoGD Standardrelease steht <a href='http://sourceforge.net/projects/lotgd'>hier zum Download</a> zur Verfügung!<br><br>";
+echo "LoGD Standardrelease steht <a href='http://sourceforge.net/projects/lotgd'>hier zum Download</a> zur VerfÃ¼gung!<br><br>";
 // echo "Home-Adresse dieser Version: <a href='http://www.anpera.net/logd'>anpera.net/logd</a><br>";
 // echo "<b>Anfragen nach dieser Version bitte an: logd@anpera.de</b><br>";
 // echo "<br><font color='#FF0000'><b>Hinweis:</b> Einige Files hier sind noch in der Entwicklung! Alle fertigen Dateien gibt es <a href='http://home.tiscali.de/anpera/downloads/LoGD097extGER.exe' target='_blank'>hier</a>!</font><br>";
 echo "<h1>Zeige Source: ", htmlentities($url), "</h1>";
-echo "<a href='#source'>Hier klicken für den Source,</a> ODER<br>";
+echo "<a href='#source'>Hier klicken fÃ¼r den Source,</a> ODER<br>";
 echo "<b>Weitere Dateien, von denen du den Quelltext sehen kannst:</b><br>(Das Lesen des Source, um sich spielerische Vorteile zu verschaffen, ist nicht erlaubt.
  Solltest du Schwachstellen oder Fehler entdecken, bist du als Spieler verpflichtet, diese zu melden.)<ul>";
 foreach ($legal_dirs as $key => $val) {

@@ -16,23 +16,23 @@ checkday();
 
 output("`b`c`2Schrein des Ramius`0`c`b");
 
-output("`n`nIn einer sehr stillen Nebenhöhle des Clubs entdeckst du einen Schrein des Gottes der Unterwelt. Hier kannst du beten, um geliebte Verstorbene wiederzuerwecken.");
-output(" Die Inschriften verraten dir, daß es dich den dreifachen Aufwand kostet, einen anderen zu erwecken, als wenn du dich selbst von Ramius wiedererwecken lässt.`n");
-output("`n Nachdem du dich eine Weile darauf konzentriert hast, kannst du erkennen, daß du ".$session['user']['deathpower']." Gefallen bei `\$Ramius`0 hast.`n");
+output("`n`nIn einer sehr stillen NebenhÃ¶hle des Clubs entdeckst du einen Schrein des Gottes der Unterwelt. Hier kannst du beten, um geliebte Verstorbene wiederzuerwecken.");
+output(" Die Inschriften verraten dir, daÃŸ es dich den dreifachen Aufwand kostet, einen anderen zu erwecken, als wenn du dich selbst von Ramius wiedererwecken lÃ¤sst.`n");
+output("`n Nachdem du dich eine Weile darauf konzentriert hast, kannst du erkennen, daÃŸ du ".$session['user']['deathpower']." Gefallen bei `\$Ramius`0 hast.`n");
 
-addnav("Zurück zum Club","rock.php");
+addnav("ZurÃ¼ck zum Club","rock.php");
 
 if ($HTTP_GET_VARS['op']==""){
 	checkday();
 	$count=0;
 	if ($session['user']['deathpower']>=150 && $session['user']['marriedto']>0 && $session['user']['charisma']==4294967295){
 		addnav("Ehepartner wiedererwecken","shrine.php?op=weiter&what=partner");
-		output("`nDu kannst deinen Ehepartner für 150 Gefallen aus dem Reich der Toten zurückholen.");
+		output("`nDu kannst deinen Ehepartner fÃ¼r 150 Gefallen aus dem Reich der Toten zurÃ¼ckholen.");
 		$count++;
 	}
 	if ($session['user']['deathpower']>=300){
 		addnav("Krieger erwecken","shrine.php?op=weiter&what=normal");
-		output("`nDu kannst einen beliebigen Krieger für 300 Gefallen erwecken.");
+		output("`nDu kannst einen beliebigen Krieger fÃ¼r 300 Gefallen erwecken.");
 		$count++;
 	}
 	if ($session['user']['acctid']==getsetting("hasegg",0)){
@@ -56,11 +56,11 @@ if ($HTTP_GET_VARS['op']==""){
 			addnav("","shrine.php?op=pickname&what=$what");
 		}else{
 			output("`n`%Dein".($session['user']['sex']?" Partner":"e Partnerin")." ist nicht tot!");
-			addnav("Zurück zum Schrein","shrine.php");
+			addnav("ZurÃ¼ck zum Schrein","shrine.php");
 		}
 	}else{
 		output("Bitte gebe den Namen dessen ein, den du wiedererwecken willst:`n`n");
-		output("<form action='shrine.php?op=findname&what=$what' method='POST'>Name:<input name='to'> (Unvollständige Namen werden automatisch ergänzt).`n",true);
+		output("<form action='shrine.php?op=findname&what=$what' method='POST'>Name:<input name='to'> (UnvollstÃ¤ndige Namen werden automatisch ergÃ¤nzt).`n",true);
 		output("`n`n<input type='submit' class='button' value='Vorschau'></form>",true);
 		output("<script language='javascript'>document.getElementById('to').focus();</script>",true);
 		addnav("","shrine.php?op=findname&what=$what");
@@ -82,9 +82,9 @@ if ($HTTP_GET_VARS['op']==""){
 		output("</form>",true);
 		addnav("","shrine.php?op=pickname&what=$what");
 	}elseif(db_num_rows($result)>100){
-		output("Der Schrein macht Geräusche, als kämen zu viele körperlose Seelen in Frage. Du solltest die Person genauer beschreiben.`n`n");
+		output("Der Schrein macht GerÃ¤usche, als kÃ¤men zu viele kÃ¶rperlose Seelen in Frage. Du solltest die Person genauer beschreiben.`n`n");
 		output("<form action='shrine.php?op=findname&what=$what' method='POST'>",true);
-		output("Name: <input name='to' value='". $_POST['to'] . "'> (Unvollständige Namen werden automatisch ergänzt).`n",true);
+		output("Name: <input name='to' value='". $_POST['to'] . "'> (UnvollstÃ¤ndige Namen werden automatisch ergÃ¤nzt).`n",true);
 		output("<input type='submit' class='button' value='Vorschau'></form>",true);
 		addnav("","shrine.php?op=findname&what=$what");
 	}elseif(db_num_rows($result)>1){
@@ -110,7 +110,7 @@ if ($HTTP_GET_VARS['op']==""){
 		$row = db_fetch_assoc($result);
 		if (ac_check($row)){
 //		if (($session[user][emailaddress]==$row[emailaddress] && $row[emailaddress]) || $session[user][lastip]==$row[lastip]){
-			output("`%Die Götter gewähren dir diesen Wunsch nicht. Du kannst deine eigenen oder derart verwandte Krieger nicht wiedererwecken.");
+			output("`%Die GÃ¶tter gewÃ¤hren dir diesen Wunsch nicht. Du kannst deine eigenen oder derart verwandte Krieger nicht wiedererwecken.");
 		}else{
 			if ($what=="partner"){
 				$session['user']['deathpower']-=150;
@@ -127,11 +127,11 @@ if ($HTTP_GET_VARS['op']==""){
 			db_query($sql);
 			$session['user']['reputation']+=5;
 			output("`n`%$row[name] `%ist wiederauferstanden!`n`n");
-			systemmail($row['acctid'],"`^Du wurdest wiedererweckt!`0","`&{$session['user']['name']}`6 hat dich wiedererweckt! Du solltest ".($session['user']['sex']?"ihr":"ihm")." dafür dankbar sein.");
+			systemmail($row['acctid'],"`^Du wurdest wiedererweckt!`0","`&{$session['user']['name']}`6 hat dich wiedererweckt! Du solltest ".($session['user']['sex']?"ihr":"ihm")." dafÃ¼r dankbar sein.");
 		}
 	}else{
 		output("Das hat nicht geklappt. Versuche es nochmal.");
-		addnav("Zurück","shrine.php");
+		addnav("ZurÃ¼ck","shrine.php");
 	}
 	
 }

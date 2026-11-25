@@ -8,7 +8,7 @@ db_query_params($sql, array((int)$session["user"]["acctid"], (int)db_unquote_leg
 	exit();	
 }elseif($_GET['op']=="process"){
 	if (!isset($_POST['msg']) || !is_array($_POST['msg']) || count($_POST['msg'])<1){
-		$session['message'] = "`\$`bDu kannst 0 Nachrichten nicht löschen! Was das heißt? Du hast \"Markierte löschen\" geklickt, aber es sind keine Nachrichten markiert. Was für eine Welt ist das nur, in der Leute Knöpfe ohne Funktion drücken?!?`b`0";
+		$session['message'] = "`\$`bDu kannst 0 Nachrichten nicht lÃ¶schen! Was das heiÃŸt? Du hast \"Markierte lÃ¶schen\" geklickt, aber es sind keine Nachrichten markiert. Was fÃ¼r eine Welt ist das nur, in der Leute KnÃ¶pfe ohne Funktion drÃ¼cken?!?`b`0";
 		header("Location: mail.php");
 	}else{
 $sql = "DELETE FROM mail WHERE msgto=? AND messageid IN (" . implode(",", array_fill(0, count($_POST["msg"]), "?")) . ")";
@@ -44,7 +44,7 @@ $result = db_query_params($sql, array((int)$row1["acctid"]));
 			output("Deine Nachricht wurde gesendet!`n");
 		}
 	}else{
-		output("Konnte den Empfänger nicht finden. Bitte versuche es nochmal.`n");
+		output("Konnte den EmpfÃ¤nger nicht finden. Bitte versuche es nochmal.`n");
 	}
 	}
 	else {
@@ -97,12 +97,12 @@ $result = db_query_params($sql, array((int)$session["user"]["acctid"]));
 		}
 		$out.="'>";
 		output($out,true);
-		output("<input type='submit' class='button' value='Markierte löschen'>",true);
+		output("<input type='submit' class='button' value='Markierte lÃ¶schen'>",true);
 		output("</form>",true);
 	}else{
 		output("`iOoooh, du hast keine Mails. Wie schade.`i");
 	}
-	output("`n`n`iDu hast ".db_num_rows($result)." Nachrichten in deiner Mailbox`nDu kannst höchstens ".getsetting('inboxlimit',50)." Nachrichten hier speichern.`nNachrichten werden nach ".getsetting("oldmail",14)." Tagen gelöscht.");
+	output("`n`n`iDu hast ".db_num_rows($result)." Nachrichten in deiner Mailbox`nDu kannst hÃ¶chstens ".getsetting('inboxlimit',50)." Nachrichten hier speichern.`nNachrichten werden nach ".getsetting("oldmail",14)." Tagen gelÃ¶scht.");
 }elseif ($_GET['op']=="read"){
 $sql = "UPDATE mail SET seen=1 WHERE msgto=? AND messageid=?";
 db_query_params($sql, array((int)$session["user"]["acctid"], (int)db_unquote_legacy_input($_GET["id"])));
@@ -120,13 +120,13 @@ $result = db_query_params($sql, array((int)$session["user"]["acctid"], (int)db_u
 		output("<img src='images/uscroll.GIF' width='182' height='11' alt='' align='center'>`n",true);
 		output(str_replace("\n","`n","$row[body]"));
 		output("`n<img src='images/lscroll.GIF' width='182' height='11' alt='' align='center'>`n",true);
-		output("<a href='mail.php?op=write&replyto=$row[messageid]' class='motd'>Antworten</a><a href='mail.php?op=del&id=$row[messageid]' class='motd'>Löschen</a>",true);
+		output("<a href='mail.php?op=write&replyto=$row[messageid]' class='motd'>Antworten</a><a href='mail.php?op=del&id=$row[messageid]' class='motd'>LÃ¶schen</a>",true);
 	}else{
 		output("Uff, so eine Nachricht wurde nicht gefunden!");
 	}
 }elseif($_GET['op']=="address"){
 	output("<form action='mail.php?op=write' method='POST'>",true);
-	output("`b`2Empfänger:`b`n");
+	output("`b`2EmpfÃ¤nger:`b`n");
 	output("`2<u>A</u>n: <input name='to' accesskey='a'> <input type='submit' class='button' value='Search'></form>",true);
 }elseif($_GET['op']=="write"){
 	$subject="";

@@ -39,8 +39,8 @@ page_header("User Editor");
 	output("<form action='user.php?op=search' method='POST'>Suche in allen Feldern: <input name='q' id='q'><input type='submit' class='button'></form>",true);
 	output("<script language='JavaScript'>document.getElementById('q').focus();</script>",true);
 	addnav("","user.php?op=search");
-addnav("G?Zurück zur Grotte","superuser.php");
-addnav("W?Zurück zum Weltlichen","village.php");
+addnav("G?ZurÃ¼ck zur Grotte","superuser.php");
+addnav("W?ZurÃ¼ck zum Weltlichen","village.php");
 addnav("Verbannung","user.php?op=setupban");
 addnav("Verbannungen anzeigen/entfernen","user.php?op=removeban");
 //addnav("Benutzereditor","user.php");
@@ -67,20 +67,20 @@ $userinfo = array(
 	"newpassword"=>"Neues Passwort",
 	"emailaddress"=>"Email Adresse",
 	"locked"=>"Account gesperrt,bool",
-	"banoverride"=>"Verbannungen übergehen,bool",
+	"banoverride"=>"Verbannungen Ã¼bergehen,bool",
 	"superuser"=>"Superuser,enum,0,Standard Spieltage pro Kalendertag,1,Unbegrenzt Spieltage pro Kalendertag,2,Kreaturen und Spott administrieren,3,User administrieren",
 	
 	"User Infos,title",
 	"name"=>"Display Name",
 	"title"=>"Titel (muss auch in Display Name)",
 	"ctitle"=>"Eigener Titel (muss auch in Display Name)",
-	"sex"=>"Geschlecht,enum,0,Männlich,1,Weiblich",
+	"sex"=>"Geschlecht,enum,0,MÃ¤nnlich,1,Weiblich",
 // we can't change this this way or their stats will be wrong.
 //	"race"=>"Race,enum,0,Unknown,1,Troll,2,Elf,3,Human,4,Dwarf,5,Echse",
 	"age"=>"Tage seit Level 1,int",
 	"dragonkills"=>"Drachenkills,int",
 	"dragonage"=>"Alter beim letzten Drachenkill,int",
-	"bestdragonage"=>"Jüngstes Alter bei einem Drachenkill,int",
+	"bestdragonage"=>"JÃ¼ngstes Alter bei einem Drachenkill,int",
 	"bio"=>"Bio",
 	
 	"Werte,title",
@@ -88,27 +88,27 @@ $userinfo = array(
 	"experience"=>"Erfahrung,int",
 	"hitpoints"=>"Lebenspunkte (aktuell),int",
 	"maxhitpoints"=>"Maximale Lebenspunkte,int",
-	"turns"=>"Runden übrig,int",
-	"playerfights"=>"Spielerkämpfe übrig,int",
+	"turns"=>"Runden Ã¼brig,int",
+	"playerfights"=>"SpielerkÃ¤mpfe Ã¼brig,int",
 	"attack"=>"Angriffswert (inkl. Waffenschaden),int",
-	"defence"=>"Verteidigung (inkl. Rüstung),int",
+	"defence"=>"Verteidigung (inkl. RÃ¼stung),int",
 	"spirits"=>"Stimmung (nur Anzeige),enum,-2,Sehr schlecht,-1,Schlecht,0,Normal,1,Gut,2,Sehr gut",
 	"resurrections"=>"Auferstehungen,int",
 	"alive"=>"Lebendig,int",
 	"reputation"=>"Ansehen (-50 - +50),int",
 	
-	"Spezialitäten,title",
-	"specialty"=>"Spezialität,enum,0,Unspezifiziert,1,Dunkle Künste,2,Mystische Kräfte,3,Diebeskunst",
-	"darkarts"=>"`4Stufe  in Dunklen Künsten`0,int",
-	"darkartuses"=>"`4^--heute übrig`0,int",
-	"magic"=>"`%Stufe in Mystischen Kräften`0,int",
-	"magicuses"=>"`%^--heute übrig`0,int",
+	"SpezialitÃ¤ten,title",
+	"specialty"=>"SpezialitÃ¤t,enum,0,Unspezifiziert,1,Dunkle KÃ¼nste,2,Mystische KrÃ¤fte,3,Diebeskunst",
+	"darkarts"=>"`4Stufe  in Dunklen KÃ¼nsten`0,int",
+	"darkartuses"=>"`4^--heute Ã¼brig`0,int",
+	"magic"=>"`%Stufe in Mystischen KrÃ¤ften`0,int",
+	"magicuses"=>"`%^--heute Ã¼brig`0,int",
 	"thievery"=>"`^Stufe in Diebeskunst`0,int",
-	"thieveryuses"=>"`^^--heute übrig`0,int",
+	"thieveryuses"=>"`^^--heute Ã¼brig`0,int",
 
-	"Grabkämpfe,title",
+	"GrabkÃ¤mpfe,title",
 	"deathpower"=>"Gefallen bei Ramius,int",
-	"gravefights"=>"Grabkämpfe übrig,int",
+	"gravefights"=>"GrabkÃ¤mpfe Ã¼brig,int",
 	"soulpoints"=>"Seelenpunkte (HP im Tod),int",
 
 	
@@ -117,29 +117,29 @@ $userinfo = array(
 	"gold"=>"Bargold,int",
 	"goldinbank"=>"Gold auf der Bank,int",
 	"transferredtoday"=>"Anzahl Transfers heute,int",
-	"amountouttoday"=>"Heute ausgegengener Wert der Überweisungen,int",
+	"amountouttoday"=>"Heute ausgegengener Wert der Ãœberweisungen,int",
 	"weapon"=>"Name der Waffe",
 	"weapondmg"=>"Waffenschaden,int",
 	"weaponvalue"=>"Kaufwert der Waffe,int",
-	"armor"=>"Name der Rüstung",
+	"armor"=>"Name der RÃ¼stung",
 	"armordef"=>"Verteidigungswert,int",
-	"armorvalue"=>"Kaufwert der Rüstung,int",
+	"armorvalue"=>"Kaufwert der RÃ¼stung,int",
 	
 	"Sonderinfos,title",
 	"house"=>"Haus-ID,int",
-	"housekey"=>"Hausschlüssel?,int",
+	"housekey"=>"HausschlÃ¼ssel?,int",
 	"marriedto"=>"Partner-ID (4294967295 = Violet/Seth),int",
 	"charisma"=>"Flirts (4294967295 = verheiratet mit Partner),int",
 	"seenlover"=>"Geflirtet,bool",
-	"seenbard"=>"Barden gehört,bool",
+	"seenbard"=>"Barden gehÃ¶rt,bool",
 	"charm"=>"Charme,int",
 	"seendragon"=>"Drachen heute gesucht,bool",
 	"seenmaster"=>"Meister befragt,bool",
 	"usedouthouse"=>"Plumpsklo besucht,bool",
-	"fedmount"=>"Tier gefüttert,bool",
+	"fedmount"=>"Tier gefÃ¼ttert,bool",
 	"gotfreeale"=>"Frei-Ale (MSB: getrunken - LSB: spendiert),int",
 	"hashorse"=>"Tier,enum$mounts",
-	"boughtroomtoday"=>"Zimmer für heute bezahlt,bool",
+	"boughtroomtoday"=>"Zimmer fÃ¼r heute bezahlt,bool",
 	"drunkenness"=>"Betrunken (0-100),int",
 	"avatar"=>"Avatar:",
 	
@@ -153,12 +153,12 @@ $userinfo = array(
 	"uniqueid"=>"Unique ID,viewonly",
 	"gentime"=>"Summe der Seitenerzeugungszeiten,viewonly",
 	"gentimecount"=>"Seitentreffer,viewonly",
-	"allowednavs"=>"Zulässige Navigation,viewonly",
+	"allowednavs"=>"ZulÃ¤ssige Navigation,viewonly",
 	"dragonpoints"=>"Eingesetzte Drachenpunkte,viewonly",
 	"bufflist"=>"Spruchliste,viewonly",
 	"prefs"=>"Einstellungen,viewonly",
-	"lastwebvote"=>"Zuletzt bei Top Wep Games gewählt,viewonly",
-	"donationconfig"=>"Spendenkäufe,viewonly"
+	"lastwebvote"=>"Zuletzt bei Top Wep Games gewÃ¤hlt,viewonly",
+	"donationconfig"=>"SpendenkÃ¤ufe,viewonly"
 	);
 
 if ($_GET['op']=="lasthit"){
@@ -174,13 +174,13 @@ if ($_GET['op']=="lasthit"){
 	$row = db_fetch_assoc($result) or die(db_error(LINK));
 	output("<form action='user.php?op=special&userid=$_GET[userid]".($_GET['returnpetition']!=""?"&returnpetition={$_GET['returnpetition']}":"")."' method='POST'>",true);
 	addnav("","user.php?op=special&userid=$_GET[userid]".($_GET['returnpetition']!=""?"&returnpetition={$_GET['returnpetition']}":"")."");
-	output("<input type='submit' class='button' name='newday' value='Neuen Tag gewähren'>",true);
+	output("<input type='submit' class='button' name='newday' value='Neuen Tag gewÃ¤hren'>",true);
 	output("<input type='submit' class='button' name='fixnavs' value='Defekte Navs reparieren'>",true);
-	output("<input type='submit' class='button' name='clearvalidation' value='E-Mail als gültig markieren'>",true);
+	output("<input type='submit' class='button' name='clearvalidation' value='E-Mail als gÃ¼ltig markieren'>",true);
 	output("</form>",true);
 
 	if ($_GET['returnpetition']!=""){
-		addnav("Zurück zur Anfrage","viewpetition.php?op=view&id={$_GET['returnpetition']}");
+		addnav("ZurÃ¼ck zur Anfrage","viewpetition.php?op=view&id={$_GET['returnpetition']}");
 	}
 	
 	addnav("Letzten Treffer anzeigen","user.php?op=lasthit&userid={$_GET['userid']}",false,true);
@@ -192,7 +192,7 @@ if ($_GET['op']=="lasthit"){
 	output("<input type='submit' class='button' value='Speichern'>",true);
 	showform($userinfo,$row);
 	output("</form>",true);
-	output("<iframe src='user.php?op=lasthit&userid={$_GET['userid']}' width='100%' height='400'>Dein Browser muss iframes unterstützen, um die letzte Seite des Users anzeigen zu können. Benutze den Link im Menü stattdessen.</iframe>",true);
+	output("<iframe src='user.php?op=lasthit&userid={$_GET['userid']}' width='100%' height='400'>Dein Browser muss iframes unterstÃ¼tzen, um die letzte Seite des Users anzeigen zu kÃ¶nnen. Benutze den Link im MenÃ¼ stattdessen.</iframe>",true);
 	addnav("","user.php?op=lasthit&userid={$_GET['userid']}");
 }elseif ($_GET['op']=="special"){
 		// Alle Aktionen verwenden dieselbe gebundene Spieler-ID, damit die URL kein SQL einschleusen kann.
@@ -213,8 +213,8 @@ if ($_GET['op']=="lasthit"){
 	}
 }elseif ($_GET['op']=="save"){
 	$sql = "UPDATE accounts SET ";
-	// Ein paar Sicherheiten für Änderungen
-	// Gesamtname geändert
+	// Ein paar Sicherheiten fÃ¼r Ã„nderungen
+	// Gesamtname geÃ¤ndert
 	if ($_POST['oldname']!=$_POST['name']) {
 		$clearedname = preg_replace('/`./','',$_POST['name']);
 		// Login bleibt gleich
@@ -244,18 +244,18 @@ if ($_GET['op']=="lasthit"){
 			}
 		}
 	}
-	// Login geändert
+	// Login geÃ¤ndert
 	elseif ($_POST['oldlogin']!=$_POST['login']) {
 		if ($_POST['ctitle']!='') $_POST['name'] = $_POST['ctitle'].' '.$_POST['login'];
 		else $_POST['name'] = $_POST['title'].' '.$_POST['login'];
 	}
-	// Titel geändert
+	// Titel geÃ¤ndert
 	elseif ($_POST['oldtitle']!=$_POST['title'] && $_POST['ctitle']=='') {
 		if ($_POST['oldctitle']!='') $colname = str_replace($_POST['oldctitle'],'',$_POST['name']);
 		else $colname = str_replace($_POST['oldtitle'],'',$_POST['name']);
 		$_POST['name'] = $_POST['title'].$colname;
 	}
-	// Usertitel geändert
+	// Usertitel geÃ¤ndert
 	elseif ($_POST['oldctitle']!=$_POST['ctitle']) {
 		if ($_POST['oldctitle']!='') $colname = str_replace($_POST['oldctitle'],'',$_POST['name']);
 		else $colname = str_replace($_POST['oldtitle'],'',$_POST['name']);
@@ -304,7 +304,7 @@ if ($_GET['op']=="lasthit"){
 	// Die Konto-ID wird hier und in der folgenden Bereinigung als Zahl gebunden.
 	$accountId = (int)db_unquote_legacy_input($_GET['userid']);
 	$res = db_query_params("SELECT name FROM accounts WHERE acctid=?", array($accountId));
-	// inventar und haus löschen und partner und ei freigeben
+	// inventar und haus lÃ¶schen und partner und ei freigeben
 	if ($_GET['userid']==getsetting("hasegg",0)) savesetting("hasegg",stripslashes(0));
 	db_query_params("UPDATE items SET owner=0 WHERE owner=?", array($accountId));
 	db_query_params("UPDATE houses SET owner=0,status=3 WHERE owner=? AND status=1", array($accountId));
@@ -312,9 +312,9 @@ if ($_GET['op']=="lasthit"){
 	db_query_params("UPDATE accounts SET charisma=0,marriedto=0 WHERE marriedto=?", array($accountId));
 	db_query_params("DELETE FROM pvp WHERE acctid2=? OR acctid1=?", array($accountId, $accountId)) or die(db_error(LINK));
 	db_query_params("DELETE FROM accounts WHERE acctid=?", array($accountId));
-	output( db_affected_rows()." Benutzer gelöscht.");
+	output( db_affected_rows()." Benutzer gelÃ¶scht.");
 	while ($row = db_fetch_assoc($res)) {
-		addnews("`#{$row['name']} wurde von den Göttern aufgelöst.");
+		addnews("`#{$row['name']} wurde von den GÃ¶ttern aufgelÃ¶st.");
 	}
 }elseif($_GET['op']=="setupban"){
 	// Die Konto-ID ist ein Datenwert, kein Teil des SQL-Befehls.
@@ -322,11 +322,11 @@ if ($_GET['op']=="lasthit"){
 	$row = db_fetch_assoc($result);
 	if ($row['name']!="") output("Setting up ban information based on `\$$row[name]`0");
 	output("<form action='user.php?op=saveban' method='POST'>",true);
-	output("Verbannung über IP oder ID (IP bevorzugt. Bei Usern hinter NAT kannst du eine Verbannung über ID versuchen, die aber leicht ungangen werden kann)`n");
+	output("Verbannung Ã¼ber IP oder ID (IP bevorzugt. Bei Usern hinter NAT kannst du eine Verbannung Ã¼ber ID versuchen, die aber leicht ungangen werden kann)`n");
 	output("<input type='radio' value='ip' name='type' checked> IP: <input name='ip' value=\"".HTMLEntities($row['lastip'])."\">`n",true);
 	output("<input type='radio' value='id' name='type'> ID: <input name='id' value=\"".HTMLEntities($row['uniqueid'])."\">`n",true);
 	output("Dauer: <input name='duration' id='duration' size='3' value='14'> days (0 for permanent)`n",true);
-	output("Grund für die Verbannung: <input name='reason' value=\"Ärger mich nicht.\">`n",true);
+	output("Grund fÃ¼r die Verbannung: <input name='reason' value=\"Ã„rger mich nicht.\">`n",true);
 	output("<input type='submit' class='button' value='Post Ban' onClick='if (document.getElementById(\"duration\").value==0) {return confirm(\"Willst du wirklich eine permanente Verbannung aussprechen?\");} else {return true;}'></form>",true);
 	output("Bei einem IP-Bann gib entweder eine komplette IP ein, oder gebe nur den Anfang der IP ein, wenn du einen IP-Bereich sperren willst.");
 	addnav("","user.php?op=saveban");
@@ -457,7 +457,7 @@ if ($_GET['op']=="lasthit"){
 			
 			output("<td>",true);
 			output("[<a href='user.php?op=edit&userid=$row[acctid]'>Edit</a>|".
-				"<a href='user.php?op=del&userid=$row[acctid]' onClick=\"return confirm('Willst du diesen User wirklich löschen?');\">Del</a>|".
+				"<a href='user.php?op=del&userid=$row[acctid]' onClick=\"return confirm('Willst du diesen User wirklich lÃ¶schen?');\">Del</a>|".
 				"<a href='user.php?op=setupban&userid=$row[acctid]'>Ban</a>|".
 				"<a href='user.php?op=debuglog&userid=$row[acctid]'>Log</a>]",true);
 			addnav("","user.php?op=edit&userid=$row[acctid]");
@@ -489,7 +489,7 @@ if ($_GET['op']=="lasthit"){
 		output("</table>",true);
 		output("Treffer gesamt: $gentimecount`n");
 		output("CPU-Zeit gesamt: ".round($gentime,3)."s`n");
-		output("Durchschnittszeit für Seitenerzeugung: ".round($gentime/max($gentimecount,1),4)."s`n");
+		output("Durchschnittszeit fÃ¼r Seitenerzeugung: ".round($gentime/max($gentimecount,1),4)."s`n");
 	}
 }
 page_footer();

@@ -3,25 +3,28 @@
 // 24062004
 
 require_once "common.php";
-page_header("Mericks Ställe");
+page_header("Mericks StÃ¤lle");
 
-$repaygold = round($playermount['mountcostgold']*2/3,0);
-$repaygems = round($playermount['mountcostgems']*2/3,0);
+// Ohne Reittier gibt getmount() eine leere Liste zurueck; dann gibt es nichts zu erstatten.
+$mountCostGold = isset($playermount['mountcostgold']) ? (int)$playermount['mountcostgold'] : 0;
+$mountCostGems = isset($playermount['mountcostgems']) ? (int)$playermount['mountcostgems'] : 0;
+$repaygold = round($mountCostGold*2/3,0);
+$repaygems = round($mountCostGems*2/3,0);
 $futtercost = $session['user']['level']*20;
 
-addnav("Zurück zum Dorf","village.php");
-if ($session['user']['hashorse']>0 && $session['user']['fedmount']==0) addnav("f?{$playermount['mountname']} füttern (`^$futtercost`0 Gold)","stables.php?op=futter");
+addnav("ZurÃ¼ck zum Dorf","village.php");
+if ($session['user']['hashorse']>0 && $session['user']['fedmount']==0) addnav("f?{$playermount['mountname']} fÃ¼ttern (`^$futtercost`0 Gold)","stables.php?op=futter");
 
 if ($_GET['op']==""){
 	checkday();
-	output("`7Hinter der Kneipe, etwas links von Pegasus' Rüstungen, befindet sich ein Stall, 
-	wie man ihn in jedem Dorf erwartungsgemäß findet. 
-	Darin kümmert sich Merick, ein stämmig wirkender Zwerg, um verschiedene Tiere.
+	output("`7Hinter der Kneipe, etwas links von Pegasus' RÃ¼stungen, befindet sich ein Stall, 
+	wie man ihn in jedem Dorf erwartungsgemÃ¤ÃŸ findet. 
+	Darin kÃ¼mmert sich Merick, ein stÃ¤mmig wirkender Zwerg, um verschiedene Tiere.
 	`n`n
-	Du näherst dich ihm, als er plötzlich herumwirbelt und seine Heugabel in deine ungefähre Richtung streckt. \"`&Ach, 
-	'tschuldigung min ".($session['user']['sex']?"Mädl":"Jung").", heb dich nit kommen hörn un heb gedenkt,
+	Du nÃ¤herst dich ihm, als er plÃ¶tzlich herumwirbelt und seine Heugabel in deine ungefÃ¤hre Richtung streckt. \"`&Ach, 
+	'tschuldigung min ".($session['user']['sex']?"MÃ¤dl":"Jung").", heb dich nit kommen hÃ¶rn un heb gedenkt,
 	du bischt sicha Cedrik, der ma widda sein Zwergenweitwurf ufbessern will. Naaahw, wat 
-	kann ich für disch tun?`7\"");
+	kann ich fÃ¼r disch tun?`7\"");
 }elseif($_GET['op']=="examine"){
 	// Die Tiernummer aus der URL wird als Zahl gebunden und kann so die Abfrage nicht veraendern.
 	$sql = "SELECT * FROM mounts WHERE mountid=?";
@@ -50,13 +53,13 @@ if ($_GET['op']==""){
 			 || 
 			($session['user']['gems']+$repaygems) < $mount['mountcostgems']
 		){
-			output("`7Merick schaut dich schief von der Seite an. \"`&Ähm, was gläubst du was du hier machst? Kanns u nich sehen, dass {$mount['mountname']} `^{$mount['mountcostgold']}`& Gold und `%{$mount['mountcostgems']}`& Edelsteine kostet?`7\"");
+			output("`7Merick schaut dich schief von der Seite an. \"`&Ã„hm, was glÃ¤ubst du was du hier machst? Kanns u nich sehen, dass {$mount['mountname']} `^{$mount['mountcostgold']}`& Gold und `%{$mount['mountcostgems']}`& Edelsteine kostet?`7\"");
 		}else{
 			if ($session['user']['hashorse']>0){
-				output("`7Du übergibst dein(e/n) {$playermount['mountname']} und bezahlst den Preis für dein neues Tier. Merick führt ein(e/n) schöne(n/s) neue(n/s) `&{$mount['mountname']}`7  für dich heraus!`n`n");
+				output("`7Du Ã¼bergibst dein(e/n) {$playermount['mountname']} und bezahlst den Preis fÃ¼r dein neues Tier. Merick fÃ¼hrt ein(e/n) schÃ¶ne(n/s) neue(n/s) `&{$mount['mountname']}`7  fÃ¼r dich heraus!`n`n");
 				$session['user']['reputation']--;
 			}else{
-				output("`7Du bezahlst den Preis für dein neues Tier und Merick führt ein(e/n) schöne(n/s) neue(n/s) `&{$mount['mountname']}`7 für dich heraus!`n`n");
+				output("`7Du bezahlst den Preis fÃ¼r dein neues Tier und Merick fÃ¼hrt ein(e/n) schÃ¶ne(n/s) neue(n/s) `&{$mount['mountname']}`7 fÃ¼r dich heraus!`n`n");
 		    }
 			$session['user']['hashorse']=$mount['mountid'];
 			$goldcost = $repaygold-$mount['mountcostgold'];
@@ -77,30 +80,30 @@ if ($_GET['op']==""){
 	debuglog("gained $repaygold gold and $repaygems gems selling their mount");
 	unset($session['bufflist']['mount']);
 	$session['user']['hashorse']=0;
-	output("`7So schwer es dir auch fällt, dich von dein(er/em) {$playermount['mountname']} zu trennen, tust du es doch und eine einsame Träne entkommt deinen Augen.`n`n");
-	output("Aber in dem Moment, in dem du die ".($repaygold>0?"`^$repaygold`7 Gold ".($repaygems>0?" und ":""):"").($repaygems>0?"`%$repaygems`7 Edelsteine":"")." erblickst, fühlst du dich gleich ein wenig besser.");
+	output("`7So schwer es dir auch fÃ¤llt, dich von dein(er/em) {$playermount['mountname']} zu trennen, tust du es doch und eine einsame TrÃ¤ne entkommt deinen Augen.`n`n");
+	output("Aber in dem Moment, in dem du die ".($repaygold>0?"`^$repaygold`7 Gold ".($repaygems>0?" und ":""):"").($repaygems>0?"`%$repaygems`7 Edelsteine":"")." erblickst, fÃ¼hlst du dich gleich ein wenig besser.");
 	$session['user']['reputation']-=2;
 }elseif($_GET['op']=='futter'){
 	if ($session['user']['gold']>=$futtercost) {
         		$buff = unserialize($playermount['mountbuff']);
         		if ($session['bufflist']['mount']['rounds'] == $buff['rounds']) {
-			output("Dein {$playermount['mountname']} ist satt und rührt das vorgesetzte Futter nicht an. Darum gibt Merick dir dein Gold zurück.");
+			output("Dein {$playermount['mountname']} ist satt und rÃ¼hrt das vorgesetzte Futter nicht an. Darum gibt Merick dir dein Gold zurÃ¼ck.");
 		}else if ($session['bufflist']['mount']['rounds'] > $buff['rounds']*.5) {
 			$futtercost=$futtercost/2;
-			output("Dein {$playermount['mountname']} nascht etwas von dem vorgesetzten Futter und lässt den Rest stehen. {$playermount['mountname']} ist voll regeneriert. ");
-			output("Da aber noch über die Hälfte des Futters übrig ist, gibt dir Merick 50% Preisnachlass.`nDu bezahlst nur $futtercost Gold.");
+			output("Dein {$playermount['mountname']} nascht etwas von dem vorgesetzten Futter und lÃ¤sst den Rest stehen. {$playermount['mountname']} ist voll regeneriert. ");
+			output("Da aber noch Ã¼ber die HÃ¤lfte des Futters Ã¼brig ist, gibt dir Merick 50% Preisnachlass.`nDu bezahlst nur $futtercost Gold.");
 			$session['user']['gold']-=$futtercost;
 			$session['user']['reputation']--;
 		}else{
 			$session['user']['gold']-=$futtercost;
-			output("Dein {$playermount['mountname']} macht sich gierig über das Futter her und frisst es bis auf den letzten Krümel.`n");
-			output("Dein {$playermount['mountname']} ist vollständig regeneriert und du gibst Merick die $futtercost Gold."); 
+			output("Dein {$playermount['mountname']} macht sich gierig Ã¼ber das Futter her und frisst es bis auf den letzten KrÃ¼mel.`n");
+			output("Dein {$playermount['mountname']} ist vollstÃ¤ndig regeneriert und du gibst Merick die $futtercost Gold."); 
 			$session['user']['reputation']--;
 		}
        		$session['bufflist']['mount']=$buff;
 		$session['user']['fedmount']=1;
 	} else {
-		output("`7Du hast nicht genug Gold dabei, um das Futter zu bezahlen. Merick weigert sich dein Tier für dich durchzufüttern und empfiehlt dir, im Wald nach einer grasbewachsenen Lichtung zu suchen.");
+		output("`7Du hast nicht genug Gold dabei, um das Futter zu bezahlen. Merick weigert sich dein Tier fÃ¼r dich durchzufÃ¼ttern und empfiehlt dir, im Wald nach einer grasbewachsenen Lichtung zu suchen.");
 	}
 }
 
@@ -116,7 +119,7 @@ for ($i=0;$i<db_num_rows($result);$i++){
 	addnav("Betrachte {$row['mountname']}`0","stables.php?op=examine&id={$row['mountid']}");
 }
 if ($session['user']['hashorse']>0){
-	output("`n`nMerick bietet dir `^$repaygold`& Gold und `%$repaygems`& Edelsteine für dein(e/n) {$playermount['mountname']}.");
+	output("`n`nMerick bietet dir `^$repaygold`& Gold und `%$repaygems`& Edelsteine fÃ¼r dein(e/n) {$playermount['mountname']}.");
 	addnav("Sonstiges");
 	addnav("Verkaufe {$playermount['mountname']}","stables.php?op=sellmount");
 }

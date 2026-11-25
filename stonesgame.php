@@ -19,20 +19,20 @@ linkable in darkhorse tavern for old man and in castle
 
 require_once "common.php";
 checkday();
-page_header("Steinchenglücksspiel");
+page_header("SteinchenglÃ¼cksspiel");
 
-output("`c`b`&Steinchenglücksspiel`0`b`c`n`n");
+output("`c`b`&SteinchenglÃ¼cksspiel`0`b`c`n`n");
 if ($HTTP_GET_VARS['op'] == ""){
-	output("`tDu fragst nach dem Glückspiel. Der alte Mann schaut dich ernst an und macht dir klar, dass er diese Spiel nur um Edelsteine spielen wird!`n");
-	output("Dann erklärt er dir das Spiel:`n");
-	output("Er wird nacheinander 3 Steine aus seiner Tasche ziehen. Folgende Gewinne sind möglich:`n`#");
+	output("`tDu fragst nach dem GlÃ¼ckspiel. Der alte Mann schaut dich ernst an und macht dir klar, dass er diese Spiel nur um Edelsteine spielen wird!`n");
+	output("Dann erklÃ¤rt er dir das Spiel:`n");
+	output("Er wird nacheinander 3 Steine aus seiner Tasche ziehen. Folgende Gewinne sind mÃ¶glich:`n`#");
 	output("`n<IMG SRC=\"images/stone1.gif\" align='middle'><IMG SRC=\"images/stone1.gif\" align='middle'> = 1 Edelstein`n",true);
 	output("<IMG SRC=\"images/stone2.gif\" align='middle'><IMG SRC=\"images/stone2.gif\" align='middle'> = 2 Edelsteine`n",true);
 	output("<IMG SRC=\"images/stone1.gif\" align='middle'><IMG SRC=\"images/stone1.gif\" align='middle'><IMG SRC=\"images/stone1.gif\" align='middle'> = 4 Edelsteine.`n",true);
 	output("<IMG SRC=\"images/stone2.gif\" align='middle'><IMG SRC=\"images/stone2.gif\" align='middle'><IMG SRC=\"images/stone2.gif\" align='middle'> = 8 Edelsteine.`n",true);
 	addnav("Edelstein setzen","stonesgame.php?op=play");
 }else if ($HTTP_GET_VARS['op'] == "play" && $session['user']['gems']>0){
-	output("`tDu wirfst einen Edelstein auf den Tisch und der Alte fängt an, Steine aus seinem Beute fallen zu lassen.`n`n");
+	output("`tDu wirfst einen Edelstein auf den Tisch und der Alte fÃ¤ngt an, Steine aus seinem Beute fallen zu lassen.`n`n");
 	$session['user']['gems']-=1;
 	$stoneone=e_rand(1,3000);
 	$stonetwo=e_rand(1,4000);
@@ -56,7 +56,7 @@ if ($HTTP_GET_VARS['op'] == ""){
 	if ($stonetotal == 2 or $stonetotal == 7){
 		//push
 		$session['user']['gems']+=1;
-		output("`tOhne ein weiteres Wort schiebt dir der alte Mann deinen Edelstein zurück, welchen du schnell schnappst und wieder sicher verstaust.`n");
+		output("`tOhne ein weiteres Wort schiebt dir der alte Mann deinen Edelstein zurÃ¼ck, welchen du schnell schnappst und wieder sicher verstaust.`n");
 	}elseif ($stonetotal == 10 or $stonetotal == 11){
 		//double
 		$session['user']['gems']+=2;
@@ -68,17 +68,17 @@ if ($HTTP_GET_VARS['op'] == ""){
 	}elseif ($stonetotal == 15 or $stonetotal == 16){
 		//quad
 		$session['user']['gems']+=8;
-		output("`tMit betrübtem Gesicht, aber immer noch ohne Worte, legt der alte Mann 7 Edelsteine zu deinem dazu und schibt sie dir entgegen. Schnell verstaust du sie sicher in deinem Edelsteinbeutelchen.`n");
+		output("`tMit betrÃ¼btem Gesicht, aber immer noch ohne Worte, legt der alte Mann 7 Edelsteine zu deinem dazu und schibt sie dir entgegen. Schnell verstaust du sie sicher in deinem Edelsteinbeutelchen.`n");
 	}else{
-		output("`tDer Alte schnappt sich deinen Edelstein und lässt ihn verschwinden. Dann schaut er dich erwartungsvoll an.`n");
+		output("`tDer Alte schnappt sich deinen Edelstein und lÃ¤sst ihn verschwinden. Dann schaut er dich erwartungsvoll an.`n");
 	}
 	addnav("Nochmal","stonesgame.php?op=play");
 }else{
 	output("`tDu hast keine Edelsteine dabei. Wie peinlich.`n");
 }
-if ($session['user']['specialinc']=="darkhorse.php") addnav("Zurück zur Taverne","forest.php?specialinc=darkhorse.php&op=oldman");
-else if ($session['user']['specialinc']=="castle.php") addnav("Zurück zur Burg","forest.php?specialinc=castle.php&op=return");
-else addnav("Zurück zum Dorf","village.php");
+if ($session['user']['specialinc']=="darkhorse.php") addnav("ZurÃ¼ck zur Taverne","forest.php?specialinc=darkhorse.php&op=oldman");
+else if ($session['user']['specialinc']=="castle.php") addnav("ZurÃ¼ck zur Burg","forest.php?specialinc=castle.php&op=return");
+else addnav("ZurÃ¼ck zum Dorf","village.php");
 
 //I cannot make you keep this line here but would appreciate it left in.
 rawoutput("<br><br><br><div style=\"text-align: right;\"><font size='1'><a href=\"http://www.pqcomp.com\" target=\"_blank\">Stones by Lonny @ http://www.pqcomp.com</a></font><br>");
